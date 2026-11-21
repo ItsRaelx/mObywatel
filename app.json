@@ -31,15 +31,36 @@
           "backgroundColor": "#DC143C",
           "image": "./assets/img/splash.png",
           "imageWidth": 120,
-          "dark": { "backgroundColor": "#5A0A1C", "image": "./assets/img/splash.png" }
+          "dark": {
+            "backgroundColor": "#5A0A1C",
+            "image": "./assets/img/splash.png"
+          }
         }
       ],
-      ["expo-camera", { "cameraPermission": "Aparat służy do skanowania kodów QR." }],
-      ["expo-local-authentication", { "faceIDPermission": "Face ID potwierdza Twoją tożsamość przy logowaniu i przekazywaniu danych." }]
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Aparat służy do skanowania kodów QR."
+        }
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Face ID potwierdza Twoją tożsamość przy logowaniu i przekazywaniu danych."
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "web": {
+      "output": "single",
+      "favicon": "./assets/img/ikona.png",
+      "name": "mObywatel, prototyp",
+      "shortName": "mObywatel",
+      "themeColor": "#DC143C",
+      "backgroundColor": "#F5F3F1"
     }
   }
 }

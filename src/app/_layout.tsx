@@ -1,11 +1,14 @@
-import { DarkTheme, DefaultTheme, router, Stack, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, router, Stack, ThemeProvider, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet, useWindowDimensions } from 'react-native';
+import { SafeAreaInsetsContext } from 'react-native-safe-area-context';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
+import { doRamki, OSADZONA } from '@/lib/web';
 import { AppProvider, useApp } from '@/state/app';
+import { Prezentacja } from '@/ui/prezentacja';
 import { Blokada, Wprowadzenie } from '@/ui/brama';
 import { ToastHost } from '@/ui/elementy';
 import { PotwierdzenieHost } from '@/ui/potwierdzenie';
@@ -16,8 +19,22 @@ SplashScreen.preventAutoHideAsync();
 if (__DEV__ && typeof window !== 'undefined') (window as unknown as { __router: typeof router }).__router = router;
 
 function Wnetrze() {
-  const { gotowe, wprowadzenie, odblokowana, k } = useApp();
+  const { gotowe, wprowadzenie, odblokowana, k, ustaw } = useApp();
+  const sciezka = usePathname();
   useEffect(() => { if (gotowe) SplashScreen.hideAsync(); }, [gotowe]);
+  /* strona pokazowa: kolor paska statusu w ramce telefonu oraz zmiana osoby i motywu ze strony */
+  const ciemnyPasek = !wprowadzenie || !odblokowana || sciezka === '/';
+  useEffect(() => { doRamki({ typ: 'pasek', jasny: ciemnyPasek, ciemny: k.dark }); }, [ciemnyPasek, k.dark]);
+  useEffect(() => {
+    if (!OSADZONA) return;
+    const wiad = (e: MessageEvent) => {
+      const d = e.data; if (!d?.mobywatel) return;
+      if (d.typ === 'osoba') { ustaw({ osobaId: d.id }); try { router.navigate('/'); } catch { /* brak */ } }
+      if (d.typ === 'motyw') ustaw({ motyw: d.m });
+    };
+    window.addEventListener('message', wiad);
+    return () => window.removeEventListener('message', wiad);
+  }, [ustaw]);
   if (!gotowe) return null;
   const nav = k.dark ? DarkTheme : DefaultTheme;
   const brama = !wprowadzenie ? <Wprowadzenie /> : !odblokowana ? <Blokada /> : null;
@@ -59,6 +76,11 @@ function Wnetrze() {
   );
 }
 
+const RAMKA = { top: 50, bottom: 26, left: 0, right: 0 };
 export default function Root() {
-  return <AppProvider><Wnetrze /></AppProvider>;
+  const { width, height } = useWindowDimensions();
+  /* szeroki ekran w przeglądarce: strona z telefonem; w ramce: wcięcia jak w iPhonie */
+  if (Platform.OS === 'web' && !OSADZONA && width >= 900 && height >= 560) return <Prezentacja />;
+  const app = <AppProvider><Wnetrze /></AppProvider>;
+  return OSADZONA ? <SafeAreaInsetsContext.Provider value={RAMKA}>{app}</SafeAreaInsetsContext.Provider> : app;
 }

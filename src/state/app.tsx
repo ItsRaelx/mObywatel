@@ -4,6 +4,7 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Platform, useColorScheme } from 'react-native';
 
+import { OSADZONA, OSOBA_Z_ADRESU } from '@/lib/web';
 import { OSOBY, type Osoba, type Pismo, type Sprawa, type Wpis } from '@/data/typy';
 import { PALETA, type Kolory } from '@/ui/motyw';
 
@@ -38,7 +39,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     AsyncStorage.getItem(KLUCZ).then(v => {
-      if (v) { const z = JSON.parse(v) as Trwale; if (!OSOBY[z.osobaId]) z.osobaId = 'marta'; setT(z); setS(sesjaDla(OSOBY[z.osobaId])); }
+      let z: Trwale | null = v ? JSON.parse(v) as Trwale : null;
+      /* strona pokazowa: osoba z adresu, bez wprowadzenia i bez blokady PIN-em */
+      if (OSOBA_Z_ADRESU && OSOBY[OSOBA_Z_ADRESU]) { z = { ...(z ?? { motyw: 'system', pin: null, wprowadzenie: true }), osobaId: OSOBA_Z_ADRESU, wprowadzenie: true, pin: z?.pin ?? '1234' }; setOdbl(true); }
+      if (OSADZONA) { z = { ...(z ?? { osobaId: 'marta', motyw: 'system', pin: null, wprowadzenie: true }), wprowadzenie: true, pin: z?.pin ?? '1234' }; setOdbl(true); }
+      if (z) { if (!OSOBY[z.osobaId]) z.osobaId = 'marta'; setT(z); setS(sesjaDla(OSOBY[z.osobaId])); }
     }).finally(() => setGotowe(true));
   }, []);
 
