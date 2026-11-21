@@ -1,0 +1,2758 @@
+{
+ "marta": {
+  "id": "marta",
+  "plec": "K",
+  "imie": "Marta",
+  "nazwisko": "Kowalska",
+  "wolacz": "Marto",
+  "opis": "Warszawa, 35 lat, mama trójki dzieci",
+  "docs": [
+   {
+    "id": "dowod",
+    "name": "mDowód",
+    "sub": "Dowód ważny do 20.05.2031",
+    "photo": 1,
+    "holder": "MARTA KOWALSKA",
+    "line": "PESEL 91071427765",
+    "f": [
+     [
+      "PESEL",
+      "91071427765"
+     ],
+     [
+      "Data urodzenia",
+      "14.07.1991"
+     ],
+     [
+      "Dowód osobisty",
+      "ABC 123456"
+     ],
+     [
+      "Dowód ważny do",
+      "20.05.2031"
+     ]
+    ],
+    "rows": [
+     [
+      "Imię",
+      "Marta"
+     ],
+     [
+      "Nazwisko",
+      "Kowalska"
+     ],
+     [
+      "PESEL",
+      "91071427765"
+     ],
+     [
+      "Data urodzenia",
+      "14.07.1991"
+     ],
+     [
+      "Dowód osobisty",
+      "ABC 123456, ważny do 20.05.2031"
+     ]
+    ]
+   },
+   {
+    "id": "kdr",
+    "name": "Karta Dużej Rodziny",
+    "sub": "Ważna bezterminowo",
+    "photo": 1,
+    "holder": "MARTA KOWALSKA",
+    "line": "Nr KDR 2024/118 554",
+    "f": [
+     [
+      "Nr karty",
+      "2024/118 554"
+     ],
+     [
+      "Ważna",
+      "bezterminowo"
+     ],
+     [
+      "PESEL",
+      "91071427765"
+     ]
+    ],
+    "rows": [
+     [
+      "Posiadaczka",
+      "Marta Kowalska"
+     ],
+     [
+      "PESEL",
+      "91071427765"
+     ],
+     [
+      "Numer karty",
+      "KDR 2024/118 554"
+     ],
+     [
+      "Ważna",
+      "bezterminowo (rodzic)"
+     ]
+    ]
+   },
+   {
+    "id": "pj",
+    "name": "mPrawo jazdy",
+    "sub": "Kat. B, 5 pkt karnych",
+    "photo": 1,
+    "holder": "MARTA KOWALSKA",
+    "line": "Kategoria B, nr 01234/20/1465",
+    "f": [
+     [
+      "Kategorie",
+      "B"
+     ],
+     [
+      "Ważne do",
+      "30.06.2035"
+     ],
+     [
+      "Nr blankietu",
+      "01234/20/1465"
+     ],
+     [
+      "Punkty karne",
+      "5"
+     ]
+    ],
+    "rows": [
+     [
+      "Numer blankietu",
+      "01234/20/1465"
+     ],
+     [
+      "Kategorie",
+      "B"
+     ],
+     [
+      "Ważne do",
+      "30.06.2035"
+     ],
+     [
+      "Punkty karne",
+      "5"
+     ]
+    ]
+   },
+   {
+    "id": "auto",
+    "name": "Moje pojazdy",
+    "sub": "Toyota Corolla, WX 4521K",
+    "alert": "OC za 11 dni",
+    "plate": "WX 4521K",
+    "model": "Toyota Corolla",
+    "kolor": "srebrny",
+    "holder": "TOYOTA COROLLA 1.8 HYBRID",
+    "who": "Toyota Corolla 1.8 Hybrid",
+    "line": "OC do 29.10.2026, badanie do 12.04.2027",
+    "f": [
+     [
+      "OC do",
+      "29.10.2026"
+     ],
+     [
+      "Badanie do",
+      "12.04.2027"
+     ]
+    ],
+    "rows": [
+     [
+      "Pojazd",
+      "Toyota Corolla 1.8 Hybrid, 2021"
+     ],
+     [
+      "Nr rejestracyjny",
+      "WX 4521K"
+     ],
+     [
+      "Kolor",
+      "srebrny"
+     ],
+     [
+      "OC",
+      "TU Orzeł, do 29.10.2026"
+     ],
+     [
+      "Badanie techniczne",
+      "do 12.04.2027"
+     ],
+     [
+      "Ostatni odczyt licznika",
+      "58 210 km"
+     ]
+    ]
+   }
+  ],
+  "tiles": [
+   {
+    "i": "mail",
+    "h": "Pismo z Urzędu Skarbowego",
+    "d": "Odpowiedź do 26.10",
+    "k": "letter",
+    "u": 1,
+    "s": "Wezwanie do wyjaśnień w sprawie ulgi termomodernizacyjnej",
+    "q": "Co jest w piśmie z Urzędu Skarbowego?"
+   },
+   {
+    "i": "car",
+    "h": "Koniec okresu OC Toyoty",
+    "d": "Za 11 dni, 29.10",
+    "k": "oc",
+    "u": 1,
+    "s": "TU Orzeł, WX 4521K, umowa zwykle przedłuża się sama, jeśli jej nie wypowiesz",
+    "q": "Kiedy kończy się OC Toyoty i co mam zrobić?"
+   },
+   {
+    "i": "coin",
+    "h": "Podatek od nieruchomości",
+    "d": "210 zł do 16.11",
+    "k": "pay",
+    "s": "IV rata 2026, Urząd m.st. Warszawy",
+    "q": "Chcę zapłacić podatek od nieruchomości"
+   }
+  ],
+  "moje": {
+   "imie_nazwisko": "Marta Kowalska",
+   "data_urodzenia": "14.07.1991",
+   "pesel": "91071427765",
+   "dowod": "ABC 123456, ważny do 20.05.2031",
+   "nr_dowodu": "ABC 123456",
+   "pelnoletnosc": "tak, ukończone 18 lat",
+   "prawo_jazdy": "kat. B, ważne do 30.06.2035",
+   "pojazd": "Toyota Corolla, WX 4521K",
+   "pojazd_model": "Toyota Corolla",
+   "pojazd_kolor": "srebrny",
+   "oc": "TU Orzeł, polisa 908 123 456 789",
+   "adres": "ul. Kwiatowa 12, Warszawa"
+  },
+  "sugg": [
+   [
+    "Zgubiłam portfel",
+    "zastrzeżenie dokumentów"
+   ],
+   [
+    "Miałam stłuczkę",
+    "oświadczenie bez druku"
+   ],
+   [
+    "Kupuję używane auto",
+    "historia, OC i umowa"
+   ],
+   [
+    "Urodziło nam się dziecko",
+    "zgłoszenie do USC"
+   ],
+   [
+    "Dostałam dziwnego SMS-a",
+    "sprawdzę i zgłoszę"
+   ]
+  ],
+  "ask": {
+   "dowod": "Kiedy mój dowód traci ważność?",
+   "pj": "Ile mam punktów karnych?",
+   "auto": "Kiedy kończy się OC?",
+   "kdr": "Gdzie mogę użyć Karty Dużej Rodziny?"
+  },
+  "dane": {
+   "urodz": "14.07.1991, Warszawa",
+   "obyw": "polskie",
+   "stan": "zamężna",
+   "rodzice": "Anna, Krzysztof",
+   "zamel": "ul. Kwiatowa 12, 02-512 Warszawa",
+   "zamelOd": "03.09.2018",
+   "tel": "+48 600 ••• 412",
+   "mail": "m.kowalska@•••.pl",
+   "pasz": "EP 4410287, ważny do 11.06.2029"
+  },
+  "platnosci": [
+   [
+    "16.10",
+    "Opłata paszportowa: Zosia",
+    "30,00 zł",
+    "EP/2026/7 102 554"
+   ],
+   [
+    "22.09",
+    "Mandat za parkowanie",
+    "100,00 zł",
+    "EP/2026/6 880 112"
+   ],
+   [
+    "15.09",
+    "Podatek od nieruchomości, III rata",
+    "210,00 zł",
+    "EP/2026/6 841 007"
+   ]
+  ],
+  "sc": {
+   "urzad": "Urząd Dzielnicy Mokotów",
+   "miasto": "Warszawa",
+   "miejsce": "ul. Puławska 145, Warszawa",
+   "partner": "Tomasz Kowalski",
+   "szpital": "Szpital Bielański, Warszawa",
+   "nazw": [
+    "Kowalska",
+    "Kowalski"
+   ],
+   "letter": {
+    "info": {
+     "icon": "mail",
+     "title": "Wezwanie do złożenia wyjaśnień",
+     "source": "e-Doręczenia, Urząd Skarbowy Warszawa-Mokotów, odebrane 17.10",
+     "body": "Urząd prosi o udokumentowanie ulgi termomodernizacyjnej z zeznania PIT-37 za 2025 r. za dom jednorodzinny przy ul. Kwiatowej 12. Wymagane są faktury za materiały i usługi. Termin: <b>7 dni</b> od odebrania. 24.10 to sobota, więc masz czas do poniedziałku 26.10."
+    },
+    "say": "W Twoich plikach są 3 faktury za docieplenie z 2025 r. Przygotować odpowiedź z załącznikami?",
+    "draft": "W odpowiedzi na wezwanie z dnia 16.10.2026 przekazuję faktury dokumentujące wydatki na termomodernizację domu jednorodzinnego przy ul. Kwiatowej 12, objęte ulgą w zeznaniu PIT-37 za 2025 r.<br><br>Załączniki: FV 2025/03/118, FV 2025/04/022, FV 2025/05/301.",
+    "to": "US Warszawa-Mokotów",
+    "att": "3 faktury (PDF)"
+   },
+   "oc": {
+    "title": "OC: Toyota Corolla, WX 4521K",
+    "rows": [
+     [
+      "Ubezpieczyciel",
+      "TU Orzeł"
+     ],
+     [
+      "Koniec okresu",
+      "29.10.2026"
+     ],
+     [
+      "Badanie techniczne",
+      "do 12.04.2027"
+     ]
+    ],
+    "note": "Umowa OC zwykle przedłuża się sama na kolejny rok, jeśli jej nie wypowiesz. Sprawdź to u ubezpieczyciela.",
+    "remind": "25.10.2026"
+   },
+   "pay": [
+    {
+     "m": "podat|nieruch",
+     "title": "Podatek od nieruchomości",
+     "source": "ePłatności, Urząd m.st. Warszawy",
+     "rows": [
+      [
+       "Rata",
+       "IV, 2026"
+      ],
+      [
+       "Kwota",
+       "210,00 zł"
+      ],
+      [
+       "Termin",
+       "16.11.2026"
+      ],
+      [
+       "Płatność",
+       "Apple Pay"
+      ]
+     ],
+     "kwota": "210 zł"
+    }
+   ],
+   "punkty": {
+    "rows": [
+     [
+      "Wykroczenie",
+      "prędkość +21–25 km/h, 12.05.2026"
+     ],
+     [
+      "Wygasają",
+      "12.05.2027"
+     ],
+     [
+      "Limit",
+      "24 pkt"
+     ]
+    ],
+    "n": 5,
+    "note": "Punkty wygasają po roku od opłacenia mandatu."
+   }
+  },
+  "status": "Masz 3 sprawy do załatwienia, w tym 2 pilne w tym tygodniu.",
+  "toku": [
+   {
+    "id": "pasz",
+    "t": "Paszport dla Zosi",
+    "s": "Mazowiecki Urząd Wojewódzki",
+    "k": "dokument",
+    "eta": "Odbiór ok. 30.10",
+    "steps": [
+     [
+      "Wniosek złożony",
+      "02.10",
+      2
+     ],
+     [
+      "Opłata 30 zł",
+      "02.10",
+      2
+     ],
+     [
+      "Personalizacja w PWPW",
+      "od 09.10",
+      1
+     ],
+     [
+      "Gotowy do odbioru",
+      "ok. 30.10",
+      0
+     ]
+    ],
+    "note": "Dostaniesz powiadomienie, gdy paszport będzie gotowy. Odbierzesz go w punkcie przy ul. Marszałkowskiej 3/5."
+   },
+   {
+    "id": "800",
+    "t": "800 plus dla Tymka",
+    "s": "ZUS, okres 2026/2027",
+    "k": "rodzina",
+    "eta": "Przyznane",
+    "steps": [
+     [
+      "Wniosek złożony",
+      "03.06",
+      2
+     ],
+     [
+      "Weryfikacja",
+      "12.06",
+      2
+     ],
+     [
+      "Decyzja: przyznano",
+      "28.06",
+      2
+     ],
+     [
+      "Wypłata",
+      "co miesiąc, do 20.",
+      2
+     ]
+    ],
+    "note": "Najbliższa wypłata 20.10 na konto PL61 1090 … 4412."
+   }
+  ],
+  "os": [
+   [
+    "26.10.2026",
+    "Odpowiedź do Urzędu Skarbowego",
+    "Ulga termomodernizacyjna, 3 faktury",
+    "podatki",
+    "Co jest w piśmie z Urzędu Skarbowego?"
+   ],
+   [
+    "29.10.2026",
+    "Koniec okresu OC Toyoty",
+    "TU Orzeł, WX 4521K",
+    "pojazd",
+    "Kiedy kończy się OC Toyoty i co mam zrobić?"
+   ],
+   [
+    "30.10.2026",
+    "Paszport Zosi do odbioru",
+    "Szacunkowo, Marszałkowska 3/5",
+    "rodzina",
+    "@toku:pasz"
+   ],
+   [
+    "16.11.2026",
+    "Podatek od nieruchomości",
+    "IV rata, 210 zł",
+    "podatki",
+    "Chcę zapłacić podatek od nieruchomości"
+   ],
+   [
+    "31.12.2026",
+    "Zgłoszenie dochodów do 800 plus",
+    "Nie musisz nic robić, ZUS sprawdzi sam",
+    "rodzina",
+    null
+   ],
+   [
+    "12.04.2027",
+    "Badanie techniczne Toyoty",
+    "Stacja kontroli pojazdów",
+    "pojazd",
+    "Kiedy mam badanie techniczne auta?"
+   ],
+   [
+    "30.04.2027",
+    "Zeznanie PIT za 2026",
+    "Twój e-PIT będzie gotowy 15.02",
+    "podatki",
+    null
+   ],
+   [
+    "20.05.2031",
+    "Dowód osobisty traci ważność",
+    "Przypomnimy 3 miesiące wcześniej",
+    "dokument",
+    "Kiedy mój dowód traci ważność?"
+   ]
+  ],
+  "rodzina": [
+   {
+    "id": "tomasz",
+    "imie": "Tomasz",
+    "rel": "mąż",
+    "wiek": 37,
+    "kol": "#2563EB",
+    "info": "Wspólne sprawy: podatek od nieruchomości, Toyota (współwłaściciel)",
+    "docs": [
+     [
+      "Wspólna sprawa",
+      "Podatek od nieruchomości, 210 zł do 16.11",
+      "warn"
+     ]
+    ],
+    "akcje": [
+     [
+      "Zapłać wspólny podatek od nieruchomości",
+      "Chcę zapłacić podatek od nieruchomości"
+     ]
+    ]
+   },
+   {
+    "id": "zosia",
+    "imie": "Zosia",
+    "rel": "córka",
+    "wiek": 9,
+    "kol": "#DC143C",
+    "info": "Szkoła Podstawowa nr 12, klasa 3b",
+    "docs": [
+     [
+      "mLegitymacja szkolna",
+      "ważna do 30.09.2027",
+      "ok"
+     ],
+     [
+      "Paszport",
+      "w produkcji, odbiór ok. 30.10",
+      "prog"
+     ],
+     [
+      "PESEL",
+      "17251203481",
+      ""
+     ]
+    ],
+    "akcje": [
+     [
+      "Status paszportu",
+      "@toku:pasz"
+     ]
+    ]
+   },
+   {
+    "id": "stas",
+    "imie": "Staś",
+    "rel": "syn",
+    "wiek": 6,
+    "kol": "#0E9F6E",
+    "info": "Zerówka, Przedszkole nr 44",
+    "docs": [
+     [
+      "Dowód osobisty dziecka",
+      "ważny do 11.03.2030",
+      "ok"
+     ],
+     [
+      "Szczepienia (IKP)",
+      "2 zaplanowane w 2027",
+      ""
+     ]
+    ],
+    "akcje": [
+     [
+      "Jakie szczepienia czekają Stasia?",
+      "Jakie szczepienia czekają Stasia?"
+     ]
+    ]
+   },
+   {
+    "id": "tymek",
+    "imie": "Tymek",
+    "rel": "syn",
+    "wiek": 2,
+    "kol": "#8B3FD9",
+    "info": "800 plus wypłacane co miesiąc",
+    "docs": [
+     [
+      "800 plus",
+      "przyznane do 31.05.2027",
+      "ok"
+     ],
+     [
+      "Karta Dużej Rodziny",
+      "dopisany do karty rodziny",
+      "ok"
+     ]
+    ],
+    "akcje": [
+     [
+      "Wypłaty 800 plus",
+      "@toku:800"
+     ]
+    ]
+   }
+  ],
+  "priv": {
+   "pesel": false,
+   "log": [
+    {
+     "id": "p1",
+     "kiedy": "Dziś, 07:41",
+     "kto": "Szybki Grosz sp. z o.o.",
+     "typ": "alert",
+     "co": "Sprawdzenie PESEL przy wniosku o pożyczkę online",
+     "dane": [
+      "PESEL",
+      "Imię i nazwisko"
+     ],
+     "jak": "Rejestr zastrzeżeń PESEL: Twój PESEL nie jest zastrzeżony, więc zapytanie przeszło."
+    },
+    {
+     "id": "p2",
+     "kiedy": "Wczoraj, 14:22",
+     "kto": "Sklep Pod Kasztanem, ul. Puławska 41",
+     "typ": "ty",
+     "co": "Potwierdzenie pełnoletności przy kasie",
+     "dane": [
+      "Pełnoletność",
+      "Zdjęcie"
+     ],
+     "jak": "Udostępnianie minimalne. Sklep nie zobaczył imienia, PESEL ani adresu."
+    },
+    {
+     "id": "p3",
+     "kiedy": "15.10, 18:05",
+     "kto": "Komenda Rejonowa Policji Warszawa II",
+     "typ": "urzad",
+     "co": "Kontrola drogowa, ul. Rzymowskiego",
+     "dane": [
+      "Prawo jazdy",
+      "OC pojazdu WX 4521K"
+     ],
+     "jak": "Funkcjonariusz sprawdził dane w CEPiK podczas kontroli."
+    },
+    {
+     "id": "p4",
+     "kiedy": "12.10, 10:30",
+     "kto": "Bank Nadwiślański S.A.",
+     "typ": "firma",
+     "co": "Weryfikacja tożsamości przy otwarciu konta",
+     "dane": [
+      "Imię i nazwisko",
+      "PESEL",
+      "Dowód osobisty",
+      "Zdjęcie"
+     ],
+     "jak": "Zgoda udzielona przez Ciebie w aplikacji banku."
+    },
+    {
+     "id": "p5",
+     "kiedy": "08.10, 08:12",
+     "kto": "Przychodnia Zdrowie+, Mokotów",
+     "typ": "urzad",
+     "co": "Sprawdzenie prawa do świadczeń (eWUŚ)",
+     "dane": [
+      "PESEL",
+      "Ubezpieczenie zdrowotne"
+     ],
+     "jak": "Automatycznie przy rejestracji na wizytę."
+    }
+   ],
+   "zgody": [
+    [
+     "TU Orzeł S.A.",
+     "Dane pojazdu WX 4521K do kalkulacji OC",
+     "do 29.10.2026"
+    ],
+    [
+     "Bank Nadwiślański S.A.",
+     "Aktualizacja adresu zamieszkania",
+     "bezterminowo"
+    ],
+    [
+     "Szkoła Podstawowa nr 12",
+     "Dane Zosi: imię, nazwisko, PESEL, adres",
+     "do 30.06.2027"
+    ]
+   ]
+  },
+  "skrzynka": [
+   {
+    "id": "m1",
+    "od": "Urząd Skarbowy Warszawa-Mokotów",
+    "t": "Wezwanie do złożenia wyjaśnień",
+    "kiedy": "17.10",
+    "nowe": 1,
+    "pilne": "Odpowiedź do 26.10",
+    "k": "podatki",
+    "skrot": [
+     "Urząd chce zobaczyć faktury za docieplenie domu z 2025 r.",
+     "Chodzi o ulgę termomodernizacyjną z Twojego PIT-37.",
+     "Masz czas do poniedziałku 26.10. W Twoich plikach są już 3 pasujące faktury."
+    ],
+    "q": "Co jest w piśmie z Urzędu Skarbowego?"
+   },
+   {
+    "id": "m2",
+    "od": "Mazowiecki Urząd Wojewódzki",
+    "t": "Paszport Zosi: wniosek przyjęty",
+    "kiedy": "02.10",
+    "k": "rodzina",
+    "skrot": [
+     "Wniosek o paszport dla Zofii Kowalskiej przyjęto do realizacji.",
+     "Paszport będzie gotowy w ciągu około 30 dni."
+    ],
+    "q": "@toku:pasz"
+   },
+   {
+    "id": "m3",
+    "od": "Urząd m.st. Warszawy",
+    "t": "IV rata podatku od nieruchomości",
+    "kiedy": "01.10",
+    "k": "podatki",
+    "skrot": [
+     "Do zapłaty 210 zł do 16.11.2026.",
+     "Możesz zapłacić od razu w aplikacji, bez przepisywania numeru konta."
+    ],
+    "q": "Chcę zapłacić podatek od nieruchomości"
+   },
+   {
+    "id": "m4",
+    "od": "Zakład Ubezpieczeń Społecznych",
+    "t": "Decyzja: 800 plus na Tymka",
+    "kiedy": "28.06",
+    "k": "rodzina",
+    "skrot": [
+     "Świadczenie przyznane na okres do 31.05.2027.",
+     "Wypłata co miesiąc do 20. dnia."
+    ],
+    "q": "@toku:800"
+   }
+  ],
+  "rcb": [
+   [
+    "Dziś, 06:12",
+    "IMGW: silny wiatr",
+    "Woj. mazowieckie. Porywy do 85 km/h od 14:00 do 22:00. Zabezpiecz rzeczy na balkonie i nie parkuj pod drzewami.",
+    1
+   ],
+   [
+    "15.10, 18:40",
+    "Utrudnienia w ruchu",
+    "Warszawa: zamknięty wiadukt w centrum do 20.10. Objazd oznakowany.",
+    0
+   ],
+   [
+    "02.10, 09:00",
+    "Ćwiczenia syren alarmowych",
+    "Warszawa, 04.10 o 12:00. To tylko test, nie musisz nic robić.",
+    0
+   ]
+  ]
+ },
+ "jan": {
+  "id": "jan",
+  "plec": "M",
+  "imie": "Jan",
+  "nazwisko": "Wiśniewski",
+  "wolacz": "Janie",
+  "opis": "Kraków, 43 lata, własna firma, troje dzieci",
+  "docs": [
+   {
+    "id": "dowod",
+    "name": "mDowód",
+    "sub": "Dowód ważny do 20.05.2030",
+    "photo": 1,
+    "holder": "JAN WIŚNIEWSKI",
+    "line": "PESEL 83051203455",
+    "f": [
+     [
+      "PESEL",
+      "83051203455"
+     ],
+     [
+      "Data urodzenia",
+      "12.05.1983"
+     ],
+     [
+      "Dowód osobisty",
+      "CDE 778812"
+     ],
+     [
+      "Dowód ważny do",
+      "20.05.2030"
+     ]
+    ],
+    "rows": [
+     [
+      "Imię",
+      "Jan"
+     ],
+     [
+      "Nazwisko",
+      "Wiśniewski"
+     ],
+     [
+      "PESEL",
+      "83051203455"
+     ],
+     [
+      "Data urodzenia",
+      "12.05.1983"
+     ],
+     [
+      "Dowód osobisty",
+      "CDE 778812, ważny do 20.05.2030"
+     ]
+    ]
+   },
+   {
+    "id": "kdr",
+    "name": "Karta Dużej Rodziny",
+    "sub": "Ważna bezterminowo",
+    "photo": 1,
+    "holder": "JAN WIŚNIEWSKI",
+    "line": "Nr KDR 2021/044 117",
+    "f": [
+     [
+      "Nr karty",
+      "2021/044 117"
+     ],
+     [
+      "Ważna",
+      "bezterminowo"
+     ],
+     [
+      "PESEL",
+      "83051203455"
+     ]
+    ],
+    "rows": [
+     [
+      "Posiadacz",
+      "Jan Wiśniewski"
+     ],
+     [
+      "PESEL",
+      "83051203455"
+     ],
+     [
+      "Numer karty",
+      "KDR 2021/044 117"
+     ],
+     [
+      "Ważna",
+      "bezterminowo (rodzic)"
+     ]
+    ]
+   },
+   {
+    "id": "pj",
+    "name": "mPrawo jazdy",
+    "sub": "Kat. B, C, bez punktów",
+    "photo": 1,
+    "holder": "JAN WIŚNIEWSKI",
+    "line": "Kategorie B, C, nr 00871/12/1261",
+    "f": [
+     [
+      "Kategorie",
+      "B, C"
+     ],
+     [
+      "Ważne do",
+      "30.09.2033"
+     ],
+     [
+      "Nr blankietu",
+      "00871/12/1261"
+     ],
+     [
+      "Punkty karne",
+      "0"
+     ]
+    ],
+    "rows": [
+     [
+      "Numer blankietu",
+      "00871/12/1261"
+     ],
+     [
+      "Kategorie",
+      "B, C"
+     ],
+     [
+      "Ważne do",
+      "30.09.2033"
+     ],
+     [
+      "Punkty karne",
+      "0"
+     ]
+    ]
+   },
+   {
+    "id": "auto",
+    "name": "Moje pojazdy",
+    "sub": "Skoda Octavia i VW Transporter",
+    "alert": "OC Transportera za 16 dni",
+    "plate": "KR 7G210",
+    "model": "Skoda Octavia Combi",
+    "kolor": "granatowy",
+    "holder": "SKODA OCTAVIA COMBI 2.0 TDI",
+    "who": "Skoda Octavia Combi, VW Transporter",
+    "line": "2 pojazdy, OC Transportera do 03.11.2026",
+    "f": [
+     [
+      "OC do",
+      "02.03.2027"
+     ],
+     [
+      "Badanie do",
+      "15.01.2027"
+     ]
+    ],
+    "more": [
+     {
+      "plate": "KR 2M884",
+      "model": "Volkswagen Transporter",
+      "kolor": "biały"
+     }
+    ],
+    "rows": [
+     [
+      "Pojazd",
+      "Skoda Octavia Combi 2.0 TDI, 2020"
+     ],
+     [
+      "Nr rejestracyjny",
+      "KR 7G210"
+     ],
+     [
+      "OC",
+      "TU Bałtyk, do 02.03.2027"
+     ],
+     [
+      "Badanie techniczne",
+      "do 15.01.2027"
+     ],
+     [
+      "Drugi pojazd",
+      "VW Transporter T6.1, KR 2M884, w leasingu"
+     ],
+     [
+      "OC Transportera",
+      "TU Tatry, do 03.11.2026"
+     ]
+    ]
+   }
+  ],
+  "tiles": [
+   {
+    "i": "mail",
+    "h": "Wyjaśnienia VAT dla urzędu",
+    "d": "Odpowiedź do 28.10",
+    "k": "letter",
+    "u": 1,
+    "s": "Czynności sprawdzające JPK_V7M za sierpień, US Kraków-Podgórze",
+    "q": "Co chce ode mnie Urząd Skarbowy?"
+   },
+   {
+    "i": "car",
+    "h": "Koniec okresu OC Transportera",
+    "d": "Za 16 dni, 03.11",
+    "k": "oc",
+    "u": 1,
+    "s": "TU Tatry, KR 2M884, auto w leasingu, OC uzgodnij z AutoLeasing",
+    "q": "Kończy się OC Transportera, co mam zrobić?"
+   },
+   {
+    "i": "coin",
+    "h": "Składki ZUS za październik",
+    "d": "1 926,76 zł do 20.11",
+    "k": "pay",
+    "s": "Składki społeczne, zdrowotna osobno",
+    "q": "Ile mam do zapłaty w ZUS i kiedy?"
+   },
+   {
+    "i": "coin",
+    "h": "Podatek od nieruchomości",
+    "d": "186 zł do 16.11",
+    "k": "pay",
+    "s": "IV rata 2026, Urząd Miasta Krakowa, przelewem",
+    "q": "Jak zapłacić podatek od nieruchomości?"
+   }
+  ],
+  "moje": {
+   "imie_nazwisko": "Jan Wiśniewski",
+   "data_urodzenia": "12.05.1983",
+   "pesel": "83051203455",
+   "dowod": "CDE 778812, ważny do 20.05.2030",
+   "nr_dowodu": "CDE 778812",
+   "pelnoletnosc": "tak, ukończone 18 lat",
+   "prawo_jazdy": "kat. B, C, ważne do 30.09.2033",
+   "pojazd": "Skoda Octavia Combi, KR 7G210",
+   "pojazd_model": "Skoda Octavia Combi",
+   "pojazd_kolor": "granatowy",
+   "oc": "TU Bałtyk, polisa 1021 448 120",
+   "adres": "ul. Wielicka 28 m. 15, Kraków"
+  },
+  "sugg": [
+   [
+    "Zgubiłem portfel",
+    "zastrzeżenie dokumentów"
+   ],
+   [
+    "Co chce ode mnie Urząd Skarbowy?",
+    "pismo w sprawie VAT"
+   ],
+   [
+    "Chcę na chwilę odblokować PESEL",
+    "kredyt na nowe auto"
+   ],
+   [
+    "Jedziemy z dziećmi do Egiptu",
+    "paszport Igora i ostrzeżenia MSZ"
+   ],
+   [
+    "Miałem stłuczkę",
+    "oświadczenie bez druku"
+   ]
+  ],
+  "ask": {
+   "dowod": "Kiedy mój dowód traci ważność?",
+   "pj": "Ile mam punktów karnych?",
+   "auto": "Kiedy kończy się OC moich aut?",
+   "kdr": "Gdzie mogę użyć Karty Dużej Rodziny?"
+  },
+  "dane": {
+   "urodz": "12.05.1983, Kraków",
+   "obyw": "polskie",
+   "stan": "żonaty",
+   "rodzice": "Barbara, Stanisław",
+   "zamel": "ul. Wielicka 28 m. 15, 30-552 Kraków",
+   "zamelOd": "21.06.2012",
+   "tel": "+48 501 ••• 088",
+   "mail": "jan@•••.pl",
+   "pasz": "EN 2271906, ważny do 11.09.2031"
+  },
+  "platnosci": [
+   [
+    "20.10",
+    "Składki ZUS za wrzesień",
+    "1 926,76 zł",
+    "EP/2026/7 160 431"
+   ],
+   [
+    "08.10",
+    "Opłata paszportowa: Igor",
+    "30,00 zł",
+    "EP/2026/7 030 980"
+   ],
+   [
+    "15.09",
+    "Podatek od nieruchomości, III rata",
+    "186,00 zł",
+    "EP/2026/6 840 212"
+   ]
+  ],
+  "sc": {
+   "urzad": "Urząd Miasta Krakowa, os. Zgody 2",
+   "miasto": "Kraków",
+   "miejsce": "ul. Wielicka 120, Kraków",
+   "partner": "Anna Wiśniewska",
+   "szpital": "Szpital Uniwersytecki, Kraków",
+   "nazw": [
+    "Wiśniewska",
+    "Wiśniewski"
+   ],
+   "letter": {
+    "info": {
+     "icon": "mail",
+     "title": "Czynności sprawdzające JPK_V7M",
+     "source": "e-Doręczenia, US Kraków-Podgórze, odebrane 14.10",
+     "body": "Urząd prosi o kopie faktur zakupowych od dwóch kontrahentów (Tech-Bud sp. z o.o. i Hurtownia Elmar) ujętych w JPK_V7M za sierpień 2026 oraz o wyjaśnienie różnicy 4 812 zł w podatku naliczonym. Termin: <b>14 dni</b> od odebrania, czyli do 28.10."
+    },
+    "say": "W Twoich plikach są 4 faktury od tych kontrahentów z sierpnia. Przygotować odpowiedź z załącznikami?",
+    "draft": "W odpowiedzi na wezwanie z dnia 14.10.2026 w ramach czynności sprawdzających przekazuję kopie faktur zakupowych od Tech-Bud sp. z o.o. i Hurtowni Elmar za sierpień 2026. Różnica w podatku naliczonym wynika z korekty faktury FV/08/2026/77 otrzymanej 29.08.2026.<br><br>Załączniki: 4 faktury, 1 faktura korygująca.",
+    "to": "US Kraków-Podgórze",
+    "att": "5 dokumentów (PDF)"
+   },
+   "oc": {
+    "title": "OC: VW Transporter, KR 2M884",
+    "rows": [
+     [
+      "Ubezpieczyciel",
+      "TU Tatry"
+     ],
+     [
+      "Koniec okresu",
+      "03.11.2026"
+     ],
+     [
+      "Właściciel",
+      "AutoLeasing Polska (leasing)"
+     ],
+     [
+      "Badanie techniczne",
+      "do 21.06.2027"
+     ]
+    ],
+    "note": "Auto jest w leasingu, więc OC zwykle odnawia leasingodawca. Sprawdź w umowie z AutoLeasing, czy polisę kupujesz sam.",
+    "remind": "30.10.2026"
+   },
+   "pay": [
+    {
+     "m": "zus|sklad",
+     "title": "Składki ZUS za październik 2026",
+     "source": "ePłatności, ZUS",
+     "rows": [
+      [
+       "Składki społeczne",
+       "1 926,76 zł"
+      ],
+      [
+       "Termin",
+       "20.11.2026"
+      ],
+      [
+       "Rachunek",
+       "Twój rachunek składkowy w ZUS"
+      ],
+      [
+       "Płatność",
+       "przelew z konta firmowego"
+      ]
+     ],
+     "kwota": "1 926,76 zł"
+    },
+    {
+     "m": "podat|nieruch",
+     "title": "Podatek od nieruchomości",
+     "source": "ePłatności, Urząd Miasta Krakowa",
+     "rows": [
+      [
+       "Rata",
+       "IV, 2026"
+      ],
+      [
+       "Kwota",
+       "186,00 zł"
+      ],
+      [
+       "Termin",
+       "16.11.2026"
+      ],
+      [
+       "Płatność",
+       "przelew"
+      ]
+     ],
+     "kwota": "186 zł"
+    }
+   ],
+   "punkty": {
+    "rows": [
+     [
+      "Punkty karne",
+      "0"
+     ],
+     [
+      "Ostatnie wykroczenie",
+      "brak w ostatnich 2 latach"
+     ],
+     [
+      "Limit",
+      "24 pkt"
+     ]
+    ],
+    "n": 0,
+    "note": "Czysto. Jeśli dostaniesz mandat, zobaczysz tu punkty i datę ich wygaśnięcia."
+   }
+  },
+  "status": "Masz 4 sprawy, w tym wyjaśnienia VAT do 28.10.",
+  "toku": [
+   {
+    "id": "vat",
+    "t": "Czynności sprawdzające JPK_V7M",
+    "s": "US Kraków-Podgórze, sierpień 2026",
+    "k": "podatki",
+    "eta": "Czeka na Ciebie",
+    "steps": [
+     [
+      "Wezwanie doręczone",
+      "14.10",
+      2
+     ],
+     [
+      "Twoje wyjaśnienia",
+      "do 28.10",
+      1
+     ],
+     [
+      "Weryfikacja w urzędzie",
+      "do 30 dni",
+      0
+     ],
+     [
+      "Zakończenie",
+      "",
+      0
+     ]
+    ],
+    "note": "Urząd prosi o faktury zakupowe od dwóch kontrahentów. Odpowiedź wyślesz przez e-Doręczenia."
+   },
+   {
+    "id": "pasz",
+    "t": "Paszport dla Igora",
+    "s": "Małopolski Urząd Wojewódzki",
+    "k": "dokument",
+    "eta": "Odbiór ok. 06.11",
+    "steps": [
+     [
+      "Wniosek złożony",
+      "08.10",
+      2
+     ],
+     [
+      "Opłata 30 zł",
+      "08.10",
+      2
+     ],
+     [
+      "Personalizacja w PWPW",
+      "w kolejce",
+      1
+     ],
+     [
+      "Gotowy do odbioru",
+      "ok. 06.11",
+      0
+     ]
+    ],
+    "note": "Wyjazd do Egiptu 20.12, zdążycie z zapasem ponad miesiąca."
+   }
+  ],
+  "os": [
+   [
+    "28.10.2026",
+    "Wyjaśnienia VAT dla urzędu",
+    "JPK_V7M za sierpień",
+    "podatki",
+    "Co chce ode mnie Urząd Skarbowy?"
+   ],
+   [
+    "03.11.2026",
+    "Koniec okresu OC Transportera",
+    "TU Tatry, uzgodnij z AutoLeasing",
+    "pojazd",
+    "Kończy się OC Transportera, co mam zrobić?"
+   ],
+   [
+    "06.11.2026",
+    "Paszport Igora do odbioru",
+    "Szacunkowo",
+    "rodzina",
+    "@toku:pasz"
+   ],
+   [
+    "16.11.2026",
+    "Podatek od nieruchomości",
+    "IV rata, 186 zł",
+    "podatki",
+    "Jak zapłacić podatek od nieruchomości?"
+   ],
+   [
+    "20.11.2026",
+    "Składki ZUS za październik",
+    "1 926,76 zł",
+    "praca",
+    "Ile mam do zapłaty w ZUS i kiedy?"
+   ],
+   [
+    "25.11.2026",
+    "JPK_V7M za październik",
+    "Deklaracja i ewidencja VAT",
+    "praca",
+    null
+   ],
+   [
+    "15.01.2027",
+    "Badanie techniczne Skody",
+    "KR 7G210",
+    "pojazd",
+    null
+   ],
+   [
+    "02.03.2027",
+    "Koniec okresu OC Skody",
+    "TU Bałtyk, KR 7G210",
+    "pojazd",
+    null
+   ]
+  ],
+  "rodzina": [
+   {
+    "id": "anna",
+    "imie": "Anna",
+    "rel": "żona",
+    "wiek": 41,
+    "kol": "#2563EB",
+    "info": "Wspólne rozliczenie PIT za 2026",
+    "docs": [
+     [
+      "Wspólna sprawa",
+      "PIT-36 razem z żoną",
+      ""
+     ]
+    ],
+    "akcje": []
+   },
+   {
+    "id": "igor",
+    "imie": "Igor",
+    "rel": "syn",
+    "wiek": 14,
+    "kol": "#DC143C",
+    "info": "Wyjazd do Egiptu 20.12",
+    "docs": [
+     [
+      "Paszport",
+      "w produkcji, odbiór ok. 06.11",
+      "prog"
+     ],
+     [
+      "mLegitymacja szkolna",
+      "ważna do 30.09.2027",
+      "ok"
+     ]
+    ],
+    "akcje": [
+     [
+      "Ostrzeżenia MSZ dla Egiptu",
+      "Jedziemy z dziećmi do Egiptu"
+     ]
+    ]
+   },
+   {
+    "id": "maja",
+    "imie": "Maja",
+    "rel": "córka",
+    "wiek": 10,
+    "kol": "#8B3FD9",
+    "info": "Szkoła Podstawowa nr 7, Kraków",
+    "docs": [
+     [
+      "Paszport",
+      "ważny do 14.08.2029",
+      "ok"
+     ],
+     [
+      "mLegitymacja szkolna",
+      "ważna do 30.09.2027",
+      "ok"
+     ]
+    ],
+    "akcje": []
+   },
+   {
+    "id": "olek",
+    "imie": "Olek",
+    "rel": "syn",
+    "wiek": 7,
+    "kol": "#0E9F6E",
+    "info": "Klasa 1a",
+    "docs": [
+     [
+      "Paszport",
+      "traci ważność 02.01.2027",
+      "warn"
+     ],
+     [
+      "mLegitymacja szkolna",
+      "ważna do 30.09.2027",
+      "ok"
+     ]
+    ],
+    "akcje": [
+     [
+      "Paszport Olka traci ważność",
+      "Jedziemy z dziećmi do Egiptu"
+     ]
+    ]
+   }
+  ],
+  "priv": {
+   "pesel": true,
+   "log": [
+    {
+     "id": "p1",
+     "kiedy": "Dziś, 06:58",
+     "kto": "KredytNaKlik.pl",
+     "typ": "alert",
+     "co": "Próba sprawdzenia PESEL przy wniosku o pożyczkę",
+     "dane": [
+      "PESEL"
+     ],
+     "jak": "Twój PESEL jest zastrzeżony, więc firma dostała odmowę. Nikt nie wziął pożyczki na Twoje dane.",
+     "zablok": 1
+    },
+    {
+     "id": "p2",
+     "kiedy": "16.10, 11:20",
+     "kto": "AutoLeasing Polska",
+     "typ": "firma",
+     "co": "Sprawdzenie OC pojazdu KR 2M884",
+     "dane": [
+      "OC pojazdu",
+      "Dane pojazdu"
+     ],
+     "jak": "Na podstawie umowy leasingu."
+    },
+    {
+     "id": "p3",
+     "kiedy": "14.10, 09:00",
+     "kto": "US Kraków-Podgórze",
+     "typ": "urzad",
+     "co": "Wgląd w rejestr VAT i JPK",
+     "dane": [
+      "NIP",
+      "JPK_V7M"
+     ],
+     "jak": "Czynności sprawdzające."
+    },
+    {
+     "id": "p4",
+     "kiedy": "08.10, 13:45",
+     "kto": "Ty, u notariusza",
+     "typ": "ty",
+     "co": "Potwierdzenie tożsamości kodem QR z mObywatela",
+     "dane": [
+      "Imię i nazwisko",
+      "PESEL",
+      "Dowód osobisty",
+      "Zdjęcie"
+     ],
+     "jak": "Kancelaria Notarialna, ul. Długa 10."
+    }
+   ],
+   "zgody": [
+    [
+     "AutoLeasing Polska",
+     "Dane pojazdu KR 2M884",
+     "do końca leasingu"
+    ],
+    [
+     "Bank Pomorski",
+     "Dane do oceny kredytowej",
+     "jednorazowo, 05.10"
+    ]
+   ]
+  },
+  "skrzynka": [
+   {
+    "id": "m1",
+    "od": "US Kraków-Podgórze",
+    "t": "Czynności sprawdzające JPK_V7M",
+    "kiedy": "14.10",
+    "nowe": 1,
+    "pilne": "Odpowiedź do 28.10",
+    "k": "podatki",
+    "skrot": [
+     "Urząd prosi o faktury zakupowe od dwóch kontrahentów za sierpień.",
+     "Odpowiedź z załącznikami wyślesz przez e-Doręczenia."
+    ],
+    "q": "Co chce ode mnie Urząd Skarbowy?"
+   },
+   {
+    "id": "m2",
+    "od": "Zakład Ubezpieczeń Społecznych",
+    "t": "Składki za październik",
+    "kiedy": "10.10",
+    "k": "praca",
+    "skrot": [
+     "Do zapłaty 1 926,76 zł do 20.11.",
+     "Składka zdrowotna liczona osobno."
+    ],
+    "q": "Ile mam do zapłaty w ZUS i kiedy?"
+   },
+   {
+    "id": "m3",
+    "od": "Małopolski Urząd Wojewódzki",
+    "t": "Paszport Igora: wniosek przyjęty",
+    "kiedy": "08.10",
+    "k": "rodzina",
+    "skrot": [
+     "Paszport będzie gotowy w ciągu około 30 dni."
+    ],
+    "q": "@toku:pasz"
+   }
+  ],
+  "rcb": [
+   [
+    "Dziś, 06:12",
+    "IMGW: silny wiatr",
+    "Woj. małopolskie. Porywy do 85 km/h od 14:00 do 22:00. Zabezpiecz rzeczy na balkonie i nie parkuj pod drzewami.",
+    1
+   ],
+   [
+    "15.10, 18:40",
+    "Utrudnienia w ruchu",
+    "Kraków: zamknięty wiadukt w centrum do 20.10. Objazd oznakowany.",
+    0
+   ],
+   [
+    "02.10, 09:00",
+    "Ćwiczenia syren alarmowych",
+    "Kraków, 04.10 o 12:00. To tylko test, nie musisz nic robić.",
+    0
+   ]
+  ]
+ },
+ "ewa": {
+  "id": "ewa",
+  "plec": "K",
+  "imie": "Ewa",
+  "nazwisko": "Nowak",
+  "wolacz": "Ewo",
+  "opis": "Lublin, 57 lat, nauczycielka, opiekuje się mamą",
+  "docs": [
+   {
+    "id": "dowod",
+    "name": "mDowód",
+    "sub": "Dowód ważny do 05.12.2026",
+    "alert": "Ważny jeszcze 48 dni",
+    "photo": 1,
+    "holder": "EWA NOWAK",
+    "line": "PESEL 69020312845",
+    "f": [
+     [
+      "PESEL",
+      "69020312845"
+     ],
+     [
+      "Data urodzenia",
+      "03.02.1969"
+     ],
+     [
+      "Dowód osobisty",
+      "AXK 552190"
+     ],
+     [
+      "Dowód ważny do",
+      "05.12.2026"
+     ]
+    ],
+    "rows": [
+     [
+      "Imię",
+      "Ewa"
+     ],
+     [
+      "Nazwisko",
+      "Nowak"
+     ],
+     [
+      "PESEL",
+      "69020312845"
+     ],
+     [
+      "Data urodzenia",
+      "03.02.1969"
+     ],
+     [
+      "Dowód osobisty",
+      "AXK 552190, ważny do 05.12.2026"
+     ]
+    ]
+   },
+   {
+    "id": "kdr",
+    "name": "Karta Dużej Rodziny",
+    "sub": "Ważna bezterminowo",
+    "photo": 1,
+    "holder": "EWA NOWAK",
+    "line": "Nr KDR 2019/302 881",
+    "f": [
+     [
+      "Nr karty",
+      "2019/302 881"
+     ],
+     [
+      "Ważna",
+      "bezterminowo"
+     ],
+     [
+      "PESEL",
+      "69020312845"
+     ]
+    ],
+    "rows": [
+     [
+      "Posiadaczka",
+      "Ewa Nowak"
+     ],
+     [
+      "PESEL",
+      "69020312845"
+     ],
+     [
+      "Numer karty",
+      "KDR 2019/302 881"
+     ],
+     [
+      "Ważna",
+      "bezterminowo (rodzic)"
+     ]
+    ]
+   },
+   {
+    "id": "pj",
+    "name": "mPrawo jazdy",
+    "sub": "Kat. B, bezterminowe",
+    "photo": 1,
+    "holder": "EWA NOWAK",
+    "line": "Kategoria B, nr 03311/98/0663",
+    "f": [
+     [
+      "Kategorie",
+      "B"
+     ],
+     [
+      "Ważne",
+      "bezterminowo"
+     ],
+     [
+      "Nr blankietu",
+      "03311/98/0663"
+     ],
+     [
+      "Punkty karne",
+      "0"
+     ]
+    ],
+    "rows": [
+     [
+      "Numer blankietu",
+      "03311/98/0663"
+     ],
+     [
+      "Kategorie",
+      "B"
+     ],
+     [
+      "Ważne",
+      "bezterminowo, wymiana do 19.01.2033"
+     ],
+     [
+      "Punkty karne",
+      "0"
+     ]
+    ]
+   },
+   {
+    "id": "auto",
+    "name": "Moje pojazdy",
+    "sub": "Fiat Panda, LU 5521P",
+    "alert": "Badanie za 21 dni",
+    "plate": "LU 5521P",
+    "model": "Fiat Panda",
+    "kolor": "czerwony",
+    "holder": "FIAT PANDA 1.2",
+    "who": "Fiat Panda 1.2",
+    "line": "Badanie do 08.11.2026, OC do 14.06.2027",
+    "f": [
+     [
+      "OC do",
+      "14.06.2027"
+     ],
+     [
+      "Badanie do",
+      "08.11.2026"
+     ]
+    ],
+    "rows": [
+     [
+      "Pojazd",
+      "Fiat Panda 1.2, 2016"
+     ],
+     [
+      "Nr rejestracyjny",
+      "LU 5521P"
+     ],
+     [
+      "Kolor",
+      "czerwony"
+     ],
+     [
+      "OC",
+      "TU Mazury, do 14.06.2027"
+     ],
+     [
+      "Badanie techniczne",
+      "do 08.11.2026"
+     ],
+     [
+      "Ostatni odczyt licznika",
+      "88 140 km"
+     ]
+    ]
+   }
+  ],
+  "tiles": [
+   {
+    "i": "id",
+    "h": "Dowód traci ważność",
+    "d": "05.12.2026, za 48 dni",
+    "k": "renew",
+    "u": 1,
+    "s": "Wniosek złożysz tutaj, potem odciski palców w urzędzie do 30 dni",
+    "q": "Mój dowód traci ważność, co mam zrobić?"
+   },
+   {
+    "i": "car",
+    "h": "Badanie techniczne Pandy",
+    "d": "Do 08.11, za 21 dni",
+    "k": "oc",
+    "u": 1,
+    "s": "LU 5521P, stacja kontroli pojazdów",
+    "q": "Kiedy mam badanie techniczne auta?"
+   },
+   {
+    "i": "coin",
+    "h": "Podatek od nieruchomości",
+    "d": "164 zł do 16.11",
+    "k": "pay",
+    "s": "IV rata 2026, Urząd Miasta Lublin, BLIK",
+    "q": "Chcę zapłacić podatek od nieruchomości"
+   },
+   {
+    "i": "mail",
+    "h": "Informacja z ZUS o emeryturze",
+    "d": "Nowa wiadomość",
+    "k": "letter",
+    "s": "Wiek emerytalny 03.02.2029, wniosek złożysz od 04.01.2029",
+    "q": "Ile będę miała emerytury?"
+   }
+  ],
+  "moje": {
+   "imie_nazwisko": "Ewa Nowak",
+   "data_urodzenia": "03.02.1969",
+   "pesel": "69020312845",
+   "dowod": "AXK 552190, ważny do 05.12.2026",
+   "nr_dowodu": "AXK 552190",
+   "pelnoletnosc": "tak, ukończone 18 lat",
+   "prawo_jazdy": "kat. B, bezterminowe",
+   "pojazd": "Fiat Panda, LU 5521P",
+   "pojazd_model": "Fiat Panda",
+   "pojazd_kolor": "czerwony",
+   "oc": "TU Mazury, polisa L4 0071 226 908",
+   "adres": "ul. Narutowicza 18 m. 3, Lublin"
+  },
+  "sugg": [
+   [
+    "Mój dowód traci ważność",
+    "wniosek tutaj, odciski w urzędzie"
+   ],
+   [
+    "Ile będę miała emerytury?",
+    "prognoza z ZUS"
+   ],
+   [
+    "Jakie recepty ma moja mama?",
+    "upoważnienie od mamy w IKP"
+   ],
+   [
+    "Dostałam dziwnego SMS-a",
+    "sprawdzę i zgłoszę"
+   ],
+   [
+    "Zgubiłam portfel",
+    "zastrzeżenie dokumentów"
+   ]
+  ],
+  "ask": {
+   "dowod": "Mój dowód traci ważność, co mam zrobić?",
+   "pj": "Kiedy muszę wymienić prawo jazdy?",
+   "auto": "Kiedy mam badanie techniczne?",
+   "kdr": "Gdzie mogę użyć Karty Dużej Rodziny?"
+  },
+  "dane": {
+   "urodz": "03.02.1969, Lublin",
+   "obyw": "polskie",
+   "stan": "wdowa",
+   "rodzice": "Halina, Józef",
+   "zamel": "ul. Narutowicza 18 m. 3, 20-016 Lublin",
+   "zamelOd": "14.11.1996",
+   "tel": "+48 692 ••• 230",
+   "mail": "ewa.nowak@•••.pl",
+   "pasz": "brak"
+  },
+  "platnosci": [
+   [
+    "30.09",
+    "Opłata za kartę EKUZ",
+    "0,00 zł",
+    "bezpłatnie"
+   ],
+   [
+    "15.09",
+    "Podatek od nieruchomości, III rata",
+    "164,00 zł",
+    "EP/2026/6 839 551"
+   ]
+  ],
+  "sc": {
+   "urzad": "Urząd Miasta Lublin, ul. Wieniawska 14",
+   "miasto": "Lublin",
+   "miejsce": "ul. Zana 38, Lublin",
+   "partner": "",
+   "szpital": "SPSK nr 4, Lublin",
+   "nazw": [
+    "Nowak",
+    "Nowak"
+   ],
+   "letter": {
+    "info": {
+     "icon": "mail",
+     "title": "Informacja o stanie konta w ZUS",
+     "source": "e-Doręczenia, ZUS, odebrane 12.10",
+     "body": "Na koncie i subkoncie w ZUS masz łącznie <b>612 480 zł</b> zwaloryzowanych składek. Wiek emerytalny osiągniesz <b>03.02.2029</b>. Wniosek o emeryturę złożysz najwcześniej 04.01.2029."
+    },
+    "after": "Przy obecnym wynagrodzeniu prognozowana emerytura to około <b>3 400 zł brutto</b>. Każdy rok dłuższej pracy podnosi ją mniej więcej o 8%.",
+    "chips": [
+     [
+      "Przypomnij w styczniu 2029",
+      "04.01.2029, 9:00"
+     ]
+    ]
+   },
+   "oc": {
+    "title": "Badanie techniczne: Fiat Panda, LU 5521P",
+    "rows": [
+     [
+      "Badanie ważne do",
+      "08.11.2026"
+     ],
+     [
+      "OC",
+      "TU Mazury, do 14.06.2027"
+     ],
+     [
+      "Najbliższa stacja",
+      "SKP, ul. Mełgiewska 7, Lublin"
+     ]
+    ],
+    "note": "Bez ważnego badania auto nie powinno wyjeżdżać na drogę, a policja może zatrzymać dowód rejestracyjny.",
+    "remind": "03.11.2026"
+   },
+   "pay": [
+    {
+     "m": "podat|nieruch",
+     "title": "Podatek od nieruchomości",
+     "source": "ePłatności, Urząd Miasta Lublin",
+     "rows": [
+      [
+       "Rata",
+       "IV, 2026"
+      ],
+      [
+       "Kwota",
+       "164,00 zł"
+      ],
+      [
+       "Termin",
+       "16.11.2026"
+      ],
+      [
+       "Płatność",
+       "BLIK"
+      ]
+     ],
+     "kwota": "164 zł"
+    }
+   ],
+   "punkty": {
+    "rows": [
+     [
+      "Punkty karne",
+      "0"
+     ],
+     [
+      "Prawo jazdy",
+      "kat. B, bezterminowe"
+     ],
+     [
+      "Limit",
+      "24 pkt"
+     ]
+    ],
+    "n": 0,
+    "note": "Bez punktów od lat. Gratulacje."
+   }
+  },
+  "status": "Dowód traci ważność za 48 dni. Wniosek złożysz w 3 minuty.",
+  "toku": [
+   {
+    "id": "san",
+    "t": "Skierowanie do sanatorium",
+    "s": "NFZ, Lubelski Oddział Wojewódzki",
+    "k": "zdrowie",
+    "eta": "Pozycja 412 w kolejce",
+    "steps": [
+     [
+      "Skierowanie od lekarza",
+      "03.06",
+      2
+     ],
+     [
+      "Ocena w NFZ",
+      "12.07",
+      2
+     ],
+     [
+      "Oczekiwanie na termin",
+      "pozycja 412",
+      1
+     ],
+     [
+      "Wyjazd",
+      "szac. wiosna 2027",
+      0
+     ]
+    ],
+    "note": "Kolejka przesunęła się o 58 miejsc w ostatnim miesiącu."
+   },
+   {
+    "id": "dow",
+    "t": "Nowy dowód osobisty",
+    "s": "Urząd Miasta Lublin",
+    "k": "dokument",
+    "eta": "Do złożenia",
+    "steps": [
+     [
+      "Wniosek w aplikacji",
+      "do zrobienia",
+      1
+     ],
+     [
+      "Odciski palców w urzędzie",
+      "do 30 dni",
+      0
+     ],
+     [
+      "Produkcja",
+      "ok. 30 dni",
+      0
+     ],
+     [
+      "Odbiór",
+      "",
+      0
+     ]
+    ],
+    "note": "Obecny dowód traci ważność 05.12.2026."
+   }
+  ],
+  "os": [
+   [
+    "08.11.2026",
+    "Badanie techniczne Pandy",
+    "LU 5521P",
+    "pojazd",
+    "Kiedy mam badanie techniczne auta?"
+   ],
+   [
+    "16.11.2026",
+    "Podatek od nieruchomości",
+    "IV rata, 164 zł",
+    "podatki",
+    "Chcę zapłacić podatek od nieruchomości"
+   ],
+   [
+    "05.12.2026",
+    "Dowód osobisty traci ważność",
+    "Złóż wniosek teraz",
+    "dokument",
+    "Mój dowód traci ważność, co mam zrobić?"
+   ],
+   [
+    "20.03.2027",
+    "Orzeczenie mamy traci ważność",
+    "Wniosek o przedłużenie od 20.01",
+    "rodzina",
+    null
+   ],
+   [
+    "14.06.2027",
+    "Koniec okresu OC Pandy",
+    "TU Mazury",
+    "pojazd",
+    null
+   ],
+   [
+    "03.02.2029",
+    "Osiągasz wiek emerytalny",
+    "Wniosek złożysz od 04.01.2029",
+    "praca",
+    "Ile będę miała emerytury?"
+   ]
+  ],
+  "rodzina": [
+   {
+    "id": "halina",
+    "imie": "Halina",
+    "rel": "mama, pod opieką",
+    "wiek": 84,
+    "kol": "#8B3FD9",
+    "info": "Masz upoważnienie do jej Internetowego Konta Pacjenta",
+    "docs": [
+     [
+      "Recepty",
+      "2 do wykupienia",
+      "warn"
+     ],
+     [
+      "Orzeczenie o niepełnosprawności",
+      "ważne do 20.03.2027",
+      "ok"
+     ],
+     [
+      "Upoważnienie IKP",
+      "aktywne, bezterminowo",
+      "ok"
+     ]
+    ],
+    "akcje": [
+     [
+      "Jakie recepty ma mama?",
+      "Jakie recepty ma moja mama?"
+     ]
+    ]
+   },
+   {
+    "id": "michal",
+    "imie": "Michał",
+    "rel": "syn",
+    "wiek": 31,
+    "kol": "#2563EB",
+    "info": "Dorosły, osobne konto mObywatela",
+    "docs": [],
+    "akcje": []
+   }
+  ],
+  "priv": {
+   "pesel": false,
+   "log": [
+    {
+     "id": "p1",
+     "kiedy": "Wczoraj, 16:10",
+     "kto": "Apteka Pod Lipami, Lublin",
+     "typ": "ty",
+     "co": "Wydanie leku z recepty Haliny Nowak",
+     "dane": [
+      "Upoważnienie IKP",
+      "Recepta"
+     ],
+     "jak": "Na podstawie Twojego upoważnienia od mamy."
+    },
+    {
+     "id": "p2",
+     "kiedy": "12.10, 09:30",
+     "kto": "Zakład Ubezpieczeń Społecznych",
+     "typ": "urzad",
+     "co": "Prognoza emerytury",
+     "dane": [
+      "Okresy składkowe",
+      "Wynagrodzenie"
+     ],
+     "jak": "Na Twój wniosek w PUE ZUS."
+    },
+    {
+     "id": "p3",
+     "kiedy": "01.10, 07:55",
+     "kto": "Szkoła Podstawowa nr 24",
+     "typ": "urzad",
+     "co": "Weryfikacja zatrudnienia nauczyciela",
+     "dane": [
+      "Imię i nazwisko",
+      "PESEL"
+     ],
+     "jak": "System Informacji Oświatowej."
+    }
+   ],
+   "zgody": [
+    [
+     "Halina Nowak",
+     "Upoważnienie do IKP mamy",
+     "bezterminowo"
+    ],
+    [
+     "TU Mazury",
+     "Dane pojazdu LU 5521P",
+     "do 14.06.2027"
+    ]
+   ]
+  },
+  "skrzynka": [
+   {
+    "id": "m1",
+    "od": "Zakład Ubezpieczeń Społecznych",
+    "t": "Informacja o stanie konta i prognoza emerytury",
+    "kiedy": "12.10",
+    "nowe": 1,
+    "k": "praca",
+    "skrot": [
+     "Wiek emerytalny osiągniesz 03.02.2029.",
+     "Wniosek o emeryturę złożysz od 04.01.2029."
+    ],
+    "q": "Ile będę miała emerytury?"
+   },
+   {
+    "id": "m2",
+    "od": "Urząd Miasta Lublin",
+    "t": "IV rata podatku od nieruchomości",
+    "kiedy": "01.10",
+    "k": "podatki",
+    "skrot": [
+     "Do zapłaty 164 zł do 16.11.2026."
+    ],
+    "q": "Chcę zapłacić podatek od nieruchomości"
+   },
+   {
+    "id": "m3",
+    "od": "NFZ Lubelski OW",
+    "t": "Skierowanie do sanatorium: miejsce w kolejce",
+    "kiedy": "01.10",
+    "k": "zdrowie",
+    "skrot": [
+     "Jesteś na pozycji 412.",
+     "Szacowany termin wyjazdu: wiosna 2027."
+    ],
+    "q": "@toku:san"
+   }
+  ],
+  "rcb": [
+   [
+    "Dziś, 06:12",
+    "IMGW: silny wiatr",
+    "Woj. lubelskie. Porywy do 85 km/h od 14:00 do 22:00. Zabezpiecz rzeczy na balkonie i nie parkuj pod drzewami.",
+    1
+   ],
+   [
+    "15.10, 18:40",
+    "Utrudnienia w ruchu",
+    "Lublin: zamknięty wiadukt w centrum do 20.10. Objazd oznakowany.",
+    0
+   ],
+   [
+    "02.10, 09:00",
+    "Ćwiczenia syren alarmowych",
+    "Lublin, 04.10 o 12:00. To tylko test, nie musisz nic robić.",
+    0
+   ]
+  ]
+ },
+ "kacper": {
+  "id": "kacper",
+  "plec": "M",
+  "imie": "Kacper",
+  "nazwisko": "Zieliński",
+  "wolacz": "Kacprze",
+  "opis": "Gdańsk, 20 lat, student, prawo jazdy od stycznia",
+  "docs": [
+   {
+    "id": "dowod",
+    "name": "mDowód",
+    "sub": "Dowód ważny do 02.04.2034",
+    "photo": 1,
+    "holder": "KACPER ZIELIŃSKI",
+    "line": "PESEL 06232141719",
+    "f": [
+     [
+      "PESEL",
+      "06232141719"
+     ],
+     [
+      "Data urodzenia",
+      "21.03.2006"
+     ],
+     [
+      "Dowód osobisty",
+      "DFT 220419"
+     ],
+     [
+      "Dowód ważny do",
+      "02.04.2034"
+     ]
+    ],
+    "rows": [
+     [
+      "Imię",
+      "Kacper"
+     ],
+     [
+      "Nazwisko",
+      "Zieliński"
+     ],
+     [
+      "PESEL",
+      "06232141719"
+     ],
+     [
+      "Data urodzenia",
+      "21.03.2006"
+     ],
+     [
+      "Dowód osobisty",
+      "DFT 220419, ważny do 02.04.2034"
+     ]
+    ]
+   },
+   {
+    "id": "leg",
+    "name": "mLegitymacja studencka",
+    "sub": "Ważna do 31.03.2027",
+    "photo": 1,
+    "holder": "KACPER ZIELIŃSKI",
+    "line": "Politechnika Gdańska, nr albumu 198442",
+    "f": [
+     [
+      "Nr albumu",
+      "198442"
+     ],
+     [
+      "Ważna do",
+      "31.03.2027"
+     ],
+     [
+      "Uczelnia",
+      "PG"
+     ],
+     [
+      "Ulga PKP",
+      "51%"
+     ]
+    ],
+    "rows": [
+     [
+      "Uczelnia",
+      "Politechnika Gdańska"
+     ],
+     [
+      "Wydział",
+      "Elektroniki, Telekomunikacji i Informatyki"
+     ],
+     [
+      "Numer albumu",
+      "198442"
+     ],
+     [
+      "Ważna do",
+      "31.03.2027"
+     ]
+    ]
+   },
+   {
+    "id": "pj",
+    "name": "mPrawo jazdy",
+    "sub": "Kat. B, okres próbny, 3 pkt",
+    "alert": "3 z 20 pkt",
+    "photo": 1,
+    "holder": "KACPER ZIELIŃSKI",
+    "line": "Kategoria B, okres próbny do 14.01.2028",
+    "f": [
+     [
+      "Kategorie",
+      "B"
+     ],
+     [
+      "Okres próbny",
+      "do 14.01.2028"
+     ],
+     [
+      "Nr blankietu",
+      "00512/26/2861"
+     ],
+     [
+      "Punkty karne",
+      "3"
+     ]
+    ],
+    "rows": [
+     [
+      "Numer blankietu",
+      "00512/26/2861"
+     ],
+     [
+      "Kategorie",
+      "B"
+     ],
+     [
+      "Wydane",
+      "14.01.2026"
+     ],
+     [
+      "Okres próbny",
+      "do 14.01.2028"
+     ],
+     [
+      "Limit punktów",
+      "20 do 14.01.2027, potem 24"
+     ],
+     [
+      "Punkty karne",
+      "3"
+     ]
+    ]
+   },
+   {
+    "id": "auto",
+    "name": "Moje pojazdy",
+    "sub": "Volkswagen Golf, GD 8K113",
+    "plate": "GD 8K113",
+    "model": "Volkswagen Golf IV",
+    "kolor": "czarny",
+    "holder": "VOLKSWAGEN GOLF IV 1.4",
+    "who": "Volkswagen Golf IV 1.4",
+    "line": "OC do 01.02.2027, badanie do 20.01.2027",
+    "f": [
+     [
+      "OC do",
+      "01.02.2027"
+     ],
+     [
+      "Badanie do",
+      "20.01.2027"
+     ]
+    ],
+    "rows": [
+     [
+      "Pojazd",
+      "Volkswagen Golf IV 1.4, 2003"
+     ],
+     [
+      "Nr rejestracyjny",
+      "GD 8K113"
+     ],
+     [
+      "Kolor",
+      "czarny"
+     ],
+     [
+      "OC",
+      "TU Wisła, do 01.02.2027"
+     ],
+     [
+      "Badanie techniczne",
+      "do 20.01.2027"
+     ],
+     [
+      "Ostatni odczyt licznika",
+      "251 300 km"
+     ]
+    ]
+   }
+  ],
+  "tiles": [
+   {
+    "i": "coin",
+    "h": "Mandat do zapłaty",
+    "d": "200 zł do 22.10",
+    "k": "pay",
+    "u": 1,
+    "s": "Prędkość +18 km/h, 3 punkty karne",
+    "q": "Jak zapłacić mandat?"
+   },
+   {
+    "i": "clock",
+    "h": "Punkty karne: 3 z 20",
+    "d": "Limit 20 pkt do 14.01.2027",
+    "k": "punkty",
+    "u": 1,
+    "s": "W pierwszym roku po przekroczeniu 20 pkt starosta cofnie uprawnienia",
+    "q": "Ile mam punktów karnych i kiedy wygasną?"
+   },
+   {
+    "i": "mail",
+    "h": "Stypendium rektora",
+    "d": "Nowa decyzja",
+    "k": "letter",
+    "s": "1 100 zł miesięcznie od października",
+    "q": "Co jest w decyzji z Politechniki?"
+   },
+   {
+    "i": "doc",
+    "h": "Głosowanie w Gdańsku",
+    "d": "Wybory 2027",
+    "k": "glos",
+    "s": "Możesz na stałe przepisać się do obwodu w Gdańsku",
+    "q": "Jak zagłosować w Gdańsku, skoro jestem zameldowany w Elblągu?"
+   }
+  ],
+  "moje": {
+   "imie_nazwisko": "Kacper Zieliński",
+   "data_urodzenia": "21.03.2006",
+   "pesel": "06232141719",
+   "dowod": "DFT 220419, ważny do 02.04.2034",
+   "nr_dowodu": "DFT 220419",
+   "pelnoletnosc": "tak, ukończone 18 lat",
+   "prawo_jazdy": "kat. B, okres próbny do 14.01.2028",
+   "pojazd": "Volkswagen Golf IV, GD 8K113",
+   "pojazd_model": "Volkswagen Golf IV",
+   "pojazd_kolor": "czarny",
+   "oc": "TU Wisła, polisa EH 330 128 774",
+   "adres": "ul. Grunwaldzka 102 m. 7, Gdańsk"
+  },
+  "sugg": [
+   [
+    "Dostałem mandat, ile mam punktów?",
+    "pierwszy rok, limit 20 pkt"
+   ],
+   [
+    "Kupuję używane auto",
+    "historia, OC i umowa"
+   ],
+   [
+    "Chcę głosować w Gdańsku",
+    "zmiana stałego obwodu"
+   ],
+   [
+    "Zgubiłem portfel",
+    "zastrzeżenie dokumentów"
+   ],
+   [
+    "Dostałem dziwnego SMS-a",
+    "sprawdzę i zgłoszę"
+   ]
+  ],
+  "ask": {
+   "dowod": "Kiedy mój dowód traci ważność?",
+   "pj": "Ile mam punktów karnych?",
+   "auto": "Kiedy kończy się OC Golfa?",
+   "leg": "Jaką zniżkę na pociąg daje mi legitymacja?"
+  },
+  "dane": {
+   "urodz": "21.03.2006, Elbląg",
+   "obyw": "polskie",
+   "stan": "kawaler",
+   "rodzice": "Beata, Tomasz",
+   "zamel": "ul. Ogólna 3, 82-300 Elbląg",
+   "zamelOd": "21.03.2006",
+   "tel": "+48 791 ••• 655",
+   "mail": "kacper.z@•••.pl",
+   "pasz": "brak"
+  },
+  "platnosci": [
+   [
+    "02.10",
+    "Opłata za legitymację studencką",
+    "22,00 zł",
+    "EP/2026/6 990 113"
+   ]
+  ],
+  "sc": {
+   "urzad": "Urząd Miejski w Gdańsku, ul. Nowe Ogrody 8/12",
+   "miasto": "Gdańsk",
+   "miejsce": "al. Grunwaldzka 140, Gdańsk",
+   "partner": "",
+   "szpital": "Szpital Wojewódzki, Gdańsk",
+   "nazw": [
+    "Zielińska",
+    "Zieliński"
+   ],
+   "meldunek": "Elbląg",
+   "letter": {
+    "info": {
+     "icon": "mail",
+     "title": "Decyzja o przyznaniu stypendium rektora",
+     "source": "e-Doręczenia, Politechnika Gdańska, odebrane 15.10",
+     "body": "Rektor przyznał Ci stypendium za wyniki w nauce w wysokości <b>1 100 zł miesięcznie</b> na rok akademicki 2026/2027 (9 miesięcy, od października do czerwca)."
+    },
+    "after": "Decyzja jest w pełni korzystna, więc nic nie musisz robić. Pierwsza wypłata z wyrównaniem trafi na konto do 30.10.",
+    "chips": [
+     [
+      "Dodaj wypłaty do kalendarza",
+      "co miesiąc, do 30."
+     ]
+    ]
+   },
+   "oc": {
+    "title": "OC: Volkswagen Golf IV, GD 8K113",
+    "rows": [
+     [
+      "Ubezpieczyciel",
+      "TU Wisła"
+     ],
+     [
+      "Koniec okresu",
+      "01.02.2027"
+     ],
+     [
+      "Badanie techniczne",
+      "do 20.01.2027"
+     ]
+    ],
+    "note": "Umowa OC zwykle przedłuża się sama, jeśli jej nie wypowiesz. Młody kierowca z punktami może dostać wyższą składkę, warto porównać oferty.",
+    "remind": "25.01.2027"
+   },
+   "pay": [
+    {
+     "m": "mandat",
+     "title": "Mandat karny kredytowany",
+     "source": "ePłatności, Komenda Miejska Policji w Gdańsku",
+     "rows": [
+      [
+       "Wykroczenie",
+       "prędkość +18 km/h, 14.10.2026"
+      ],
+      [
+       "Kwota",
+       "200,00 zł"
+      ],
+      [
+       "Termin",
+       "22.10.2026"
+      ],
+      [
+       "Płatność",
+       "BLIK"
+      ]
+     ],
+     "kwota": "200 zł"
+    }
+   ],
+   "punkty": {
+    "rows": [
+     [
+      "Wykroczenie",
+      "prędkość +18 km/h, 14.10.2026"
+     ],
+     [
+      "Punkty",
+      "3"
+     ],
+     [
+      "Twój limit",
+      "20 pkt do 14.01.2027, potem 24 pkt"
+     ],
+     [
+      "Wygasają",
+      "rok od zapłaty mandatu"
+     ]
+    ],
+    "n": 3,
+    "note": "W pierwszym roku po egzaminie przekroczenie 20 pkt oznacza cofnięcie uprawnień i ponowny egzamin."
+   }
+  },
+  "status": "Mandat 200 zł do zapłaty do 22.10. Masz 3 z 20 punktów.",
+  "toku": [
+   {
+    "id": "styp",
+    "t": "Stypendium rektora",
+    "s": "Politechnika Gdańska",
+    "k": "nauka",
+    "eta": "Przyznane",
+    "steps": [
+     [
+      "Wniosek złożony",
+      "20.09",
+      2
+     ],
+     [
+      "Komisja stypendialna",
+      "08.10",
+      2
+     ],
+     [
+      "Decyzja: 1 100 zł/mies.",
+      "15.10",
+      2
+     ],
+     [
+      "Pierwsza wypłata",
+      "do 30.10",
+      1
+     ]
+    ],
+    "note": "Stypendium za październik wypłacimy z wyrównaniem."
+   },
+   {
+    "id": "obw",
+    "t": "Zmiana obwodu głosowania",
+    "s": "Urząd Miasta Gdańska",
+    "k": "wybory",
+    "eta": "Do złożenia",
+    "steps": [
+     [
+      "Wniosek w aplikacji",
+      "do zrobienia",
+      1
+     ],
+     [
+      "Decyzja urzędu",
+      "3 dni",
+      0
+     ],
+     [
+      "Wpis do rejestru",
+      "",
+      0
+     ]
+    ],
+    "note": "Jesteś zameldowany w Elblągu, ale mieszkasz w Gdańsku."
+   }
+  ],
+  "os": [
+   [
+    "22.10.2026",
+    "Mandat do zapłaty",
+    "200 zł, prędkość +18 km/h",
+    "pojazd",
+    "Jak zapłacić mandat?"
+   ],
+   [
+    "20.01.2027",
+    "Badanie techniczne Golfa",
+    "GD 8K113",
+    "pojazd",
+    null
+   ],
+   [
+    "01.02.2027",
+    "Koniec okresu OC Golfa",
+    "TU Wisła",
+    "pojazd",
+    null
+   ],
+   [
+    "14.01.2027",
+    "Koniec pierwszego roku prawa jazdy",
+    "Limit punktów rośnie z 20 do 24",
+    "pojazd",
+    "Ile mam punktów karnych i kiedy wygasną?"
+   ],
+   [
+    "31.03.2027",
+    "Legitymacja studencka do przedłużenia",
+    "Hologram w dziekanacie albo w aplikacji",
+    "nauka",
+    null
+   ],
+   [
+    "14.01.2028",
+    "Koniec okresu próbnego",
+    "Prawo jazdy kat. B",
+    "pojazd",
+    null
+   ]
+  ],
+  "rodzina": [],
+  "priv": {
+   "pesel": false,
+   "log": [
+    {
+     "id": "p1",
+     "kiedy": "Wczoraj, 23:12",
+     "kto": "Klub Stocznia, Gdańsk",
+     "typ": "ty",
+     "co": "Potwierdzenie pełnoletności",
+     "dane": [
+      "Pełnoletność",
+      "Zdjęcie"
+     ],
+     "jak": "Udostępnianie minimalne. Klub nie zobaczył daty urodzenia ani PESEL."
+    },
+    {
+     "id": "p2",
+     "kiedy": "16.10, 08:40",
+     "kto": "PKP Intercity",
+     "typ": "firma",
+     "co": "Weryfikacja ulgi studenckiej 51%",
+     "dane": [
+      "Status studenta",
+      "Ważność legitymacji"
+     ],
+     "jak": "Kontrola biletów w pociągu."
+    },
+    {
+     "id": "p3",
+     "kiedy": "14.10, 21:05",
+     "kto": "Komenda Miejska Policji Gdańsk",
+     "typ": "urzad",
+     "co": "Kontrola drogowa, mandat za prędkość",
+     "dane": [
+      "Prawo jazdy",
+      "Punkty karne",
+      "OC pojazdu GD 8K113"
+     ],
+     "jak": "CEPiK."
+    }
+   ],
+   "zgody": [
+    [
+     "Politechnika Gdańska",
+     "Dane do legitymacji i stypendium",
+     "do 31.03.2027"
+    ]
+   ]
+  },
+  "skrzynka": [
+   {
+    "id": "m1",
+    "od": "Politechnika Gdańska",
+    "t": "Decyzja o przyznaniu stypendium rektora",
+    "kiedy": "15.10",
+    "nowe": 1,
+    "k": "nauka",
+    "skrot": [
+     "Przyznano 1 100 zł miesięcznie od października.",
+     "Wypłata do końca miesiąca."
+    ],
+    "q": "Co jest w decyzji z Politechniki?"
+   },
+   {
+    "id": "m2",
+    "od": "Komenda Miejska Policji Gdańsk",
+    "t": "Mandat karny kredytowany",
+    "kiedy": "14.10",
+    "pilne": "Zapłać do 22.10",
+    "k": "pojazd",
+    "skrot": [
+     "200 zł i 3 punkty karne za przekroczenie prędkości o 18 km/h.",
+     "Zapłacisz w aplikacji, BLIK-iem."
+    ],
+    "q": "Jak zapłacić mandat?"
+   }
+  ],
+  "rcb": [
+   [
+    "Dziś, 06:12",
+    "IMGW: silny wiatr",
+    "Woj. pomorskie. Porywy do 85 km/h od 14:00 do 22:00. Zabezpiecz rzeczy na balkonie i nie parkuj pod drzewami.",
+    1
+   ],
+   [
+    "15.10, 18:40",
+    "Utrudnienia w ruchu",
+    "Gdańsk: zamknięty wiadukt w centrum do 20.10. Objazd oznakowany.",
+    0
+   ],
+   [
+    "02.10, 09:00",
+    "Ćwiczenia syren alarmowych",
+    "Gdańsk, 04.10 o 12:00. To tylko test, nie musisz nic robić.",
+    0
+   ]
+  ]
+ }
+}

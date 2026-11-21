@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "mObywatel",
+    "slug": "mobywatel-prototyp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/img/ikona.png",
+    "scheme": "mobywatel",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "pl.prototyp.mobywatel",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Aparat służy do skanowania kodów QR.",
+        "NSFaceIDUsageDescription": "Face ID potwierdza Twoją tożsamość przy logowaniu i przekazywaniu danych."
+      }
+    },
+    "android": {
+      "package": "pl.prototyp.mobywatel",
+      "adaptiveIcon": {
+        "backgroundColor": "#DC143C",
+        "foregroundImage": "./assets/img/ikona-android.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#DC143C",
+          "image": "./assets/img/splash.png",
+          "imageWidth": 120,
+          "dark": { "backgroundColor": "#5A0A1C", "image": "./assets/img/splash.png" }
+        }
+      ],
+      ["expo-camera", { "cameraPermission": "Aparat służy do skanowania kodów QR." }],
+      ["expo-local-authentication", { "faceIDPermission": "Face ID potwierdza Twoją tożsamość przy logowaniu i przekazywaniu danych." }]
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}
