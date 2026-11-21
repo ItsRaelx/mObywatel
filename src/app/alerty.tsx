@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Switch, View } from 'react-native';
+import { View } from 'react-native';
 
 import { useApp } from '@/state/app';
-import { Ekran, Grupa, Ikona, Karta, Sekcja, T } from '@/ui/elementy';
+import { Przelacznik, Ekran, Grupa, Ikona, Karta, Sekcja, T } from '@/ui/elementy';
 
 export default function Alerty() {
   const { os, k } = useApp(); const [woj, setWoj] = useState(true); const [lok, setLok] = useState(false);
@@ -19,8 +19,8 @@ export default function Alerty() {
       </View>
       <Sekcja tytul="Gdzie chcesz dostawać alerty?">
         <Grupa>
-          <View style={{ flexDirection: 'row', alignItems: 'center', padding: 14, gap: 12 }}><View style={{ flex: 1 }}><T v="bodyB">Moje województwo</T><T v="sub">Według adresu zameldowania</T></View><Switch value={woj} onValueChange={setWoj} trackColor={{ true: k.acc, false: k.surface2 }} /></View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', padding: 14, gap: 12 }}><View style={{ flex: 1 }}><T v="bodyB">Tam, gdzie jestem</T><T v="sub">Gdy podróżujesz po Polsce</T></View><Switch value={lok} onValueChange={setLok} trackColor={{ true: k.acc, false: k.surface2 }} /></View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', padding: 14, gap: 12 }}><View style={{ flex: 1 }}><T v="bodyB">Moje województwo</T><T v="sub">Według adresu zameldowania</T></View><Przelacznik value={woj} onValueChange={setWoj} /></View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', padding: 14, gap: 12 }}><View style={{ flex: 1 }}><T v="bodyB">Tam, gdzie jestem</T><T v="sub">Gdy podróżujesz po Polsce</T></View><Przelacznik value={lok} onValueChange={setLok} /></View>
         </Grupa>
       </Sekcja>
       <T v="small" center style={{ marginTop: 16 }}>W prototypie alerty są fikcyjne.</T>

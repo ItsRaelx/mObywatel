@@ -8,7 +8,7 @@ import type { Osoba, Pismo, Sprawa, Wiersz } from './typy';
 export type V = Record<string, string>;
 export type Opcja = string | { t: string; o?: string; ik?: string };
 export type Pole = {
-  k: string; l: string; typ?: 'tekst' | 'dlugi' | 'wybor' | 'wiele' | 'tak' | 'plik'; opcje?: Opcja[]; v?: string;
+  k: string; l: string; typ?: 'tekst' | 'dlugi' | 'wybor' | 'wiele' | 'tak' | 'plik' | 'lista' | 'okres'; opcje?: Opcja[]; v?: string;
   ph?: string; wym?: boolean; podp?: string; num?: boolean; gdy?: (v: V) => boolean; plik?: string;
 };
 export type Krok = { t: string; opis?: string; pola: Pole[]; ostrzezenie?: (v: V) => string | null; stop?: (v: V) => string | null };
@@ -19,14 +19,14 @@ export type Wynik = {
   dok?: Dok; coDalej?: string[]; sprawa?: Sprawa; os?: [string, string, boolean?][];
   wykres?: { t: string; jedn: string; dane: [string, number, boolean?][] }; kontrola?: [string, string, boolean][];
 };
-export type Api = { zalatw: (k: string) => void; pesel: (v: boolean) => void; pismo: (p: Omit<Pismo, 'id' | 'kiedy'>) => void; zaplac: (tytul: string, kwota: string) => void };
+export type Api = { zalatw: (k: string) => void; pesel: (v: boolean) => void; wpis: (id: string, pole: 'zgl' | 'potw') => void; pismo: (p: Omit<Pismo, 'id' | 'kiedy'>) => void; zaplac: (tytul: string, kwota: string) => void };
 export type Info = { tekst?: string; wiersze?: Wiersz[]; uwaga?: string; flaga?: string; dalej?: { t: string; trasa: string; ik?: string }[] };
 export type Stan = { pesel: boolean; zaplacone: string[] };
 export type Usluga = {
   id: string; t: string; opis: string; kat: string; ik: string; slowa?: string;
   ekran?: string; ekranInfo?: string; dostepna?: (o: Osoba, st: Stan) => boolean;
   karta?: (o: Osoba, st: Stan) => KartaInfo; wstep?: (o: Osoba, st: Stan) => Info;
-  kroki?: (o: Osoba, st: Stan) => Krok[]; podsumowanie?: (v: V, o: Osoba) => Wiersz[];
+  kroki?: (o: Osoba, st: Stan, p: V) => Krok[]; ukryta?: boolean; podsumowanie?: (v: V, o: Osoba) => Wiersz[];
   zgoda?: string; przycisk?: string; bezFaceId?: boolean; platnosc?: boolean; wysylka?: string[];
   wynik?: (v: V, o: Osoba, api: Api) => Wynik; blokada?: (o: Osoba, st: Stan) => Info | null;
 };
@@ -50,6 +50,9 @@ const za = (n: number) => new Date(2026, 9, 18 + n).toLocaleDateString('pl-PL', 
 const nr = (p: string) => `${p}/2026/${String(100000 + Math.floor(Math.random() * 899999))}`;
 export const lab = (x: Opcja) => (typeof x === 'string' ? x : x.t);
 export const wiele = (s: string) => (s ? s.split('|') : []);
+/* okres zapisany jako "dd.mm.rrrr|dd.mm.rrrr" */
+export const okresTxt = (s: string) => { const [a, b] = (s || '').split('|'); return a && b ? `od ${a} do ${b}` : a ? `od ${a}` : ''; };
+export const KRAJE = ['Albania', 'Austria', 'Belgia', 'Bułgaria', 'Chorwacja', 'Cypr', 'Czarnogóra', 'Czechy', 'Dania', 'Egipt', 'Estonia', 'Finlandia', 'Francja', 'Grecja', 'Gruzja', 'Hiszpania', 'Holandia', 'Indonezja', 'Irlandia', 'Islandia', 'Izrael', 'Japonia', 'Jordania', 'Kanada', 'Kenia', 'Litwa', 'Łotwa', 'Malta', 'Maroko', 'Meksyk', 'Niemcy', 'Norwegia', 'Portugalia', 'Rumunia', 'Słowacja', 'Słowenia', 'Stany Zjednoczone', 'Szwajcaria', 'Szwecja', 'Tajlandia', 'Tunezja', 'Turcja', 'Ukraina', 'Węgry', 'Wielka Brytania', 'Wietnam', 'Włochy', 'Zjednoczone Emiraty Arabskie'];
 const tak = (s?: string) => s === 'tak';
 let licz = 0;
 const sprawa = (t: string, s: string, k: string, eta: string, steps: [string, string, 0 | 1 | 2][], note: string): Sprawa => ({ id: `n${Date.now()}${++licz}`, t, s, k, eta, steps, note });
@@ -65,7 +68,7 @@ export const USLUGI: Usluga[] = [
     karta: () => ({ czas: 'ok. 1 minuty', oplata: 'bezpłatnie', potrzebne: ['Nic więcej, dane mamy w rejestrze'], jak: ['Wybierasz, od kiedy zastrzeżenie ma działać', 'Podpisujesz PIN-em mObywatela', 'Zastrzeżenie działa od razu, w całej Polsce'] }),
     kroki: () => [{
       t: 'Co chcesz zastrzec', pola: [
-        { k: 'pow', l: 'Dlaczego zastrzegasz?', typ: 'wybor', opcje: [{ t: 'Profilaktycznie', o: 'Najczęstszy wybór. Po prostu dla bezpieczeństwa.' }, { t: 'Zgubiłem lub ukradziono mi dokumenty', o: 'Zastrzeż też dowód w usłudze „Zgubiony dowód”.' }, { t: 'Ktoś użył moich danych', o: 'Po zastrzeżeniu zgłoś sprawę na policji.' }] },
+        { k: 'pow', l: 'Dlaczego zastrzegasz?', typ: 'wybor', opcje: [{ t: 'Profilaktycznie', o: 'Najczęstszy wybór. Po prostu dla bezpieczeństwa.' }, { t: 'Dokumenty zginęły albo zostały skradzione', o: 'Zastrzeż też dowód w usłudze „Zgubiony dowód”.' }, { t: 'Ktoś użył moich danych', o: 'Po zastrzeżeniu zgłoś sprawę na policji.' }] },
         { k: 'sms', l: 'Powiadamiaj mnie o każdej próbie sprawdzenia', typ: 'tak', v: 'tak', podp: 'Dostaniesz powiadomienie, gdy bank zapyta o Twój PESEL.' },
       ],
     }],
@@ -108,7 +111,7 @@ export const USLUGI: Usluga[] = [
       if (v.co === 'Skradzione') cd.unshift('Zgłoś kradzież na policji. Zaświadczenie przyda się w banku.');
       return {
         tytul: 'Dokumenty zabezpieczone', opis: 'Banki i operatorzy już widzą zastrzeżenie.', wiersze: [['Dowód osobisty', o.moje.nr_dowodu], ['Zastrzeżenie w bankach', tak(v.zastrz) ? 'tak' : 'nie'], ['Blokada', tak(v.blok) ? 'do ' + za(14) : 'nie'], ['PESEL', tak(v.pesel) ? 'zastrzeżony' : 'bez zmian']],
-        coDalej: cd, sprawa: sprawa('Utrata dowodu osobistego', 'Rejestr Dowodów Osobistych', 'dokument', 'Blokada do ' + za(14).slice(0, 5), [['Zgłoszenie utraty', dzis.slice(0, 5), 2], ['Zastrzeżenie i blokada', 'teraz', 2], ['Decyzja: odblokuj albo unieważnij', 'do ' + za(14).slice(0, 5), 1], ['Wniosek o nowy dowód', '', 0]], 'Znalazłeś dowód? Odblokujesz go jednym dotknięciem. Jeśli nie, unieważnimy go po 14 dniach.'),
+        coDalej: cd, sprawa: sprawa('Utrata dowodu osobistego', 'Rejestr Dowodów Osobistych', 'dokument', 'Blokada do ' + za(14).slice(0, 5), [['Zgłoszenie utraty', dzis.slice(0, 5), 2], ['Zastrzeżenie i blokada', 'teraz', 2], ['Decyzja: odblokuj albo unieważnij', 'do ' + za(14).slice(0, 5), 1], ['Wniosek o nowy dowód', '', 0]], 'Dowód się znalazł? Odblokujesz go jednym dotknięciem. Jeśli nie, unieważnimy go po 14 dniach.'),
         dalej: [{ t: 'Złóż wniosek o nowy dowód', trasa: '/usluga/wniosek-dowod' }],
       };
     },
@@ -148,6 +151,37 @@ export const USLUGI: Usluga[] = [
         dok: { naglowek: 'Krajowy Rejestr Karny', tytul: 'Zaświadczenie o niekaralności', nr: nr('KRK'), tresc: [['Osoba', o.moje.imie_nazwisko], ['PESEL', o.moje.pesel], ['Imiona rodziców', v.rodzice], ['Treść', 'nie figuruje w kartotece']], stopka: 'Dokument elektroniczny z kwalifikowaną pieczęcią' },
         coDalej: ['Wyślij PDF pracodawcy prosto ze skrzynki.', 'Zaświadczenie jest ważne, dopóki pracodawca je przyjmuje (zwykle do 3 miesięcy).'], dalej: [{ t: 'Otwórz skrzynkę', trasa: '/skrzynka' }] };
     },
+  },
+  {
+    id: 'blad-danych', t: 'Zgłoś błąd w danych', opis: 'Popraw dane w rejestrze PESEL', kat: 'dokumenty', ik: 'edit', slowa: 'blad pomylka zle dane korekta popraw',
+    karta: () => ({ czas: 'ok. 2 minut, poprawka zwykle do 7 dni', oplata: 'bezpłatnie', potrzebne: ['Dokument z poprawnymi danymi, np. akt małżeństwa (jeśli go masz)'], jak: ['Wskazujesz, które dane są błędne', 'Podajesz poprawne dane i dodajesz dokument', 'Urząd poprawia rejestr PESEL i daje Ci znać'] }),
+    kroki: o => [
+      { t: 'Co jest błędne?', pola: [{ k: 'co', l: 'Które dane są błędne?', typ: 'wybor', opcje: [{ t: 'Imię lub nazwisko', o: o.moje.imie_nazwisko }, { t: 'Adres zameldowania', o: o.dane.zamel }, { t: 'Stan cywilny', o: o.dane.stan }, { t: 'Imiona rodziców', o: o.dane.rodzice }, { t: 'Data lub miejsce urodzenia', o: o.dane.urodz }, { t: 'Coś innego' }] }] },
+      { t: 'Jak powinno być?', pola: [{ k: 'popr', l: 'Poprawne dane', ph: 'Wpisz, jak powinno być', wym: true }, { k: 'opis', l: 'Wyjaśnienie (opcjonalnie)', typ: 'dlugi', ph: 'Np. zmiana nazwiska po ślubie w 2024 r.' }, { k: 'dok', l: 'Dokument potwierdzający (opcjonalnie)', typ: 'plik', plik: 'dokument-potwierdzajacy.pdf' }] },
+    ],
+    zgoda: 'Oświadczam, że podane dane są zgodne z prawdą.',
+    podsumowanie: (v, o) => {
+      const teraz: V = { 'Imię lub nazwisko': o.moje.imie_nazwisko, 'Adres zameldowania': o.dane.zamel, 'Stan cywilny': o.dane.stan, 'Imiona rodziców': o.dane.rodzice, 'Data lub miejsce urodzenia': o.dane.urodz };
+      return [['Błędne dane', v.co], ...(teraz[v.co] ? [['Teraz w rejestrze', teraz[v.co]] as Wiersz] : []), ['Powinno być', v.popr], ['Dokument', v.dok ? 'dodany' : 'brak'], ['Opłata', 'bezpłatnie']];
+    },
+    wysylka: ['Podpisuję zgłoszenie…', 'Wysyłam do urzędu…'],
+    wynik: (v, o, api) => {
+      api.pismo({ od: `Urząd, ${o.sc.miasto}`, t: 'Zgłoszenie błędu w danych przyjęte', k: 'dokumenty', nowe: 1, skrot: [`Zgłoszenie dotyczy: ${v.co.toLowerCase()}.`, 'Urząd sprawdzi dane i da Ci znać o poprawce.'], q: '' });
+      return { tytul: 'Zgłoszenie wysłane', opis: 'Urząd sprawdzi dane i poprawi rejestr PESEL.', wiersze: [['Dotyczy', v.co], ['Numer sprawy', nr('KD')]],
+        coDalej: ['Urząd może poprosić o oryginał dokumentu.', 'Po poprawce zaktualizujemy dane w aplikacji. Dowodu nie musisz wymieniać, chyba że zmieniło się imię lub nazwisko.'],
+        sprawa: sprawa('Poprawka danych w rejestrze PESEL', `Urząd, ${o.sc.miasto}`, 'dokument', 'Do 7 dni', [['Zgłoszenie', dzis.slice(0, 5), 2], ['Weryfikacja w urzędzie', 'w toku', 1], ['Poprawka w rejestrze', '', 0]], 'Dostaniesz powiadomienie, gdy dane zostaną poprawione.') };
+    },
+  },
+  {
+    id: 'brak-dokumentu', t: 'Brak dokumentu w rejestrze', opis: 'Poprosimy wystawcę o dodanie', kat: 'dokumenty', ik: 'doc', ukryta: true,
+    karta: () => ({ czas: 'ok. 2 minut, odpowiedź zwykle do 7 dni', oplata: 'bezpłatnie', potrzebne: ['Wiesz, kto wydał dokument'], jak: ['Nie znaleźliśmy tego dokumentu w rejestrach', 'Wysyłamy zapytanie do wystawcy, np. szkoły albo uczelni', 'Gdy wystawca go doda, pojawi się w Twoim portfelu'] }),
+    kroki: (_, __, p) => [
+      { t: 'Którego dokumentu brakuje?', pola: [{ k: 'dok', l: 'Którego dokumentu brakuje?', typ: 'wybor', v: p.dok, opcje: ['mLegitymacja szkolna', 'mLegitymacja studencka', 'mLegitymacja doktoranta', 'Karta Dużej Rodziny', 'Legitymacja emeryta-rencisty', 'Legitymacja osoby niepełnosprawnej', 'Diia.pl'] }] },
+      { t: 'Kto go wydał?', pola: [{ k: 'kto', l: 'Wystawca', ph: 'Np. Szkoła Podstawowa nr 12, Politechnika', wym: true }, { k: 'nr', l: 'Numer dokumentu (opcjonalnie)' }, { k: 'foto', l: 'Zdjęcie dokumentu (opcjonalnie)', typ: 'plik', plik: 'zdjecie-dokumentu.jpg' }] },
+    ],
+    przycisk: 'Wyślij zapytanie', bezFaceId: true, wysylka: ['Wysyłam zapytanie do wystawcy…'],
+    wynik: v => ({ tytul: 'Zapytanie wysłane', opis: `${v.kto} dostał prośbę o dodanie dokumentu do rejestru.`, wiersze: [['Dokument', v.dok], ['Wystawca', v.kto]],
+      sprawa: sprawa(`Brakujący dokument: ${v.dok}`, v.kto, 'dokument', 'Odpowiedź do 7 dni', [['Zapytanie', dzis.slice(0, 5), 2], ['Odpowiedź wystawcy', 'w toku', 1], ['Dokument w portfelu', '', 0]], 'Gdy dokument pojawi się w rejestrze, dodamy go do portfela.') }),
   },
   { id: 'sprawdz', t: 'Sprawdź dokument innej osoby', opis: 'Bez kserowania dowodu', kat: 'dokumenty', ik: 'scan', ekran: '/sprawdz', slowa: 'weryfikacja tozsamosc najemca' },
   { id: 'dodaj-dokument', t: 'Dodaj dokument', opis: 'Legitymacja, KDR, Diia.pl i inne', kat: 'dokumenty', ik: 'plus', ekran: '/dodaj-dokument', slowa: 'legitymacja karta' },
@@ -244,7 +278,7 @@ export const USLUGI: Usluga[] = [
       wykres: { t: 'Przebieg z badań technicznych', jedn: 'tys. km', dane: [['2020', 18], ['2021', 41], ['2022', 66], ['2023', 89], ['2024', 112], ['2025', 87, true]] },
       os: [['03.2019', 'Pierwsza rejestracja w Polsce'], ['06.2021', 'Zmiana właściciela'], ['11.2022', 'Szkoda istotna zgłoszona przez ubezpieczyciela', true], ['05.2025', 'Badanie: 87 400 km, mniej niż rok wcześniej', true], ['08.2026', 'Zmiana właściciela']],
       kontrola: [['Kradzież', 'brak zgłoszeń', true], ['Wyrejestrowanie', 'nie', true], ['Szkody istotne', '1 (2022)', false], ['Przebieg', 'niezgodny', false]],
-      dalej: [{ t: 'Kupiłeś? Zarejestruj auto', trasa: '/usluga/rejestracja-pojazdu' }],
+      dalej: [{ t: 'Zarejestruj kupione auto', trasa: '/usluga/rejestracja-pojazdu' }],
     }),
   },
   {
@@ -316,6 +350,20 @@ export const USLUGI: Usluga[] = [
     wynik: v => ({ tytul: 'Wniosek wysłany do ZUS', opis: 'Informację o przyznaniu dostaniesz do skrzynki.', wiersze: [['Dzieci', wiele(v.dz).join(', ')], ['Kwota', `${wiele(v.dz).length * 800} zł / mies.`]],
       sprawa: sprawa('800 plus', 'ZUS', 'rodzina', 'Decyzja do 2 mies.', [['Wniosek', dzis.slice(0, 5), 2], ['Weryfikacja w ZUS', 'w toku', 1], ['Informacja o przyznaniu', '', 0], ['Wypłaty', 'co miesiąc', 0]], 'Wypłata z wyrównaniem od miesiąca złożenia wniosku.') }),
   },
+  {
+    id: 'dodaj-osobe', t: 'Dodaj osobę', opis: 'Upoważnienie do dokumentów i spraw', kat: 'rodzina', ik: 'user', slowa: 'upowaznienie opieka mama tata rodzic dodaj osobe',
+    karta: () => ({ czas: 'ok. 2 minut', oplata: 'bezpłatnie', potrzebne: ['PESEL tej osoby', 'Postanowienie sądu, jeśli jesteś opiekunem prawnym'], jak: ['Podajesz dane osoby i wybierasz, co chcesz widzieć', 'Osoba potwierdza prośbę w swoim mObywatelu', 'Jej dokumenty i sprawy pojawią się w Rodzinie'] }),
+    kroki: () => [
+      { t: 'Kogo chcesz dodać?', opis: 'Dzieci do 18 lat widzisz automatycznie, nie musisz ich dodawać.', pola: [{ k: 'kto', l: 'Kogo chcesz dodać?', typ: 'wybor', opcje: [{ t: 'Dorosłą osobę z rodziny', o: 'Np. mamę albo partnera. Musi zgodzić się w swoim mObywatelu.' }, { t: 'Osobę pod moją opieką prawną', o: 'Dodasz postanowienie sądu.' }] }] },
+      { t: 'Dane osoby', pola: [{ k: 'imie', l: 'Imię i nazwisko', wym: true }, { k: 'pesel', l: 'PESEL', ph: '11 cyfr', wym: true, num: true }, { k: 'rel', l: 'Kim jest dla Ciebie?', typ: 'wybor', opcje: ['Rodzic', 'Partner lub partnerka', 'Dorosłe dziecko', 'Rodzeństwo', 'Inna osoba'] }, { k: 'post', l: 'Postanowienie sądu', typ: 'plik', plik: 'postanowienie-sadu.pdf', wym: true, gdy: v => v.kto.startsWith('Osobę pod') }] },
+      { t: 'Co chcesz widzieć?', pola: [{ k: 'zakres', l: 'Zaznacz', typ: 'wiele', opcje: ['Dokumenty', 'Recepty i Konto Pacjenta', 'Pisma z urzędów', 'Płatności'], v: 'Dokumenty|Recepty i Konto Pacjenta' }] },
+    ],
+    podsumowanie: v => [['Osoba', v.imie], ['PESEL', v.pesel.slice(0, 6) + '•••' + v.pesel.slice(9)], ['Relacja', v.rel], ['Dostęp', wiele(v.zakres).join(', ') || 'brak'], ...(v.post ? [['Postanowienie sądu', 'dodane'] as Wiersz] : [])],
+    przycisk: 'Wyślij prośbę', wysylka: ['Podpisuję prośbę…', 'Wysyłam do mObywatela tej osoby…'],
+    wynik: v => ({ tytul: 'Prośba wysłana', opis: `${v.imie.split(' ')[0]} zobaczy ją w swoim mObywatelu. Po akceptacji dodamy tę osobę do Rodziny.`, wiersze: [['Dostęp', wiele(v.zakres).join(', ')]],
+      coDalej: ['Prośba jest ważna 7 dni.', 'Upoważnienie możesz w każdej chwili cofnąć w Centrum prywatności.'],
+      sprawa: sprawa(`Upoważnienie: ${v.imie}`, 'mObywatel', 'rodzina', 'Czeka na zgodę', [['Prośba wysłana', dzis.slice(0, 5), 2], ['Zgoda tej osoby', 'w toku', 1], ['Dostęp w Rodzinie', '', 0]], 'Dostaniesz powiadomienie, gdy osoba zaakceptuje prośbę.') }),
+  },
   { id: 'kdr', t: 'Karta Dużej Rodziny', opis: 'Zniżki i partnerzy w okolicy', kat: 'rodzina', ik: 'family', slowa: 'kdr znizki partnerzy', ekranInfo: 'kdr' },
 
   /* =================== ZDROWIE I EMERYTURA =================== */
@@ -335,12 +383,12 @@ export const USLUGI: Usluga[] = [
   {
     id: 'sms', t: 'Dziwny SMS lub strona', opis: 'Sprawdzimy i zgłosimy do CERT', kat: 'bezp', ik: 'alert', slowa: 'oszustwo phishing link sms dziwny', bezFaceId: true,
     karta: () => ({ czas: 'kilka sekund', oplata: 'bezpłatnie', potrzebne: ['Treść wiadomości albo adres strony'], jak: ['Wklejasz wiadomość', 'Sprawdzamy ją na Liście Ostrzeżeń CERT Polska', 'Jeśli to oszustwo, zgłaszamy je za Ciebie'] }),
-    kroki: () => [{ t: 'Wiadomość', pola: [{ k: 'tresc', l: 'Wklej treść albo adres strony', typ: 'dlugi', v: 'Poczta: paczka zatrzymana z powodu braku opłaty 1,20 zł. Opłać: poczta-dostawa24.top/pl', wym: true }, { k: 'skad', l: 'Skąd ją masz?', typ: 'wybor', opcje: ['SMS', 'E-mail', 'Komunikator', 'Strona internetowa'] }, { k: 'dane', l: 'Czy podałeś tam jakieś dane?', typ: 'wybor', opcje: ['Nie', 'Tak, dane karty', 'Tak, login do banku'] }] }],
+    kroki: () => [{ t: 'Wiadomość', pola: [{ k: 'tresc', l: 'Wklej treść albo adres strony', typ: 'dlugi', v: 'Poczta: paczka zatrzymana z powodu braku opłaty 1,20 zł. Opłać: poczta-dostawa24.top/pl', wym: true }, { k: 'skad', l: 'Skąd ją masz?', typ: 'wybor', opcje: ['SMS', 'E-mail', 'Komunikator', 'Strona internetowa'] }, { k: 'dane', l: 'Czy wpisano tam Twoje dane?', typ: 'wybor', opcje: ['Nie', 'Tak, dane karty', 'Tak, login do banku'] }] }],
     przycisk: 'Sprawdź', wysylka: ['Sprawdzam Listę Ostrzeżeń CERT Polska…', 'Analizuję adres…'],
     wynik: v => ({
       tytul: 'To oszustwo', ikona: 'alert', opis: 'Nie otwieraj linku. Zgłosiliśmy go do CERT Polska.', wiersze: [['Domena', 'poczta-dostawa24.top']],
       kontrola: [['Domena zarejestrowana 3 dni temu', 'podejrzane', false], ['Na Liście Ostrzeżeń CERT', 'od wczoraj', false], ['Podszywa się pod Pocztę', 'tak', false], ['Prosi o drobną dopłatę', 'typowy wzorzec', false]],
-      coDalej: v.dane === 'Nie' ? ['Usuń wiadomość.', 'Prześlij SMS na bezpłatny numer 8080, operator zablokuje nadawcę.'] : ['Od razu zablokuj kartę w aplikacji banku albo pod +48 828 828 828.', 'Zmień hasło do bankowości i zadzwoń do banku.', 'Zgłoś sprawę na policji.', 'Zastrzeż PESEL, jeśli jeszcze tego nie zrobiłeś.'],
+      coDalej: v.dane === 'Nie' ? ['Usuń wiadomość.', 'Prześlij SMS na bezpłatny numer 8080, operator zablokuje nadawcę.'] : ['Od razu zablokuj kartę w aplikacji banku albo pod +48 828 828 828.', 'Zmień hasło do bankowości i zadzwoń do banku.', 'Zgłoś sprawę na policji.', 'Zastrzeż PESEL, jeśli nie jest jeszcze zastrzeżony.'],
       dalej: v.dane === 'Nie' ? [] : [{ t: 'Zastrzeż PESEL', trasa: '/usluga/zastrzez-pesel' }],
     }),
   },
@@ -348,7 +396,31 @@ export const USLUGI: Usluga[] = [
     id: 'incydent', t: 'Zgłoś incydent do CERT', opis: 'Włamanie, wyciek, oszustwo', kat: 'bezp', ik: 'shield', slowa: 'cert incydent wlamanie konto hacker wyciek',
     karta: () => ({ czas: 'ok. 3 minut', oplata: 'bezpłatnie', potrzebne: ['Opis tego, co się stało'], jak: ['Opisujesz incydent', 'Zgłoszenie trafia do CERT Polska', 'Dostajesz numer zgłoszenia i porady'] }),
     kroki: () => [{ t: 'Co się stało', pola: [{ k: 'co', l: 'Rodzaj incydentu', typ: 'wybor', opcje: ['Ktoś przejął moje konto', 'Oszustwo przy zakupach w sieci', 'Wyciek moich danych', 'Złośliwe oprogramowanie', 'Inne'] }, { k: 'opis', l: 'Opisz krótko', typ: 'dlugi', wym: true, ph: 'Co się stało i kiedy?' }, { k: 'zal', l: 'Zrzut ekranu (opcjonalnie)', typ: 'plik', plik: 'zrzut-ekranu.png' }] }],
-    wynik: v => ({ tytul: 'Zgłoszenie przyjęte', opis: 'CERT Polska przeanalizuje zgłoszenie.', wiersze: [['Rodzaj', v.co], ['Numer zgłoszenia', nr('CERT')]], coDalej: ['Zmień hasła i włącz logowanie dwuetapowe.', 'Jeśli straciłeś pieniądze, zgłoś to też na policji i w banku.'] }),
+    wynik: v => ({ tytul: 'Zgłoszenie przyjęte', opis: 'CERT Polska przeanalizuje zgłoszenie.', wiersze: [['Rodzaj', v.co], ['Numer zgłoszenia', nr('CERT')]], coDalej: ['Zmień hasła i włącz logowanie dwuetapowe.', 'Jeśli przepadły pieniądze, zgłoś to też na policji i w banku.'] }),
+  },
+  {
+    id: 'nie-ja', t: 'To nie ja', opis: 'Zgłoś podejrzane sprawdzenie danych', kat: 'bezp', ik: 'alert', ukryta: true,
+    kroki: (o, st, p) => {
+      const w = o.priv.log.find(x => x.id === p.wpis);
+      return [
+        { t: 'Zablokujmy to', opis: w ? `${w.kto}, ${w.kiedy.toLowerCase()}: ${w.co.charAt(0).toLowerCase() + w.co.slice(1)}.` : undefined, pola: [
+          { k: 'wpis', l: '', v: p.wpis ?? '', gdy: () => false },
+          { k: 'zastrz', l: 'Zastrzeż PESEL', typ: 'tak', v: st.pesel ? 'nie' : 'tak', podp: 'Banki i firmy pożyczkowe dostaną odmowę.', gdy: () => !st.pesel },
+          { k: 'firma', l: 'Powiadom firmę, że to nie Ty', typ: 'tak', v: 'tak', podp: 'Wstrzyma wniosek i oznaczy go jako podejrzany.' },
+          { k: 'cert', l: 'Zgłoś do CERT Polska', typ: 'tak', v: 'tak' },
+          { k: 'policja', l: 'Przygotuj zawiadomienie na policję', typ: 'tak', v: 'nie', podp: 'Wyślesz je przez e-Doręczenia, bez wizyty na komisariacie.' },
+        ] },
+        { t: 'Co się wydarzyło?', pola: [{ k: 'dane', l: 'Czy Twoje dane mógł ktoś poznać?', typ: 'wybor', opcje: ['Nie', 'Nie wiem', 'Tak'] }, { k: 'opis', l: 'Opis (opcjonalnie)', typ: 'dlugi', ph: 'Np. przyszedł SMS z kodem, o który nikt nie prosił' }] },
+      ];
+    },
+    podsumowanie: v => [['Zastrzeżenie PESEL', tak(v.zastrz) ? 'tak' : 'bez zmian'], ['Powiadomienie firmy', tak(v.firma) ? 'tak' : 'nie'], ['Zgłoszenie do CERT', tak(v.cert) ? 'tak' : 'nie'], ['Zawiadomienie na policję', tak(v.policja) ? 'tak' : 'nie'], ['Podane dane', v.dane]],
+    przycisk: 'Zablokuj i zgłoś', wysylka: ['Zastrzegam PESEL…', 'Powiadamiam firmę…', 'Wysyłam zgłoszenie…'],
+    wynik: (v, _, api) => {
+      if (tak(v.zastrz)) api.pesel(true);
+      if (v.wpis) api.wpis(v.wpis, 'zgl');
+      return { tytul: 'Zablokowane i zgłoszone', opis: 'Nikt nie weźmie teraz kredytu na Twoje dane.', wiersze: [['Numer zgłoszenia', nr('CERT')]],
+        coDalej: [...(v.dane !== 'Nie' ? ['Zmień hasła do banku i poczty.'] : []), ...(tak(v.policja) ? ['Zawiadomienie czeka w skrzynce na Twój podpis.'] : []), 'Sprawdź, czy w BIK nie ma wniosków, które nie są Twoje.'] };
+    },
   },
   { id: 'alerty', t: 'Alerty RCB', opis: 'Ostrzeżenia dla Twojej okolicy', kat: 'bezp', ik: 'megaphone', ekran: '/alerty', slowa: 'ostrzezenia pogoda rcb' },
 
@@ -363,9 +435,13 @@ export const USLUGI: Usluga[] = [
     id: 'podroz', t: 'Bezpieczna podróż', opis: 'Zarejestruj wyjazd w Odyseuszu', kat: 'inne', ik: 'plane', slowa: 'wakacje wyjazd egipt zagranica odyseusz paszport',
     karta: () => ({ czas: 'ok. 2 minut', oplata: 'bezpłatnie', potrzebne: ['Kraj i daty wyjazdu'], jak: ['Rejestrujesz podróż', 'Sprawdzamy ważność paszportów', 'W razie zagrożenia konsul wyśle Ci SMS'] }),
     wstep: o => o.id === 'jan' ? { flaga: 'Paszport Olka traci ważność 02.01.2027. Egipt wymaga paszportu ważnego co najmniej 6 miesięcy od wjazdu, więc trzeba go wymienić przed wyjazdem.' } : {},
-    kroki: o => [{ t: 'Wyjazd', pola: [{ k: 'kraj', l: 'Dokąd jedziesz?', v: o.id === 'jan' ? 'Egipt' : '', ph: 'kraj', wym: true }, { k: 'kiedy', l: 'Kiedy', v: o.id === 'jan' ? 'od 20.12 do 03.01' : '', ph: 'np. od 01.07 do 14.07', wym: true }, { k: 'kto', l: 'Kto jedzie?', typ: 'wiele', opcje: [o.imie, ...o.rodzina.map(m => m.imie)], v: o.imie }, { k: 'tel', l: 'Telefon w podróży', v: o.dane.tel, wym: true }] }],
-    podsumowanie: v => [['Kraj', v.kraj], ['Termin', v.kiedy], ['Osoby', wiele(v.kto).join(', ')], ['Telefon', v.tel]],
-    wynik: v => ({ tytul: 'Podróż zarejestrowana', opis: 'Dostaniesz SMS, jeśli w kraju podróży będzie niebezpiecznie.', wiersze: [['Kraj', v.kraj], ['Termin', v.kiedy], ['Osoby', String(wiele(v.kto).length)]], coDalej: ['Sprawdź ostrzeżenia MSZ dla kraju podróży.', 'Weź kartę EKUZ, jeśli jedziesz do kraju UE.', 'Zapisz numer konsulatu.'], dalej: [{ t: 'Zamów kartę EKUZ', trasa: '/usluga/ekuz' }] }),
+    kroki: o => [
+      { t: 'Dokąd jedziesz?', pola: [{ k: 'kraj', l: 'Dokąd jedziesz?', typ: 'lista', opcje: KRAJE, v: o.id === 'jan' ? 'Egipt' : '', ph: 'Wybierz kraj', wym: true }] },
+      { t: 'Kiedy jedziesz?', opis: 'Dotknij dnia wyjazdu, a potem dnia powrotu.', pola: [{ k: 'kiedy', l: 'Termin', typ: 'okres', v: o.id === 'jan' ? '20.12.2026|03.01.2027' : '', wym: true }] },
+      { t: 'Kto jedzie?', pola: [{ k: 'kto', l: 'Kto jedzie?', typ: 'wiele', opcje: [o.imie, ...o.rodzina.map(m => m.imie)], v: o.imie }, { k: 'tel', l: 'Telefon w podróży', v: o.dane.tel, wym: true }] },
+    ],
+    podsumowanie: v => [['Kraj', v.kraj], ['Termin', okresTxt(v.kiedy)], ['Osoby', wiele(v.kto).join(', ')], ['Telefon', v.tel]],
+    wynik: v => ({ tytul: 'Podróż zarejestrowana', opis: 'Dostaniesz SMS, jeśli w kraju podróży będzie niebezpiecznie.', wiersze: [['Kraj', v.kraj], ['Termin', okresTxt(v.kiedy)], ['Osoby', String(wiele(v.kto).length)]], coDalej: ['Sprawdź ostrzeżenia MSZ dla kraju podróży.', 'Weź kartę EKUZ, jeśli jedziesz do kraju UE.', 'Zapisz numer konsulatu.'], dalej: [{ t: 'Zamów kartę EKUZ', trasa: '/usluga/ekuz' }] }),
   },
   { id: 'ulgi-studenta', t: 'Ulgi studenta', opis: 'Co daje mLegitymacja', kat: 'inne', ik: 'cap', slowa: 'legitymacja znizka pociag student', ekranInfo: 'ulgi', dostepna: o => o.docs.some(d => d.id === 'leg') },
 ];
@@ -396,5 +472,5 @@ export function trasaDla(q: string | null | undefined): string | null {
 export function szukaj(q: string, o: Osoba, st: Stan) {
   const n = norm(q.trim()); if (!n) return [];
   const slowa = n.split(/\s+/);
-  return USLUGI.filter(u => (!u.dostepna || u.dostepna(o, st)) && slowa.every(s => norm(`${u.t} ${u.opis} ${u.slowa ?? ''}`).includes(s)));
+  return USLUGI.filter(u => !u.ukryta && (!u.dostepna || u.dostepna(o, st)) && slowa.every(s => norm(`${u.t} ${u.opis} ${u.slowa ?? ''}`).includes(s)));
 }

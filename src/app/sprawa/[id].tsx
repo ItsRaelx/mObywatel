@@ -1,9 +1,9 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
-import { Switch, View } from 'react-native';
+import { View } from 'react-native';
 
 import { useApp } from '@/state/app';
-import { Ekran, Ikona, Karta, Notka, Pill, T } from '@/ui/elementy';
+import { Przelacznik, Ekran, Ikona, Karta, Notka, Pill, T } from '@/ui/elementy';
 
 export default function SprawaEkran() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -35,7 +35,7 @@ export default function SprawaEkran() {
       <Notka ik="bell">{s.note}</Notka>
       <Karta style={{ marginTop: 14, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
         <View style={{ flex: 1 }}><T v="bodyB">Powiadom mnie o zmianie</T><T v="sub">Powiadomienie w telefonie</T></View>
-        <Switch value={pow} onValueChange={setPow} trackColor={{ true: k.acc, false: k.surface2 }} />
+        <Przelacznik value={pow} onValueChange={setPow} />
       </Karta>
     </Ekran>
   );

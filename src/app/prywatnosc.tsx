@@ -1,11 +1,11 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, Switch, View } from 'react-native';
+import { Alert, Pressable, View } from 'react-native';
 
 import type { Wpis } from '@/data/typy';
 import { useApp } from '@/state/app';
 import { potwierdz } from '@/ui/potwierdzenie';
-import { Ekran, Grupa, Ikona, IkonaKafel, Karta, Pill, Sekcja, T } from '@/ui/elementy';
+import { Przelacznik, Ekran, Grupa, Ikona, IkonaKafel, Karta, Pill, Sekcja, T } from '@/ui/elementy';
 import { AlertPrywatnosci } from '@/ui/wspolne';
 
 const IK = { alert: 'alert', urzad: 'gov', firma: 'brief', ty: 'user' } as const;
@@ -24,8 +24,9 @@ function WpisWiersz({ x }: { x: Wpis }) {
         <View style={{ marginTop: 10, marginLeft: 52, gap: 8 }}>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>{x.dane.map(d => <Pill key={d} t={d} />)}</View>
           <T v="sub">{x.jak}</T>
-          {x.zablok ? <T v="sub" c={k.ok} style={{ fontWeight: '600' }}>✓ Zablokowane dzięki zastrzeżeniu PESEL</T> : null}
-          {x.zgl ? <T v="sub" c={k.ok} style={{ fontWeight: '600' }}>✓ Zgłoszone do CERT Polska</T> : null}
+          {x.zablok ? <T v="sub" c={k.ok} style={{ fontWeight: '600' }}>Zablokowane dzięki zastrzeżeniu PESEL</T> : null}
+          {x.zgl ? <T v="sub" c={k.ok} style={{ fontWeight: '600' }}>Zgłoszone do CERT Polska</T> : null}
+          {x.typ !== 'ty' && !x.zgl && !x.potw && !x.zablok ? <Pressable onPress={() => router.push(`/usluga/nie-ja?wpis=${x.id}` as never)} hitSlop={8}><T v="sub" c={k.accInk} style={{ fontWeight: '700' }}>Nie rozpoznajesz tego? Zgłoś</T></Pressable> : null}
         </View>
       ) : null}
     </Pressable>
@@ -48,7 +49,7 @@ export default function Prywatnosc() {
           <T v="bodyB">Zastrzeżenie PESEL</T>
           <T v="sub">{pesel ? 'Włączone. Nikt nie weźmie kredytu na Twoje dane.' : 'Wyłączone. Banki mogą sprawdzić Twój PESEL.'}</T>
         </View>
-        <Switch value={pesel} onValueChange={przelacz} trackColor={{ true: k.ok, false: k.surface2 }} accessibilityLabel="Zastrzeżenie PESEL" />
+        <Przelacznik value={pesel} onValueChange={przelacz} accessibilityLabel="Zastrzeżenie PESEL" />
       </Karta>
       <View style={{ marginTop: 14 }}><AlertPrywatnosci /></View>
       <Sekcja tytul="Dziennik dostępu">

@@ -4,7 +4,6 @@ import { Pressable, TextInput, View } from 'react-native';
 import { dniZadania, pl3, type Osoba, type Sprawa, type Zadanie } from '@/data/typy';
 import { trasaDla } from '@/data/uslugi';
 import { rodz, useApp, useK } from '@/state/app';
-import { potwierdz } from '@/ui/potwierdzenie';
 import { Dni, Ikona, IkonaKafel, Karta, Portret, T, Wiersz } from '@/ui/elementy';
 
 /* dokąd prowadzi przypomnienie z listy „Do załatwienia” */
@@ -60,7 +59,7 @@ export function AlertPrywatnosci() {
   const { log, os, pesel, zmien, toast } = useApp(); const k = useK();
   const a = log.find(x => x.typ === 'alert' && !x.zgl && !x.zablok && !x.potw);
   if (!a) return null;
-  const nieJa = async () => { if (!(await potwierdz('Zastrzeżenie PESEL', 'pin'))) return; zmien(s => ({ pesel: true, log: s.log.map(x => (x.id === a.id ? { ...x, zgl: 1 } : x)) })); toast('PESEL zastrzeżony. Zgłoszenie trafiło do CERT Polska.'); };
+  const nieJa = () => router.push(`/usluga/nie-ja?wpis=${a.id}` as never);
   return (
     <Karta style={{ padding: 16, borderWidth: 2, borderColor: k.acc }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>

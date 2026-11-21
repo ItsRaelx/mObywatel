@@ -6,7 +6,7 @@ import { useApp } from '@/state/app';
 import { Ekran, Grupa, Ikona, Para, Portret, Przycisk, Sekcja, T, Wiersz } from '@/ui/elementy';
 
 export default function MojeDane() {
-  const { os, k, toast } = useApp(); const D = os.dane; const [pok, setPok] = useState(false);
+  const { os, k } = useApp(); const D = os.dane; const [pok, setPok] = useState(false);
   return (
     <Ekran>
       <View style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
@@ -32,7 +32,7 @@ export default function MojeDane() {
       </Sekcja>
       <Sekcja tytul="Dokumenty tożsamości"><Grupa><Para k="Dowód osobisty" w={os.moje.dowod} /><Para k="Paszport" w={D.pasz} /></Grupa></Sekcja>
       <Sekcja tytul="Kontakt do powiadomień"><Grupa><Para k="Telefon" w={D.tel} /><Para k="E-mail" w={D.mail} /></Grupa></Sekcja>
-      <Przycisk tytul="Zgłoś błąd w danych" ik="alert" rodzaj="drugi" style={{ marginTop: 22 }} onPress={() => toast('Zgłoszenie wysłane do urzędu gminy (pokaz)')} />
+      <Przycisk tytul="Zgłoś błąd w danych" ik="alert" rodzaj="drugi" style={{ marginTop: 22 }} onPress={() => router.push('/usluga/blad-danych')} />
     </Ekran>
   );
 }

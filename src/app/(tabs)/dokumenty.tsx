@@ -21,7 +21,7 @@ export default function Dokumenty() {
               <KartaDokumentu d={d} os={os} w={w} ukryte={d.id === 'dowod'} onQR={() => router.push('/pokaz-kod')} onPokaz={() => router.push('/dokument/dowod')} />
             </Sprezyna>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8, paddingHorizontal: 4 }}>
-              <T v="sub" n={1} style={{ flex: 1 }}>{d.sub}</T>
+              <T v="sub" style={{ flex: 1, marginRight: 8 }}>{d.sub}</T>
               {d.alert ? <Pill t={d.alert} ton="r" ik="alert" /> : <Pill t="Ważny" ton="g" ik="ok" />}
             </View>
           </Wejscie>

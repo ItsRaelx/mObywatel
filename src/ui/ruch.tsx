@@ -29,7 +29,7 @@ export function Sprezyna({ children, style, onPress, skala = 0.98, haptyka = tru
       onPressIn={() => { s.set(withTiming(skala, { duration: 90 })); }}
       onPressOut={() => { s.set(withTiming(1, { duration: 160 })); }}
       onPress={e => { if (haptyka) Haptics.selectionAsync().catch(() => {}); onPress?.(e); }}>
-      <Animated.View style={[wnetrze, maUklad && (flex || flexGrow) ? { flex: 1 } : null, st]}>{children}</Animated.View>
+      <Animated.View style={[wnetrze, maUklad && (flex || flexGrow) ? { flexGrow: 1 } : null, st]}>{children}</Animated.View>
     </Pressable>
   );
 }

@@ -11,7 +11,7 @@ export default function Uslugi() {
   const { os, pesel, zaplacone } = useApp(); const [q, setQ] = useState('');
   const st = { pesel, zaplacone };
   const wyniki = q.trim() ? szukaj(q, os, st) : [];
-  const dost = USLUGI.filter(u => !u.dostepna || u.dostepna(os, st));
+  const dost = USLUGI.filter(u => !u.ukryta && (!u.dostepna || u.dostepna(os, st)));
   return (
     <Ekran tab tytul="Usługi" podtytul="Sprawy urzędowe bez wychodzenia z domu">
       <PoleSzukania q={q} setQ={setQ} />

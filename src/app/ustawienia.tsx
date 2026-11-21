@@ -1,8 +1,9 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
-import { Alert, Pressable, Switch, View } from 'react-native';
+import { Alert, Pressable, View } from 'react-native';
 
 import { useApp, type Motyw } from '@/state/app';
-import { Ekran, Grupa, Ikona, Sekcja, T, Wiersz } from '@/ui/elementy';
+import { Przelacznik, Ekran, Grupa, Ikona, Sekcja, T, Wiersz } from '@/ui/elementy';
 import { PALETA } from '@/ui/motyw';
 
 const MOTYWY: [Motyw, string, string][] = [['jasny', 'Jasny', 'sun'], ['ciemny', 'Ciemny', 'moon'], ['system', 'Jak w telefonie', 'auto']];
@@ -19,10 +20,10 @@ function Podglad({ m }: { m: Motyw }) {
 }
 
 export default function Ustawienia() {
-  const { k, motyw, ustaw, toast } = useApp();
+  const { k, motyw, ustaw } = useApp();
   const [p, setP] = useState({ terminy: true, pisma: true, dane: true, rcb: true, bio: true });
   const sw = (key: keyof typeof p, t: string, o: string) => (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 }}><View style={{ flex: 1 }}><T v="bodyB">{t}</T><T v="sub">{o}</T></View><Switch value={p[key]} onValueChange={v => setP({ ...p, [key]: v })} trackColor={{ true: k.acc, false: k.surface2 }} /></View>
+    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 }}><View style={{ flex: 1 }}><T v="bodyB">{t}</T><T v="sub">{o}</T></View><Przelacznik value={p[key]} onValueChange={v => setP({ ...p, [key]: v })} /></View>
   );
   return (
     <Ekran>
@@ -43,7 +44,7 @@ export default function Ustawienia() {
         <Grupa>
           {sw('bio', 'Face ID / odcisk palca', 'Do otwierania aplikacji. Wnioski podpisujesz PIN-em mObywatela')}
           <Wiersz ik="key" tytul="Zmień PIN" onPress={() => Alert.alert('Zmienić PIN?', 'Przejdziesz przez krótkie ustawienie od nowa.', [{ text: 'Anuluj', style: 'cancel' }, { text: 'Zmień', onPress: () => ustaw({ wprowadzenie: false, pin: null }) }])} />
-          <Wiersz ik="phone" tytul="Aktywne urządzenia" opis="Ten telefon" onPress={() => toast('Wylogowano z pozostałych urządzeń (pokaz)')} />
+          <Wiersz ik="phone" tytul="Aktywne urządzenia" opis="3 urządzenia" onPress={() => router.push('/urzadzenia' as never)} />
         </Grupa>
       </Sekcja>
     </Ekran>

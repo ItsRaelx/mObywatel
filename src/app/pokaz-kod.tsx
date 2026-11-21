@@ -25,10 +25,10 @@ export default function PokazKod() {
   return (
     <ScrollView style={{ flex: 1, backgroundColor: k.bg }} contentContainerStyle={{ padding: 16, paddingBottom: 50 }}>
       <T v="cap" style={{ marginLeft: 4, marginBottom: 8 }}>Co chcesz pokazać?</T>
-      <View style={{ flexDirection: 'row', backgroundColor: k.surface2, borderRadius: 14, padding: 4 }}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
         {dost.map(x => (
-          <Pressable key={x.id} onPress={() => setWyb(x.id)} accessibilityState={{ selected: x.id === wyb }} style={{ flex: 1, paddingVertical: 9, borderRadius: 11, backgroundColor: x.id === wyb ? k.surface : 'transparent', alignItems: 'center' }}>
-            <T v="sub" c={x.id === wyb ? k.ink : k.ink2} style={{ fontWeight: '700' }}>{x.t}</T>
+          <Pressable key={x.id} onPress={() => setWyb(x.id)} accessibilityRole="radio" accessibilityState={{ selected: x.id === wyb }} style={{ flexBasis: '47%', flexGrow: 1, paddingVertical: 12, borderRadius: 14, backgroundColor: x.id === wyb ? k.ink : k.surface, borderWidth: 1, borderColor: x.id === wyb ? k.ink : k.hair, alignItems: 'center' }}>
+            <T v="sub" c={x.id === wyb ? k.bg : k.ink} style={{ fontWeight: '700' }}>{x.t}</T>
           </Pressable>
         ))}
       </View>

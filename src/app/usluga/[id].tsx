@@ -8,8 +8,8 @@ import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollVie
 import { FadeIn, LinearTransition } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { lab, usluga, wiele, type Api, type Info, type Krok, type Pole, type Usluga, type V, type Wynik } from '@/data/uslugi';
-import type { Osoba, Wiersz as Wrsz } from '@/data/typy';
+import { lab, okresTxt, usluga, wiele, type Api, type Info, type Krok, type Pole, type Usluga, type V, type Wynik } from '@/data/uslugi';
+import { DZIS, MIESIACE, dataZ, type Osoba, type Wiersz as Wrsz } from '@/data/typy';
 import { useApp } from '@/state/app';
 import { Grupa, Ikona, IkonaKafel, Karta, Para, Przycisk, Sekcja, T, Wiersz } from '@/ui/elementy';
 import { EkranInfo } from '@/ui/info-uslugi';
@@ -19,9 +19,9 @@ import { DokumentPapier, Kontrola, Os, Wykres } from '@/ui/wynik';
 
 type Faza = 'karta' | 'krok' | 'sum' | 'wysylka' | 'done';
 const widoczne = (k: Krok, v: V) => k.pola.filter(p => !p.gdy || p.gdy(v));
-const pusta = (p: Pole, v: V) => !String(v[p.k] ?? '').trim();
+const pusta = (p: Pole, v: V) => (p.typ === 'okres' ? !String(v[p.k] ?? '').includes('|') : !String(v[p.k] ?? '').trim());
 const czekaj = (ms: number) => new Promise(r => setTimeout(r, ms));
-const wybieralne = (p: Pole) => p.typ === 'wybor' || p.typ === 'wiele' || (!p.typ && !!p.opcje);
+const wybieralne = (p: Pole) => p.typ === 'wybor' || p.typ === 'wiele' || p.typ === 'lista' || (!p.typ && !!p.opcje);
 /* jedno pole wyboru na kroku: pytanie staje się tytułem ekranu, jeśli jest pytaniem; inaczej tytułem jest nazwa kroku */
 const pytanie = (kr: Krok, pola: Pole[]) => (pola.length === 1 && wybieralne(pola[0]) && /\?$/.test(pola[0].l) ? pola[0].l : kr.t);
 const etykieta = (p: Pole, kr: Krok, ile: number) => (ile === 1 && wybieralne(p) && !/\?$/.test(p.l) ? kr.t : p.l.replace(/\s*\(opcjonalnie\)/, '').replace(/\?$/, ''));
@@ -165,11 +165,11 @@ function Zalacznik({ nazwa, wart, ustaw, zly }: { nazwa: string; wart: string; u
   );
 }
 
-function PoleWidok({ p, v, setV, blad, jedyne }: { p: Pole; v: V; setV: (k: string, w: string) => void; blad: boolean; jedyne: boolean }) {
+function PoleWidok({ p, v, setV, blad, jedyne, tytul }: { p: Pole; v: V; setV: (k: string, w: string) => void; blad: boolean; jedyne: boolean; tytul?: string }) {
   const { k } = useApp();
   const wart = v[p.k] ?? ''; const zly = blad && !!p.wym && !wart.trim();
   const typ = p.typ ?? (p.opcje ? 'wybor' : 'tekst');
-  const naglowek = jedyne && (typ === 'wybor' || typ === 'wiele') ? null : <T v="sub" c={k.ink} style={{ fontWeight: '700', marginBottom: 8 }}>{p.l}</T>;
+  const naglowek = p.l === tytul || (jedyne && (typ === 'wybor' || typ === 'wiele' || typ === 'lista' || typ === 'okres')) ? null : <T v="sub" c={k.ink} style={{ fontWeight: '700', marginBottom: 8 }}>{p.l}</T>;
   let tresc: ReactNode;
   if (typ === 'wybor' && p.opcje) {
     tresc = <Grupa>{p.opcje.map(o => { const t = lab(o), on = wart === t, op = typeof o === 'string' ? undefined : o.o; return (
@@ -195,6 +195,10 @@ function PoleWidok({ p, v, setV, blad, jedyne }: { p: Pole; v: V; setV: (k: stri
         </Wiersz2>
       </Grupa>
     );
+  } else if (typ === 'lista' && p.opcje) {
+    tresc = <Lista opcje={p.opcje.map(lab)} wart={wart} ustaw={w => setV(p.k, w)} ph={p.ph} zly={zly} />;
+  } else if (typ === 'okres') {
+    tresc = <Kalendarz wart={wart} ustaw={w => setV(p.k, w)} />;
   } else if (typ === 'plik') {
     tresc = <Zalacznik nazwa={p.plik ?? 'plik.pdf'} wart={wart} ustaw={w => setV(p.k, w)} zly={zly} />;
   } else {
@@ -211,6 +215,84 @@ function PoleWidok({ p, v, setV, blad, jedyne }: { p: Pole; v: V; setV: (k: stri
       {zly ? <T v="small" c={k.accInk} style={{ marginTop: 6, fontWeight: '600' }}>{typ === 'plik' ? 'Dodaj plik, żeby przejść dalej.' : 'Uzupełnij to pole.'}</T>
         : p.podp ? <T v="small" style={{ marginTop: 6 }}>{p.podp}</T> : null}
     </View>
+  );
+}
+
+/* ---------- lista z wyszukiwarką (np. kraje) ---------- */
+function Lista({ opcje, wart, ustaw, ph, zly }: { opcje: string[]; wart: string; ustaw: (w: string) => void; ph?: string; zly: boolean }) {
+  const { k } = useApp(); const [q, setQ] = useState('');
+  const n = (t: string) => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ł/g, 'l');
+  const lista = opcje.filter(o => n(o).includes(n(q)));
+  return (
+    <View>
+      {wart ? (
+        <Grupa style={{ marginBottom: 12 }}>
+          <Wiersz2 rola="radio" on onPress={() => ustaw('')}>
+            <T v="bodyB" style={{ flex: 1 }}>{wart}</T>
+            <T v="sub" c={k.accInk} style={{ fontWeight: '700' }}>Zmień</T>
+          </Wiersz2>
+        </Grupa>
+      ) : (
+        <>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 52, borderRadius: 16, paddingHorizontal: 14, backgroundColor: k.surface, borderWidth: 1.5, borderColor: zly ? k.acc : k.hair, marginBottom: 12 }}>
+            <Ikona n="search" size={18} color={k.ink3} />
+            <TextInput value={q} onChangeText={setQ} placeholder={ph ?? 'Szukaj'} placeholderTextColor={k.ink3} style={{ flex: 1, fontSize: 17, color: k.ink }} accessibilityLabel={ph} />
+          </View>
+          <Grupa>{lista.slice(0, 60).map(o => (
+            <Wiersz2 key={o} rola="radio" on={false} onPress={() => { ustaw(o); setQ(''); }}>
+              <T v="body" style={{ flex: 1 }}>{o}</T>
+            </Wiersz2>
+          ))}</Grupa>
+          {!lista.length ? <T v="sub" style={{ marginTop: 8 }}>Nie ma takiego kraju na liście.</T> : null}
+        </>
+      )}
+    </View>
+  );
+}
+
+/* ---------- kalendarz z wyborem okresu od do ---------- */
+const DNI_TYG = ['pn', 'wt', 'śr', 'cz', 'pt', 'sb', 'nd'];
+const fmt = (d: Date) => `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`;
+function Kalendarz({ wart, ustaw }: { wart: string; ustaw: (w: string) => void }) {
+  const { k } = useApp();
+  const [a, b] = (wart || '').split('|'); const od = a ? dataZ(a) : null, doo = b ? dataZ(b) : null;
+  const [mies, setMies] = useState(() => { const d = od ?? DZIS; return new Date(d.getFullYear(), d.getMonth(), 1); });
+  const pierwszy = (mies.getDay() + 6) % 7, ile = new Date(mies.getFullYear(), mies.getMonth() + 1, 0).getDate();
+  const komorki: (Date | null)[] = [...Array(pierwszy).fill(null), ...Array.from({ length: ile }, (_, i) => new Date(mies.getFullYear(), mies.getMonth(), i + 1))];
+  const wybierz = (d: Date) => {
+    Haptics.selectionAsync().catch(() => {});
+    if (!od || doo || d < od) ustaw(fmt(d)); else ustaw(`${fmt(od)}|${fmt(d)}`);
+  };
+  const dni = od && doo ? Math.round((doo.getTime() - od.getTime()) / 864e5) + 1 : 0;
+  const moznaWstecz = mies > new Date(DZIS.getFullYear(), DZIS.getMonth(), 1);
+  return (
+    <Karta style={{ padding: 14 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+        <Pressable disabled={!moznaWstecz} onPress={() => setMies(new Date(mies.getFullYear(), mies.getMonth() - 1, 1))} hitSlop={10} accessibilityLabel="Poprzedni miesiąc" style={{ padding: 6, opacity: moznaWstecz ? 1 : 0.25 }}><Ikona n="back" size={20} color={k.ink} /></Pressable>
+        <T v="bodyB" center style={{ flex: 1 }}>{MIESIACE[mies.getMonth()]} {mies.getFullYear()}</T>
+        <Pressable onPress={() => setMies(new Date(mies.getFullYear(), mies.getMonth() + 1, 1))} hitSlop={10} accessibilityLabel="Następny miesiąc" style={{ padding: 6 }}><Ikona n="chev" size={20} color={k.ink} /></Pressable>
+      </View>
+      <View style={{ flexDirection: 'row' }}>{DNI_TYG.map(d => <T key={d} v="small" center style={{ width: '14.285%', fontWeight: '700' }}>{d}</T>)}</View>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 6 }}>
+        {komorki.map((d, i) => {
+          if (!d) return <View key={'p' + i} style={{ width: '14.285%', height: 44 }} />;
+          const prz = d < DZIS, poczatek = !!od && d.getTime() === od.getTime(), koniec = !!doo && d.getTime() === doo.getTime();
+          const wsr = !!od && !!doo && d > od && d < doo, kraniec = poczatek || koniec;
+          return (
+            <View key={i} style={{ width: '14.285%', height: 44, justifyContent: 'center', backgroundColor: wsr || (kraniec && doo && od && doo > od) ? k.accBg : 'transparent',
+              borderTopLeftRadius: poczatek ? 22 : 0, borderBottomLeftRadius: poczatek ? 22 : 0, borderTopRightRadius: koniec ? 22 : 0, borderBottomRightRadius: koniec ? 22 : 0 }}>
+              <Pressable disabled={prz} onPress={() => wybierz(d)} accessibilityLabel={fmt(d)} accessibilityState={{ selected: kraniec, disabled: prz }}
+                style={{ alignSelf: 'center', width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: kraniec ? k.acc : 'transparent' }}>
+                <T v="body" c={kraniec ? '#fff' : prz ? k.ink3 : k.ink} style={{ fontWeight: kraniec ? '800' : '500', opacity: prz ? 0.5 : 1 }}>{d.getDate()}</T>
+              </Pressable>
+            </View>
+          );
+        })}
+      </View>
+      <View style={{ marginTop: 10, paddingTop: 12, borderTopWidth: 0.5, borderTopColor: k.hair }}>
+        <T v="bodyB" center>{od && doo ? `${okresTxt(wart)}, ${dni} ${dni === 1 ? 'dzień' : 'dni'}` : od ? `Wyjazd ${a}. Teraz wybierz dzień powrotu.` : 'Wybierz dzień wyjazdu.'}</T>
+      </View>
+    </Karta>
   );
 }
 
@@ -269,10 +351,10 @@ function EkranWyniku({ w }: { w: Wynik }) {
 }
 
 export default function UslugaEkran() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, ...param } = useLocalSearchParams<{ id: string; dok?: string; wpis?: string }>();
   const { os, k, pesel, zaplacone, zmien } = useApp();
   const u = usluga(id); const st = { pesel, zaplacone };
-  const kroki = useMemo(() => u?.kroki?.(os, st) ?? [], [u, os]); // eslint-disable-line react-hooks/exhaustive-deps
+  const kroki = useMemo(() => u?.kroki?.(os, st, param as V) ?? [], [u, os]); // eslint-disable-line react-hooks/exhaustive-deps
   const [v, setVals] = useState<V>(() => Object.fromEntries(kroki.flatMap(kr => kr.pola).map(p => [p.k, p.v ?? (p.typ !== 'wiele' && p.typ !== 'plik' && p.opcje?.length ? lab(p.opcje[0]) : '')])));
   const [faza, setFaza] = useState<Faza>(u?.karta ? 'karta' : 'krok');
   const [nr, setNr] = useState(0); const [blad, setBlad] = useState(false); const [zgoda, setZgoda] = useState(false); const [bladZgody, setBladZgody] = useState(false);
@@ -292,12 +374,13 @@ export default function UslugaEkran() {
   const api: Api = {
     zalatw: z => zmien(s => ({ zalatwione: [...s.zalatwione, z] })),
     pesel: b => zmien({ pesel: b }),
+    wpis: (wid, pole) => zmien(x => ({ log: x.log.map(w => (w.id === wid ? { ...w, [pole]: 1 } : w)) })),
     pismo: p => zmien(s => ({ pisma: [{ ...p, id: 'n' + Date.now() + Math.random().toString(36).slice(2, 6), kiedy: '18.10' }, ...s.pisma] })),
     zaplac: (t, kw) => zmien(s => ({ historia: [['18.10', t, kw, 'EP/2026/7 3' + String(Date.now()).slice(-5)], ...s.historia] })),
   };
   const auto = !u.podsumowanie;
   const podsum: (Wrsz & { krok?: number })[] = u.podsumowanie ? u.podsumowanie(v, os) : kroki.flatMap((kr, ki) => widoczne(kr, v).map(p => ({ p, kr, ki, ile: widoczne(kr, v).length }))).filter(({ p }) => v[p.k]).map(({ p, kr, ki, ile }) => {
-    const w = v[p.k]; const t = p.typ === 'tak' ? (w === 'tak' ? 'tak' : 'nie') : p.typ === 'wiele' ? wiele(w).join(', ') : p.typ === 'dlugi' && w.length > 60 ? w.slice(0, 60) + '...' : w;
+    const w = v[p.k]; const t = p.typ === 'tak' ? (w === 'tak' ? 'tak' : 'nie') : p.typ === 'wiele' ? wiele(w).join(', ') : p.typ === 'okres' ? okresTxt(w) : p.typ === 'dlugi' && w.length > 60 ? w.slice(0, 60) + '...' : w;
     return Object.assign([p.typ === 'tak' ? p.l : etykieta(p, kr, ile), t] as Wrsz, { krok: ki });
   });
 
@@ -366,7 +449,7 @@ export default function UslugaEkran() {
         <Tytul t={krok ? pytanie(krok, pola) : ''} opis={krok?.opis} />
         {nr === 0 && !u.karta && u.wstep?.(os, st).flaga ? <Ostrzezenie t={u.wstep(os, st).flaga!} /> : null}
         {stop ? <Ostrzezenie t={stop} ton="r" /> : ostrz ? <Ostrzezenie t={ostrz} /> : null}
-        {pola.map(p => <PoleWidok key={p.k} p={p} v={v} setV={setV} blad={blad} jedyne={jedno} />)}
+        {pola.map(p => <PoleWidok key={p.k} p={p} v={v} setV={setV} blad={blad} jedyne={jedno} tytul={krok ? pytanie(krok, pola) : undefined} />)}
         {blad ? <T v="sub" c={k.accInk} style={{ fontWeight: '600' }}>Uzupełnij zaznaczone pola.</T> : null}
       </Uklad>
     </>

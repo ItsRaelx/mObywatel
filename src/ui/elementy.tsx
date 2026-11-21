@@ -198,6 +198,19 @@ export function Dni({ n }: { n: number | null }) {
   );
 }
 
+/* ---------- przełącznik (zielony, jak w iOS) ---------- */
+export function Przelacznik({ value, onValueChange, accessibilityLabel }: { value: boolean; onValueChange: (v: boolean) => void; accessibilityLabel?: string }) {
+  const k = useK(); const x = useSharedValue(value ? 1 : 0);
+  useEffect(() => { x.set(withTiming(value ? 1 : 0, { duration: 160 })); }, [value, x]);
+  const st = useAnimatedStyle(() => ({ transform: [{ translateX: x.value * 20 }] }));
+  return (
+    <Pressable onPress={() => onValueChange(!value)} hitSlop={8} accessibilityRole="switch" accessibilityState={{ checked: value }} accessibilityLabel={accessibilityLabel}
+      style={{ width: 50, height: 30, borderRadius: 15, padding: 3, backgroundColor: value ? k.ok : k.dark ? '#3A3B41' : '#DCD8D4' }}>
+      <Animated.View style={[{ width: 24, height: 24, borderRadius: 12, backgroundColor: '#fff', shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 2, shadowOffset: { width: 0, height: 1 }, elevation: 2 }, st]} />
+    </Pressable>
+  );
+}
+
 /* ---------- komunikat na dole ekranu ---------- */
 export function ToastHost() {
   const { toastTxt, k } = useApp(); const ins = useSafeAreaInsets();

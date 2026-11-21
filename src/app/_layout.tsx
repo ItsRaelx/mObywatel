@@ -49,6 +49,7 @@ function Wnetrze() {
         <Stack.Screen name="alerty" options={{ title: 'Alerty RCB' }} />
         <Stack.Screen name="ustawienia" options={{ title: 'Ustawienia' }} />
         <Stack.Screen name="dodaj-dokument" options={{ title: 'Dodaj dokument' }} />
+        <Stack.Screen name="urzadzenia" options={{ title: 'Aktywne urządzenia' }} />
       </Stack>
       <ToastHost />
       {brama ? <Animated.View key={wprowadzenie ? 'blokada' : 'wprowadzenie'} entering={FadeIn.duration(250)} exiting={FadeOut.duration(380)} style={StyleSheet.absoluteFill}>{brama}</Animated.View> : null}

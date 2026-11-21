@@ -6,7 +6,7 @@ import { useApp } from '@/state/app';
 import { Ekran, Ikona, Karta, Notka, Pill, Portret, Przycisk, T } from '@/ui/elementy';
 
 export default function Rodzina() {
-  const { os, k, toast } = useApp();
+  const { os, k } = useApp();
   return (
     <Ekran>
       <T v="body" c={k.ink2} style={{ marginBottom: 16 }}>Dokumenty i sprawy dzieci oraz osób pod Twoją opieką w jednym miejscu.</T>
@@ -48,7 +48,7 @@ export default function Rodzina() {
           <T v="sub" center style={{ marginTop: 6 }}>Dzieci zobaczysz tu automatycznie. Rodzice i inni dorośli mogą dać Ci upoważnienie w swoim mObywatelu.</T>
         </Karta>
       )}
-      <Przycisk tytul="Dodaj osobę" ik="plus" rodzaj="drugi" style={{ marginTop: 16 }} onPress={() => toast('Wysłaliśmy prośbę o upoważnienie (pokaz)')} />
+      <Przycisk tytul="Dodaj osobę" ik="plus" rodzaj="drugi" style={{ marginTop: 16 }} onPress={() => router.push('/usluga/dodaj-osobe')} />
       <Notka ik="lock">Dzieci do 18 lat widzisz automatycznie na podstawie rejestru PESEL. Dorosłych dodasz tylko wtedy, gdy sami dadzą Ci upoważnienie i w każdej chwili mogą je cofnąć.</Notka>
     </Ekran>
   );
