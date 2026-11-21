@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { useEffect, useState } from 'react';
-import { Animated, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Animated, BackHandler, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import R, { FadeIn, FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -16,6 +16,7 @@ export function Blokada() {
   const { os, pin, odblokuj, k, ustaw } = useApp(); const ins = useSafeAreaInsets();
   const [p, setP] = useState(''); const [msg, setMsg] = useState('Wpisz PIN, aby otworzyć aplikację');
   const blad = useState(() => new Animated.Value(0))[0];
+  useEffect(() => { const sub = BackHandler.addEventListener('hardwareBackPress', () => { BackHandler.exitApp(); return true; }); return () => sub.remove(); }, []);
   const bio = async () => { if (await biometria('Zaloguj się do mObywatela')) odblokuj(); };
   useEffect(() => { if (Platform.OS !== 'web') LocalAuthentication.isEnrolledAsync().then(e => { if (e) bio(); }).catch(() => {}); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const cyfra = (c: string) => {
@@ -51,6 +52,11 @@ export function Wprowadzenie() {
   const [p1, setP1] = useState(''); const [p2, setP2] = useState(''); const [pierwszy, setPierwszy] = useState<string | null>(null);
   const blad = useState(() => new Animated.Value(0))[0];
   const dalej = () => setKrok(krok + 1);
+  /* Android: wstecz cofa slajd, na pierwszym zamyka aplikację */
+  useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => { if (krok > 0) setKrok(krok - 1); else BackHandler.exitApp(); return true; });
+    return () => sub.remove();
+  }, [krok]);
 
   if (krok < 3) {
     const s = SLAJDY[krok];

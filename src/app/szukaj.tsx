@@ -22,7 +22,7 @@ export default function Szukaj() {
         <View style={{ flex: 1 }}><PoleSzukania q={q} setQ={setQ} autoFocus /></View>
         <Pressable onPress={() => router.back()} hitSlop={10}><T v="bodyB" c={k.accInk}>Anuluj</T></Pressable>
       </View>
-      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ padding: 16, paddingBottom: 60 }}>
+      <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ padding: 16, paddingBottom: 60 + ins.bottom }}>
         {!q.trim() ? (
           <>
             <T v="cap" style={{ marginBottom: 10, marginLeft: 4 }}>Najczęściej szukane</T>

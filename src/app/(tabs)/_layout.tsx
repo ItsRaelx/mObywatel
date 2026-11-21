@@ -2,7 +2,7 @@ import * as Haptics from 'expo-haptics';
 import { router } from 'expo-router';
 import { Tabs, type BottomTabBarProps } from 'expo-router/tabs';
 import { useEffect, useState } from 'react';
-import { Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
+import { Platform, Pressable, StyleSheet, Text, View, type LayoutChangeEvent } from 'react-native';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -30,6 +30,8 @@ function Pasek({ state, navigateToTab }: BottomTabBarProps) {
   const [szer, setSzer] = useState(0);
   const x = useSharedValue(0), q = useSharedValue(1);
   const kol = szer / 5;
+  /* Android: przy nawigacji gestami pasek schodzi bliżej krawędzi; przy 3 przyciskach zostawiamy miejsce na przyciski */
+  const dol = Platform.OS === 'android' ? (ins.bottom >= 40 ? ins.bottom : Math.max(ins.bottom - 12, 6)) : Math.max(ins.bottom, 8);
   useEffect(() => { if (kol) x.set(withTiming(POZYCJA[state.index] * kol + kol / 2 - 28, PLYNNIE)); }, [state.index, kol, x]);
   const wsk = useAnimatedStyle(() => ({ transform: [{ translateX: x.value }] }));
   const qs = useAnimatedStyle(() => ({ transform: [{ scale: q.value }] }));
@@ -40,7 +42,7 @@ function Pasek({ state, navigateToTab }: BottomTabBarProps) {
       onPress={() => { Haptics.selectionAsync().catch(() => {}); navigateToTab(r.key); }} />;
   };
   return (
-    <View onLayout={(e: LayoutChangeEvent) => setSzer(e.nativeEvent.layout.width)} style={[st_.pasek, { paddingBottom: Math.max(ins.bottom, 8), backgroundColor: k.tab, borderTopColor: k.hair }]}>
+    <View onLayout={(e: LayoutChangeEvent) => setSzer(e.nativeEvent.layout.width)} style={[st_.pasek, { paddingBottom: dol, backgroundColor: k.tab, borderTopColor: k.hair }]}>
       {kol ? <Animated.View style={[st_.wsk, { backgroundColor: k.accBg }, wsk]} /> : null}
       {zak(0)}{zak(1)}
       <Pressable accessibilityRole="button" accessibilityLabel="Kod QR: pokaż albo zeskanuj"

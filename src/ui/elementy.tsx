@@ -40,7 +40,7 @@ export function T({ v = 'body', c, style, children, n, center }: { v?: Wariant; 
 /* ---------- ekran z dużym tytułem (zakładki) ---------- */
 export function Ekran({ tytul, podtytul, prawa, children, tab }: { tytul?: string; podtytul?: string; prawa?: ReactNode; children: ReactNode; tab?: boolean }) {
   const k = useK(); const ins = useSafeAreaInsets();
-  return (
+  const tresc = (
     <ScrollView style={{ flex: 1, backgroundColor: k.bg }} contentInsetAdjustmentBehavior="automatic"
       contentContainerStyle={{ paddingTop: tab ? ins.top + 10 : 8, paddingHorizontal: 16, paddingBottom: (tab ? 110 : 40) + ins.bottom }}>
       {tytul ? (
@@ -55,6 +55,9 @@ export function Ekran({ tytul, podtytul, prawa, children, tab }: { tytul?: strin
       {children}
     </ScrollView>
   );
+  if (!tab) return tresc;
+  /* zakładki: pasek pod zegarem, żeby przewijana treść nie wchodziła pod ikony systemu */
+  return <View style={{ flex: 1, backgroundColor: k.bg }}>{tresc}<View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, height: ins.top, backgroundColor: k.bg }} /></View>;
 }
 
 /* ---------- sekcja, grupa, wiersz ---------- */
@@ -64,8 +67,8 @@ export function Sekcja({ tytul, akcja, onAkcja, children, style, i = 1 }: { tytu
     <Wejscie i={i} style={[{ marginTop: 26 }, style]}>
       {tytul ? (
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10, paddingHorizontal: 4 }}>
-          <T v="h2" style={{ fontSize: 19 }}>{tytul}</T>
-          {akcja ? <Pressable hitSlop={10} onPress={onAkcja}><T v="sub" c={k.accInk} style={{ fontWeight: '600' }}>{akcja}</T></Pressable> : null}
+          <T v="h2" style={{ fontSize: 19, flexShrink: 1 }}>{tytul}</T>
+          {akcja ? <Pressable hitSlop={10} onPress={onAkcja} style={{ marginLeft: 12 }}><T v="sub" c={k.accInk} n={1} style={{ fontWeight: '600' }}>{akcja}</T></Pressable> : null}
         </View>
       ) : null}
       {children}

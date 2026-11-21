@@ -4,6 +4,8 @@ import { Pressable, ScrollView, useWindowDimensions, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
 
 import { ZAKRESY } from '@/data/zakresy';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { useApp } from '@/state/app';
 import { Ikona, Karta, KodQR, Portret, T } from '@/ui/elementy';
 import { Pasek } from '@/ui/ruch';
@@ -12,7 +14,7 @@ const WSZYSTKIE = ['Imię i nazwisko', 'Data urodzenia', 'PESEL', 'Numer dowodu'
 
 export default function PokazKod() {
   const { zakres } = useLocalSearchParams<{ zakres?: string }>();
-  const { os, k } = useApp(); const { width } = useWindowDimensions();
+  const { os, k } = useApp(); const { width } = useWindowDimensions(); const ins = useSafeAreaInsets();
   const dost = ZAKRESY.filter(z => z.id !== 'ulga' || os.docs.some(d => d.id === 'leg' || d.id === 'kdr')).filter(z => z.id !== 'prawo_jazdy' || os.docs.some(d => d.id === 'pj'));
   const [wyb, setWyb] = useState(dost.find(z => z.id === zakres)?.id ?? 'tozsamosc');
   const [tok, setTok] = useState(() => Math.floor(Math.random() * 90000) + 10000); const [left, setLeft] = useState(30);
@@ -23,12 +25,12 @@ export default function PokazKod() {
   const tekst = useMemo(() => `MOBYWATEL:Z:${tok}:${wyb}`, [tok, wyb]);
 
   return (
-    <ScrollView style={{ flex: 1, backgroundColor: k.bg }} contentContainerStyle={{ padding: 16, paddingBottom: 50 }}>
+    <ScrollView style={{ flex: 1, backgroundColor: k.bg }} contentContainerStyle={{ padding: 16, paddingBottom: ins.bottom + 40 }}>
       <T v="cap" style={{ marginLeft: 4, marginBottom: 8 }}>Co chcesz pokazać?</T>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 8 }}>
         {dost.map(x => (
-          <Pressable key={x.id} onPress={() => setWyb(x.id)} accessibilityRole="radio" accessibilityState={{ selected: x.id === wyb }} style={{ flexBasis: '47%', flexGrow: 1, paddingVertical: 12, borderRadius: 14, backgroundColor: x.id === wyb ? k.ink : k.surface, borderWidth: 1, borderColor: x.id === wyb ? k.ink : k.hair, alignItems: 'center' }}>
-            <T v="sub" c={x.id === wyb ? k.bg : k.ink} style={{ fontWeight: '700' }}>{x.t}</T>
+          <Pressable key={x.id} onPress={() => setWyb(x.id)} accessibilityRole="radio" accessibilityState={{ selected: x.id === wyb }} style={{ width: '48.5%', paddingVertical: 12, paddingHorizontal: 6, borderRadius: 14, backgroundColor: x.id === wyb ? k.ink : k.surface, borderWidth: 1, borderColor: x.id === wyb ? k.ink : k.hair, alignItems: 'center' }}>
+            <T v="sub" n={1} c={x.id === wyb ? k.bg : k.ink} style={{ fontWeight: '700' }}>{x.t}</T>
           </Pressable>
         ))}
       </View>

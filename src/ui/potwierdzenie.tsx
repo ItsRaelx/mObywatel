@@ -4,7 +4,7 @@
    potwierdz() można wywołać z dowolnego miejsca; okno rysuje PotwierdzenieHost w głównym layoucie. */
 import * as Haptics from 'expo-haptics';
 import { useEffect, useState, useSyncExternalStore } from 'react';
-import { Animated as RNAnimated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated as RNAnimated, BackHandler, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { Easing, FadeIn, FadeOut, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -105,6 +105,12 @@ function OknoFaceId({ z }: { z: Zadanie }) {
 
 export function PotwierdzenieHost() {
   const z = useSyncExternalStore(subskrybuj, () => biezace, () => null);
+  /* Android: systemowe wstecz anuluje potwierdzenie zamiast przejść pod okno */
+  useEffect(() => {
+    if (!z) return;
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => { z.koniec(false); return true; });
+    return () => sub.remove();
+  }, [z]);
   if (!z) return null;
   return z.tryb === 'pin' ? <OknoPin key={z.id} z={z} /> : <OknoFaceId key={z.id} z={z} />;
 }

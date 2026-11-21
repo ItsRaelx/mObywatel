@@ -4,7 +4,7 @@
 import * as Haptics from 'expo-haptics';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, BackHandler, KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, useWindowDimensions, View } from 'react-native';
 import { FadeIn, LinearTransition } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -30,7 +30,7 @@ const etykieta = (p: Pole, kr: Krok, ile: number) => (ile === 1 && wybieralne(p)
 function Uklad({ children, stopka, gora }: { children: ReactNode; stopka?: ReactNode; gora?: ReactNode }) {
   const { k } = useApp(); const ins = useSafeAreaInsets();
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={90} style={{ flex: 1, backgroundColor: k.bg }}>
+    <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : ins.top + 56} style={{ flex: 1, backgroundColor: k.bg }}>
       {gora}
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 12, paddingBottom: 24 }} keyboardShouldPersistTaps="handled">
         <Animated.View entering={FadeIn.duration(220)}>{children}</Animated.View>
@@ -403,6 +403,18 @@ export default function UslugaEkran() {
   const [etap, setEtap] = useState(''); const [wynik, setWynik] = useState<Wynik | null>(null);
   const [blok] = useState(() => u?.blokada?.(os, st) ?? (u?.dostepna && !u.dostepna(os, st) ? { tekst: 'Ta usługa Cię teraz nie dotyczy. Wszystkie sprawy, które możesz załatwić, znajdziesz w zakładce Usługi.', dalej: [{ t: 'Wszystkie usługi', trasa: '/uslugi' }] } : null));
   useEffect(() => { if (u?.ekran) router.replace(u.ekran as never); }, [u]);
+  /* Android: systemowe wstecz cofa o krok, a nie wyrzuca z usługi */
+  useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => {
+      if (faza === 'wysylka') return true;
+      if (faza === 'qr') { setFaza('sum'); return true; }
+      if (faza === 'sum') { setFaza('krok'); return true; }
+      if (faza === 'krok' && nr > 0) { setNr(nr - 1); setBlad(false); return true; }
+      if (faza === 'krok' && u?.karta) { setFaza('karta'); return true; }
+      return false;
+    });
+    return () => sub.remove();
+  }, [faza, nr, u]);
   if (!u) return <Uklad><Tytul t="Nie znaleziono" opis="Tej usługi nie ma w prototypie." /></Uklad>;
   if (u.ekran) return null;
   if (u.ekranInfo && !blok) return <><Stack.Screen options={{ title: '' }} /><EkranInfo id={u.ekranInfo} u={u} /></>;
