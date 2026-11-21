@@ -29,7 +29,7 @@ function Wnetrze() {
         headerTitleStyle: { color: k.ink, fontWeight: '700' }, headerBackTitle: 'Wróć', contentStyle: { backgroundColor: k.bg }, animation: 'ios_from_right',
       }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false, title: 'Start' }} />
-        <Stack.Screen name="kod-qr" options={{ presentation: 'formSheet', sheetAllowedDetents: 'fitToContents', sheetGrabberVisible: true, headerShown: false, contentStyle: { backgroundColor: k.bg } }} />
+        <Stack.Screen name="kod-qr" options={{ presentation: 'transparentModal', animation: 'none', headerShown: false, contentStyle: { backgroundColor: 'transparent' } }} />
         <Stack.Screen name="pokaz-kod" options={{ presentation: 'modal', title: 'Pokaż kod', animation: 'slide_from_bottom' }} />
         <Stack.Screen name="skanuj" options={{ presentation: 'fullScreenModal', headerShown: false, animation: 'fade' }} />
         <Stack.Screen name="potwierdz" options={{ presentation: 'modal', title: 'Przekazanie danych', animation: 'slide_from_bottom' }} />
