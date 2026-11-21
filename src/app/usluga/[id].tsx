@@ -252,7 +252,7 @@ function EkranWyniku({ w }: { w: Wynik }) {
             <View style={{ flexDirection: 'row', gap: 4, marginTop: 14 }}>
               {w.sprawa.steps.map(([t, , s], i) => <View key={t + i} style={{ flex: 1, height: 6, borderRadius: 3, backgroundColor: s === 2 ? k.ok : s === 1 ? k.warn : k.surface2 }} />)}
             </View>
-            <T v="sub" style={{ marginTop: 10 }}>Teraz: {w.sprawa.steps.find(s => s[2] === 1)?.[0].replace(/^./, c => c.toLowerCase()) ?? 'zakończone'}. Śledź postęp na ekranie Start.</T>
+            <T v="sub" style={{ marginTop: 10 }}>Teraz: {w.sprawa.steps.find(s => s[2] === 1)?.[0].replace(/^./, c => c.toLowerCase()) ?? 'zakończone'}. Postęp sprawdzisz w Więcej → Terminy i sprawy.</T>
           </Karta>
         </Wejscie>
       ) : null}

@@ -1,7 +1,7 @@
 /* Animacje: wejście elementów, sprężyste wciśnięcia, liczniki i ikony sukcesu (Reanimated 4). */
 import * as Haptics from 'expo-haptics';
 import { useEffect, type ReactNode } from 'react';
-import { Pressable, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
+import { Pressable, StyleSheet, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
 import Animated, {
   Easing, FadeInDown, FadeInUp, useAnimatedProps, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withTiming, FadeIn,
 } from 'react-native-reanimated';
@@ -20,12 +20,16 @@ export function Wejscie({ i = 0, children, style, gora, baza = 0 }: { i?: number
 export function Sprezyna({ children, style, onPress, skala = 0.98, haptyka = true, zewn, ...rest }: PressableProps & { children: ReactNode; style?: StyleProp<ViewStyle>; skala?: number; haptyka?: boolean; zewn?: StyleProp<ViewStyle> }) {
   const s = useSharedValue(1);
   const st = useAnimatedStyle(() => ({ transform: [{ scale: s.value }] }));
+  /* właściwości układu (szerokość w rzędzie) muszą trafić na zewnętrzny Pressable, inaczej kafelki w rzędzie mają różne szerokości */
+  const { flex, flexGrow, flexShrink, flexBasis, width, alignSelf, ...wnetrze } = StyleSheet.flatten(style) ?? {};
+  const uklad = { flex, flexGrow, flexShrink, flexBasis, width, alignSelf };
+  const maUklad = Object.values(uklad).some(x => x !== undefined);
   return (
-    <Pressable {...rest} style={zewn}
+    <Pressable {...rest} style={[maUklad && uklad, zewn]}
       onPressIn={() => { s.set(withTiming(skala, { duration: 90 })); }}
       onPressOut={() => { s.set(withTiming(1, { duration: 160 })); }}
       onPress={e => { if (haptyka) Haptics.selectionAsync().catch(() => {}); onPress?.(e); }}>
-      <Animated.View style={[style, st]}>{children}</Animated.View>
+      <Animated.View style={[wnetrze, maUklad && (flex || flexGrow) ? { flex: 1 } : null, st]}>{children}</Animated.View>
     </Pressable>
   );
 }

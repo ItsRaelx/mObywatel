@@ -9,10 +9,10 @@ import { rodz, useApp, useZadania } from '@/state/app';
 import { Avatar, Grupa, Ikona, Karta, LogoBiale, Sekcja, T } from '@/ui/elementy';
 import { KartaDokumentu } from '@/ui/karta';
 import { Sprezyna } from '@/ui/ruch';
-import { AlertPrywatnosci, KafelSkrot, SprawaWiersz, ZadanieWiersz } from '@/ui/wspolne';
+import { AlertPrywatnosci, KafelSkrot, ZadanieWiersz } from '@/ui/wspolne';
 
 export default function Start() {
-  const { os, k, skrzynka, przeczytane, sprawy } = useApp(); const ins = useSafeAreaInsets(); const { width } = useWindowDimensions();
+  const { os, k, skrzynka, przeczytane } = useApp(); const ins = useSafeAreaInsets(); const { width } = useWindowDimensions();
   const zadania = useZadania();
   const nowe = skrzynka.filter(m => m.nowe && !przeczytane.includes(m.id)).length;
   const dowod = os.docs.find(d => d.id === 'dowod');
@@ -56,10 +56,6 @@ export default function Start() {
         <Sekcja tytul="Do załatwienia" akcja="Kalendarz" onAkcja={() => router.push('/terminy')}>
           {zadania.length ? <Grupa>{zadania.map(z => <ZadanieWiersz key={z.h} z={z} />)}</Grupa>
             : <Karta style={{ padding: 20, alignItems: 'center' }}><Ikona n="check" size={32} color={k.ok} /><T v="bodyB" style={{ marginTop: 8 }}>Wszystko załatwione</T><T v="sub" center>Nowe sprawy pojawią się tutaj.</T></Karta>}
-        </Sekcja>
-
-        <Sekcja tytul="Sprawy w toku" akcja="Wszystkie" onAkcja={() => router.push('/terminy')}>
-          <Grupa>{sprawy.map(s => <SprawaWiersz key={s.id} s={s} />)}</Grupa>
         </Sekcja>
 
         {rcb ? (
