@@ -16,7 +16,7 @@ const POZYCJA = [0, 1, 3, 4]; // kolumny paska (środek zajmuje przycisk QR)
 function Zakladka({ name, on, onPress, badge }: { name: string; on: boolean; onPress: () => void; badge: number }) {
   const { k } = useApp(); const [t, ik] = ZAKLADKI[name];
   const s = useSharedValue(1);
-  useEffect(() => { if (on) s.set(withSequence(withTiming(0.82, { duration: 90 }), withSpring(1, { damping: 7, stiffness: 260 }))); }, [on, s]);
+  useEffect(() => { if (on) s.set(withSequence(withTiming(0.92, { duration: 80 }), withSpring(1, { damping: 14, stiffness: 260 }))); }, [on, s]);
   const st = useAnimatedStyle(() => ({ transform: [{ scale: s.value }] }));
   const c = on ? k.accInk : k.ink3;
   return (

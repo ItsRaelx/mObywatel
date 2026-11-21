@@ -3,7 +3,7 @@ import * as Haptics from 'expo-haptics';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { KeyboardAvoidingView, Platform, Pressable, TextInput, View } from 'react-native';
-import { FadeIn, FadeInDown, FadeInRight, FadeOut, LinearTransition, ZoomIn } from 'react-native-reanimated';
+import { FadeIn, FadeInDown, FadeOut, LinearTransition } from 'react-native-reanimated';
 
 import { lab, usluga, wiele, type Api, type Info, type Krok, type Pole, type Usluga, type V, type Wynik } from '@/data/uslugi';
 import type { Osoba, Wiersz as Wrsz } from '@/data/typy';
@@ -36,7 +36,7 @@ function Wstep({ w }: { w: Info }) {
 function Naglowek({ u }: { u: Usluga }) {
   return (
     <Wejscie style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 18 }}>
-      <Animated.View entering={ZoomIn.springify().damping(13)}><IkonaKafel n={u.ik} akcent size={52} /></Animated.View>
+      <IkonaKafel n={u.ik} akcent size={52} />
       <View style={{ flex: 1 }}><T v="h2">{u.t}</T><T v="sub" style={{ marginTop: 2 }}>{u.opis}</T></View>
     </Wejscie>
   );
@@ -70,7 +70,7 @@ function KartaStart({ u, os, st, start }: { u: Usluga; os: Osoba; st: { pesel: b
       <Sekcja tytul="Jak to działa" i={3} style={{ marginTop: 22 }}>
         <Karta style={{ padding: 16 }}>
           {c.jak.map((j, i) => (
-            <Animated.View key={j} entering={FadeInRight.delay(250 + i * 90).duration(400)} style={{ flexDirection: 'row', gap: 14 }}>
+            <Animated.View key={j} entering={FadeIn.delay(120 + i * 50).duration(260)} style={{ flexDirection: 'row', gap: 14 }}>
               <View style={{ alignItems: 'center' }}>
                 <View style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: i === 0 ? k.acc : k.surface2, alignItems: 'center', justifyContent: 'center' }}><T v="sub" c={i === 0 ? '#fff' : k.ink} style={{ fontWeight: '800' }}>{i + 1}</T></View>
                 {i < c.jak.length - 1 ? <View style={{ width: 2, flex: 1, minHeight: 14, backgroundColor: k.hair, marginVertical: 4 }} /> : null}
@@ -102,7 +102,7 @@ function PoleWidok({ p, v, setV, blad, i }: { p: Pole; v: V; setV: (k: string, w
           <Sprezyna key={t} skala={0.98} onPress={() => setV(p.k, t)} accessibilityRole="radio" accessibilityState={{ checked: on }}
             style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 17, backgroundColor: k.surface, borderWidth: 1.5, borderColor: on ? k.acc : k.hair }}>
             <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: on ? k.acc : k.ink3, alignItems: 'center', justifyContent: 'center' }}>
-              {on ? <Animated.View entering={ZoomIn.springify().damping(12)} style={{ width: 11, height: 11, borderRadius: 6, backgroundColor: k.acc }} /> : null}
+              {on ? <Animated.View entering={FadeIn.duration(120)} style={{ width: 11, height: 11, borderRadius: 6, backgroundColor: k.acc }} /> : null}
             </View>
             <View style={{ flex: 1 }}>
               <T v="bodyB">{t}</T>
@@ -132,7 +132,7 @@ function PoleWidok({ p, v, setV, blad, i }: { p: Pole; v: V; setV: (k: string, w
           {ik ? <IkonaKafel n={ik} size={36} /> : null}
           <T v="body" style={{ flex: 1 }}>{t}</T>
           <View style={{ width: 26, height: 26, borderRadius: 8, borderWidth: 2, borderColor: on ? k.acc : k.ink3, backgroundColor: on ? k.acc : 'transparent', alignItems: 'center', justifyContent: 'center' }}>
-            {on ? <Animated.View entering={ZoomIn.duration(180)}><Ikona n="ok" size={16} color="#fff" sw={2.8} /></Animated.View> : null}
+            {on ? <Animated.View entering={FadeIn.duration(120)}><Ikona n="ok" size={16} color="#fff" sw={2.8} /></Animated.View> : null}
           </View>
         </Pressable>
       ); })}</Grupa>
@@ -184,7 +184,7 @@ function Zalacznik({ nazwa, wart, ustaw, zly }: { nazwa: string; wart: string; u
   const { k } = useApp(); const [laduje, setLaduje] = useState(false);
   const dodaj = async () => { setLaduje(true); await czekaj(900); setLaduje(false); ustaw(nazwa); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); };
   if (wart) return (
-    <Animated.View entering={ZoomIn.springify().damping(14)}>
+    <Animated.View entering={FadeIn.duration(200)}>
       <Karta style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12 }}>
         <View style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: k.okBg, alignItems: 'center', justifyContent: 'center' }}><Ikona n={/jpg|png|zdj/.test(wart) ? 'camera' : 'doc'} size={22} color={k.ok} /></View>
         <View style={{ flex: 1 }}><T v="bodyB" n={1}>{wart}</T><T v="small">Dodano · {/zdj/.test(wart) ? '4 × 2,1 MB' : '184 kB'}</T></View>
@@ -205,12 +205,12 @@ function Wysylka({ etapy, n }: { etapy: string[]; n: number }) {
   const { k } = useApp();
   return (
     <View style={{ alignItems: 'center', paddingTop: 60 }}>
-      <Puls style={{ width: 96, height: 96, borderRadius: 48, backgroundColor: k.accBg, alignItems: 'center', justifyContent: 'center' }}><Ikona n="spark" size={42} color={k.acc} sw={2} /></Puls>
+      <View style={{ width: 96, height: 96, borderRadius: 48, backgroundColor: k.accBg, alignItems: 'center', justifyContent: 'center' }}><Ikona n="spark" size={42} color={k.acc} sw={2} /></View>
       <T v="h2" center style={{ marginTop: 22 }}>Chwileczkę…</T>
       <View style={{ marginTop: 26, gap: 14, alignSelf: 'stretch', paddingHorizontal: 20 }}>
         {etapy.map((e, i) => i > n ? null : (
           <Animated.View key={e} entering={FadeInDown.duration(300)} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-            {i < n ? <Animated.View entering={ZoomIn.springify()} style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: k.ok, alignItems: 'center', justifyContent: 'center' }}><Ikona n="ok" size={14} color="#fff" sw={2.8} /></Animated.View>
+            {i < n ? <Animated.View entering={FadeIn.duration(150)} style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: k.ok, alignItems: 'center', justifyContent: 'center' }}><Ikona n="ok" size={14} color="#fff" sw={2.8} /></Animated.View>
               : <Puls style={{ width: 24, height: 24, borderRadius: 12, borderWidth: 2.5, borderColor: k.acc }}><View /></Puls>}
             <T v="body" c={i < n ? k.ink2 : k.ink} style={{ fontWeight: i < n ? '500' : '700' }}>{i < n ? e.replace('…', '') : e}</T>
           </Animated.View>
@@ -246,8 +246,9 @@ function EkranWyniku({ w }: { w: Wynik }) {
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
               <Ikona n="route" size={20} color={k.accInk} />
               <T v="bodyB" style={{ flex: 1 }}>Dodaliśmy do Spraw w toku</T>
-              <Pill t={w.sprawa.eta} ton="a" />
+              <Ikona n="chev" size={18} color={k.ink3} />
             </View>
+            <View style={{ flexDirection: 'row', marginTop: 8 }}><Pill t={w.sprawa.eta} ton="a" ik="clock" /></View>
             <View style={{ flexDirection: 'row', gap: 4, marginTop: 14 }}>
               {w.sprawa.steps.map(([t, , s], i) => <View key={t + i} style={{ flex: 1, height: 6, borderRadius: 3, backgroundColor: s === 2 ? k.ok : s === 1 ? k.warn : k.surface2 }} />)}
             </View>
@@ -284,11 +285,11 @@ export default function UslugaEkran() {
   const [faza, setFaza] = useState<Faza>(u?.karta ? 'karta' : 'krok');
   const [nr, setNr] = useState(0); const [blad, setBlad] = useState(false); const [zgoda, setZgoda] = useState(false); const [bladZgody, setBladZgody] = useState(false);
   const [etap, setEtap] = useState(0); const [wynik, setWynik] = useState<Wynik | null>(null);
-  const [blok] = useState(() => u?.blokada?.(os, st) ?? null);
+  const [blok] = useState(() => u?.blokada?.(os, st) ?? (u?.dostepna && !u.dostepna(os, st) ? { tekst: 'Ta usługa Cię teraz nie dotyczy. Wszystkie sprawy, które możesz załatwić, znajdziesz w zakładce Usługi.', dalej: [{ t: 'Wszystkie usługi', trasa: '/uslugi', ik: 'grid' }] } : null));
   useEffect(() => { if (u?.ekran) router.replace(u.ekran as never); }, [u]);
   if (!u) return <Ekran tytul="Nie znaleziono"><T>Tej usługi nie ma w prototypie.</T></Ekran>;
   if (u.ekran) return null;
-  if (u.ekranInfo) return <><Stack.Screen options={{ title: '' }} /><EkranInfo id={u.ekranInfo} u={u} /></>;
+  if (u.ekranInfo && !blok) return <><Stack.Screen options={{ title: '' }} /><EkranInfo id={u.ekranInfo} u={u} /></>;
 
   const setV = (kl: string, w: string) => { setVals(s => ({ ...s, [kl]: w })); };
   const etapy = u.wysylka ?? (u.bezFaceId ? ['Sprawdzam dane…'] : ['Podpisuję elektronicznie…', 'Wysyłam do urzędu…']);
@@ -377,7 +378,7 @@ export default function UslugaEkran() {
         <Wejscie><T v="h2">{krok?.t}</T>{krok?.opis ? <T v="sub" style={{ marginTop: 4 }}>{krok.opis}</T> : null}</Wejscie>
         {pola.map((p, i) => <PoleWidok key={p.k} p={p} v={v} setV={setV} blad={blad} i={i + 1} />)}
         {stop ? (
-          <Animated.View entering={FadeInDown.springify()} exiting={FadeOut}>
+          <Animated.View entering={FadeIn.duration(200)} exiting={FadeOut}>
             <Karta style={{ padding: 16, marginTop: 18, backgroundColor: k.accBg, gap: 12 }}>
               <View style={{ flexDirection: 'row', gap: 10 }}><Ikona n="alert" size={22} color={k.accInk} /><T v="body" c={k.ink} style={{ flex: 1, fontWeight: '600' }}>{stop}</T></View>
               <Przycisk tytul="Zadzwoń 112" ik="phone" onPress={() => router.back()} />

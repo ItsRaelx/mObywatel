@@ -1,7 +1,7 @@
 /* Elementy ekranu wyniku: wydany dokument na „papierze”, wykres słupkowy, oś czasu, lista kontrolna. */
 import { useEffect } from 'react';
 import { View } from 'react-native';
-import Animated, { Easing, FadeInLeft, useAnimatedStyle, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
+import Animated, { Easing, FadeIn, useAnimatedStyle, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
 
 import type { Dok, Wynik } from '@/data/uslugi';
 import { useApp } from '@/state/app';
@@ -73,7 +73,7 @@ export function Os({ dane }: { dane: [string, string, boolean?][] }) {
   return (
     <Karta style={{ padding: 16 }}>
       {dane.map(([d, t, zle], i) => (
-        <Animated.View key={d + t} entering={FadeInLeft.delay(350 + i * 80).duration(380)} style={{ flexDirection: 'row', gap: 12 }}>
+        <Animated.View key={d + t} entering={FadeIn.delay(150 + i * 40).duration(240)} style={{ flexDirection: 'row', gap: 12 }}>
           <View style={{ alignItems: 'center', width: 14 }}>
             <View style={{ width: 12, height: 12, borderRadius: 6, marginTop: 4, backgroundColor: zle ? k.acc : k.ink3 }} />
             {i < dane.length - 1 ? <View style={{ width: 2, flex: 1, backgroundColor: k.hair, marginVertical: 3 }} /> : null}
@@ -93,7 +93,7 @@ export function Kontrola({ dane }: { dane: [string, string, boolean][] }) {
   return (
     <Karta>
       {dane.map(([t, w, ok], i) => (
-        <Animated.View key={t} entering={FadeInLeft.delay(250 + i * 110).duration(360)} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderTopWidth: i ? 0.5 : 0, borderTopColor: k.hair }}>
+        <Animated.View key={t} entering={FadeIn.delay(120 + i * 50).duration(240)} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderTopWidth: i ? 0.5 : 0, borderTopColor: k.hair }}>
           <View style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: ok ? k.okBg : k.accBg, alignItems: 'center', justifyContent: 'center' }}>
             <Ikona n={ok ? 'ok' : 'x'} size={15} color={ok ? k.ok : k.accInk} sw={2.6} />
           </View>

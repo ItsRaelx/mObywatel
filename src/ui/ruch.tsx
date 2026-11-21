@@ -11,7 +11,7 @@ export const SPREZYNA = { damping: 16, stiffness: 180, mass: 0.8 };
 
 /* element wjeżdżający od dołu, z opóźnieniem zależnym od pozycji na liście */
 export function Wejscie({ i = 0, children, style, gora, baza = 0 }: { i?: number; children: ReactNode; style?: StyleProp<ViewStyle>; gora?: boolean; baza?: number }) {
-  const a = (gora ? FadeInUp : FadeInDown).delay(baza + Math.min(i, 10) * 55).duration(460).easing(Easing.out(Easing.cubic));
+  const a = (gora ? FadeInUp : FadeInDown).delay(baza + Math.min(i, 6) * 35).duration(320).easing(Easing.out(Easing.cubic));
   return <Animated.View entering={a} style={style}>{children}</Animated.View>;
 }
 
@@ -32,10 +32,10 @@ export function Sprezyna({ children, style, onPress, skala = 0.965, haptyka = tr
 /* duża ikona na ekranie sukcesu: wskakuje i zostawia rozchodzący się pierścień */
 export function Pop({ children, kolor, size = 92 }: { children: ReactNode; kolor: string; size?: number }) {
   const p = useSharedValue(0);
-  useEffect(() => { p.set(withDelay(250, withRepeat(withTiming(1, { duration: 1600, easing: Easing.out(Easing.quad) }), 2, false))); }, [p]);
-  const fala = useAnimatedStyle(() => ({ opacity: interpolate(p.value, [0, 1], [0.5, 0]), transform: [{ scale: interpolate(p.value, [0, 1], [1, 1.8]) }] }));
+  useEffect(() => { p.set(withDelay(250, withTiming(1, { duration: 1100, easing: Easing.out(Easing.quad) }))); }, [p]);
+  const fala = useAnimatedStyle(() => ({ opacity: interpolate(p.value, [0, 1], [0.35, 0]), transform: [{ scale: interpolate(p.value, [0, 1], [1, 1.45]) }] }));
   return (
-    <Animated.View entering={ZoomIn.springify().damping(11).stiffness(160)} style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+    <Animated.View entering={ZoomIn.duration(260)} style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
       <Animated.View style={[{ position: 'absolute', width: size, height: size, borderRadius: size / 2, backgroundColor: kolor }, fala]} />
       {children}
     </Animated.View>
@@ -54,7 +54,7 @@ export function Luk({ r, f, kolor, grub = 4, cx, cy, opoznienie = 200 }: { r: nu
 /* delikatne pulsowanie (np. kropka „w toku”) */
 export function Puls({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const p = useSharedValue(1);
-  useEffect(() => { p.set(withRepeat(withSequence(withTiming(1.25, { duration: 700 }), withTiming(1, { duration: 700 })), -1)); }, [p]);
+  useEffect(() => { p.set(withRepeat(withSequence(withTiming(1.12, { duration: 700 }), withTiming(1, { duration: 700 })), -1)); }, [p]);
   const st = useAnimatedStyle(() => ({ transform: [{ scale: p.value }] }));
   return <Animated.View style={[style, st]}>{children}</Animated.View>;
 }

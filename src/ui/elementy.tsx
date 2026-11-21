@@ -1,7 +1,7 @@
 import { useEffect, useMemo, type ReactNode } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Animated, { FadeInDown, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import Svg, { Circle, SvgXml } from 'react-native-svg';
 
 import { kiedy, pl3 } from '@/data/typy';
@@ -80,7 +80,7 @@ export function Karta({ children, style, onPress }: { children: ReactNode; style
 }
 export function Grupa({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const k = useK(); const arr = (Array.isArray(children) ? children : [children]).flat().filter(Boolean);
-  return <Karta style={style}>{arr.map((c, i) => <Animated.View key={i} entering={FadeInDown.delay(80 + Math.min(i, 8) * 45).duration(380)} style={i ? { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: k.hair } : null}>{c}</Animated.View>)}</Karta>;
+  return <Karta style={style}>{arr.map((c, i) => <Animated.View key={i} style={i ? { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: k.hair } : null}>{c}</Animated.View>)}</Karta>;
 }
 export function IkonaKafel({ n, akcent, size = 40 }: { n: string; akcent?: boolean; size?: number }) {
   const k = useK();

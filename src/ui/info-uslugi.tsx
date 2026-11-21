@@ -2,7 +2,7 @@
 import { router } from 'expo-router';
 import { useState, type ReactNode } from 'react';
 import { Pressable, ScrollView, TextInput, View } from 'react-native';
-import Animated, { FadeIn, FadeInDown, LinearTransition, ZoomIn } from 'react-native-reanimated';
+import Animated, { FadeIn, FadeInDown, LinearTransition } from 'react-native-reanimated';
 import Svg, { Circle, SvgXml } from 'react-native-svg';
 
 import { dniDo, kiedy, pl3, type Osoba } from '@/data/typy';
@@ -44,7 +44,7 @@ function Hero({ u, children }: { u: Usluga; children?: ReactNode }) {
   return (
     <Wejscie style={{ marginBottom: 18 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-        <Animated.View entering={ZoomIn.springify().damping(13)}><IkonaKafel n={u.ik} akcent size={52} /></Animated.View>
+        <IkonaKafel n={u.ik} akcent size={52} />
         <View style={{ flex: 1 }}><T v="h2">{u.t}</T><T v="sub" style={{ marginTop: 2 }}>{u.opis}</T></View>
       </View>
       {children}
@@ -70,7 +70,7 @@ function Punkty({ u, os }: { u: Usluga; os: Osoba }) {
               <Circle cx={90} cy={90} r={78} stroke={k.surface2} strokeWidth={14} fill="none" />
               {p.n ? <Luk cx={90} cy={90} r={78} f={f} kolor={kol} grub={14} opoznienie={350} /> : null}
             </Svg>
-            <Animated.View entering={ZoomIn.delay(300).springify()} style={{ alignItems: 'center' }}>
+            <Animated.View style={{ alignItems: 'center' }}>
               <T v="h1" style={{ fontSize: 52, lineHeight: 56 }}>{p.n}</T>
               <T v="sub">z {limit} pkt</T>
             </Animated.View>
@@ -153,10 +153,10 @@ function KartaRecepty({ r, i }: { r: Recepta; i: number }) {
             {r.stan !== 'wykupiona' ? <Pill t={`Ważna do ${r.do.slice(0, 5)}`} ik="clock" ton={dniDo(r.do) < 10 ? 'a' : 'n'} /> : null}
           </View>
           {kod ? (
-            <Animated.View entering={FadeInDown.springify().damping(15)} style={{ marginTop: 16, alignItems: 'center', padding: 16, borderRadius: 16, backgroundColor: k.surface2 }}>
+            <Animated.View entering={FadeIn.duration(200)} style={{ marginTop: 16, alignItems: 'center', padding: 16, borderRadius: 16, backgroundColor: k.surface2 }}>
               <T v="cap">Kod recepty</T>
               <View style={{ flexDirection: 'row', gap: 8, marginTop: 8 }}>
-                {r.kod.split('').map((c, j) => <Animated.View key={j} entering={ZoomIn.delay(j * 70).springify()} style={{ width: 48, height: 60, borderRadius: 12, backgroundColor: k.surface, alignItems: 'center', justifyContent: 'center' }}><T v="h1" style={{ fontSize: 34 }}>{c}</T></Animated.View>)}
+                {r.kod.split('').map((c, j) => <Animated.View key={j} style={{ width: 48, height: 60, borderRadius: 12, backgroundColor: k.surface, alignItems: 'center', justifyContent: 'center' }}><T v="h1" style={{ fontSize: 34 }}>{c}</T></Animated.View>)}
               </View>
               <View style={{ marginTop: 14, padding: 8, backgroundColor: '#fff', borderRadius: 12 }}><KodQR tekst={`erecepta:${r.kod}:${r.dla}`} size={140} logo={false} /></View>
               <T v="small" center style={{ marginTop: 10 }}>W aptece podaj kod i PESEL {r.dla === os.imie ? '' : `osoby (${r.dla}) `}albo pokaż kod QR.</T>
@@ -229,7 +229,7 @@ function Szczepienia({ u, os }: { u: Usluga; os: Osoba }) {
         <Sekcja tytul={`Kalendarz: ${kto}, ${o.wiek} ${pl3(o.wiek, 'rok', 'lata', 'lat')}`} style={{ marginTop: 22 }}>
           <Karta style={{ padding: 16 }}>
             {pl.map(([t, kiedy_, s], i) => (
-              <Animated.View key={t} entering={FadeInDown.delay(i * 60)} style={{ flexDirection: 'row', gap: 12 }}>
+              <Animated.View key={t} entering={FadeIn.delay(i * 30).duration(220)} style={{ flexDirection: 'row', gap: 12 }}>
                 <View style={{ alignItems: 'center', width: 24 }}>
                   <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: s === 2 ? k.ok : s === 1 ? k.warnBg : k.surface2, borderWidth: s === 1 ? 2 : 0, borderColor: k.warn, alignItems: 'center', justifyContent: 'center' }}>{s === 2 ? <Ikona n="ok" size={13} color="#fff" sw={2.8} /> : null}</View>
                   {i < pl.length - 1 ? <View style={{ width: 2, flex: 1, minHeight: 12, backgroundColor: s === 2 ? k.ok : k.hair, marginVertical: 3 }} /> : null}
@@ -265,7 +265,7 @@ function Emerytura({ u, os }: { u: Usluga; os: Osoba }) {
       <Wejscie i={1}>
         <Karta style={{ padding: 20 }}>
           <T v="cap">Prognoza emerytury (brutto)</T>
-          <Animated.View key={w} entering={FadeInDown.springify().damping(14)}><T v="h1" style={{ fontSize: 44, lineHeight: 50, marginTop: 6 }}>{kwota.toLocaleString('pl-PL')} zł</T></Animated.View>
+          <Animated.View key={w} entering={FadeIn.duration(200)}><T v="h1" style={{ fontSize: 44, lineHeight: 50, marginTop: 6 }}>{kwota.toLocaleString('pl-PL')} zł</T></Animated.View>
           <T v="sub">miesięcznie, jeśli przejdziesz na emeryturę w wieku {w} lat ({rok + w})</T>
           <View style={{ marginTop: 18 }}><Pasek f={Math.min(1, (2026 - rok - 18) / (w - 18))} kolor={k.acc} tlo={k.surface2} h={10} /></View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 6 }}><T v="small">Start pracy</T><T v="small">{lat > 0 ? `Jeszcze ${lat} ${pl3(lat, 'rok', 'lata', 'lat')}` : 'Możesz złożyć wniosek'}</T></View>
@@ -316,7 +316,12 @@ function Kdr({ u, os }: { u: Usluga; os: Osoba }) {
     <>
       <Hero u={u} />
       <Karta style={{ padding: 18 }}><T v="body">Karta przysługuje rodzinom z co najmniej trojgiem dzieci, niezależnie od dochodu. Rodzice dostają ją dożywotnio.</T></Karta>
-      <Przycisk tytul="Sprawdź, czy przysługuje" ik="arrow" style={{ marginTop: 16 }} onPress={() => router.back()} />
+      <Grupa style={{ marginTop: 14 }}>
+        <Para k="Kto może dostać" w="rodzina z min. 3 dzieci" />
+        <Para k="Dzieci" w="do 18 lat, uczące się do 25" />
+        <Para k="Gdzie złożyć" w="urząd gminy albo online" />
+        <Para k="Opłata" w="bezpłatnie" />
+      </Grupa>
     </>
   );
   const czl = os.rodzina.length + 1;
@@ -365,12 +370,12 @@ function Ulgi({ u }: { u: Usluga }) {
         <Karta style={{ padding: 18 }}>
           <T v="cap">Kalkulator biletu (pociąg, 2 klasa)</T>
           <View style={{ marginTop: 12 }}><Chipy opcje={trasy.map(x => x[0])} v={t} set={setT} /></View>
-          <Animated.View key={t} entering={FadeInDown.springify().damping(15)} style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 12, marginTop: 16 }}>
+          <Animated.View key={t} entering={FadeIn.duration(200)} style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 12, marginTop: 16 }}>
             <View><T v="small">Normalny</T><T v="h3" c={k.ink3} style={{ textDecorationLine: 'line-through' }}>{cena} zł</T></View>
             <Ikona n="arrow" size={20} color={k.ink3} />
             <View><T v="small">Z mLegitymacją</T><T v="h1" style={{ fontSize: 38, lineHeight: 42 }}>{(cena * 0.49).toFixed(2).replace('.', ',')} zł</T></View>
           </Animated.View>
-          <Pill t={`Oszczędzasz ${(cena * 0.51).toFixed(0)} zł`} ton="g" ik="coin" />
+          <View style={{ flexDirection: 'row', marginTop: 12 }}><Pill t={`Oszczędzasz ${(cena * 0.51).toFixed(0)} zł`} ton="g" ik="coin" /></View>
         </Karta>
       </Wejscie>
       <Sekcja tytul="Co Ci przysługuje" i={2} style={{ marginTop: 22 }}>
@@ -421,7 +426,7 @@ function OcBadanie({ u, os }: { u: Usluga; os: Osoba }) {
       {auta.length > 1 ? <View style={{ marginBottom: 14 }}><Segment opcje={auta.map(z => z.plate)} v={x.plate} set={p => setWyb(auta.findIndex(z => z.plate === p))} /></View> : null}
       <Animated.View key={x.plate} entering={FadeIn.duration(300)}>
         <Karta style={{ padding: 16, alignItems: 'center' }}>
-          <Animated.View entering={FadeInDown.springify().damping(14)} style={{ width: '100%' }}><SvgXml xml={autoSvg(x.model, x.kolor)} width="100%" height={130} /></Animated.View>
+          <Animated.View style={{ width: '100%' }}><SvgXml xml={autoSvg(x.model, x.kolor)} width="100%" height={130} /></Animated.View>
           <T v="bodyB" center style={{ marginTop: 6 }}>{x.model}</T>
           <T v="sub" center>{x.plate}</T>
         </Karta>
@@ -470,7 +475,7 @@ function PrawoJazdy({ u, os }: { u: Usluga; os: Osoba }) {
       <Sekcja tytul="Twoje kategorie" i={2} style={{ marginTop: 22 }}>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
           {KAT.map(([kk], i) => { const ma = kat.includes(kk), on = wyb === kk; return (
-            <Animated.View key={kk} entering={ZoomIn.delay(150 + i * 35)}>
+            <Animated.View key={kk}>
               <Sprezyna onPress={() => setWyb(kk)} style={{ width: 58, height: 52, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: ma ? (on ? k.acc : k.accBg) : on ? k.ink : k.surface, borderWidth: 1, borderColor: ma ? 'transparent' : k.hair }}>
                 <T v="bodyB" c={ma ? (on ? '#fff' : k.accInk) : on ? k.bg : k.ink3}>{kk}</T>
               </Sprezyna>
