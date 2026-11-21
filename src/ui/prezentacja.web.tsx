@@ -8,10 +8,10 @@ import { portretSvg } from '@/lib/grafika';
 import { QR } from '@/lib/qr';
 
 const SCENARIUSZE: Record<string, string[]> = {
-  marta: ['Na ekranie Start ktoś sprawdzał Twój PESEL. Dotknij „To nie ja, zablokuj” i przejdź zgłoszenie.', 'W Dokumentach otwórz Moje pojazdy: historia badań, polisa i stan licznika Toyoty.', 'W Usługach spisz mStłuczkę. Na końcu pokażesz kod QR drugiemu kierowcy.'],
-  jan: ['Odpowiedz urzędowi skarbowemu w sprawie JPK, z fakturami w załączniku.', 'W Moich pojazdach przełącz się między Skodą a Transporterem w leasingu.', 'Zarejestruj wyjazd do Egiptu w Bezpiecznej podróży i zobacz ostrzeżenie o paszporcie Olka.'],
-  ewa: ['Twój dowód traci ważność za 48 dni. Złóż wniosek o nowy prosto z ekranu Start.', 'W Usługach otwórz Recepty i pokaż kod do apteki dla mamy.', 'Sprawdź Moją emeryturę i zobacz, jak zmienia się prognoza.'],
-  kacper: ['Zapłać mandat. Płatność potwierdzisz Face ID.', 'Sprawdź punkty karne i limit w okresie próbnym.', 'Pokaż mLegitymację i policz zniżkę na pociąg w Ulgach studenta.'],
+  alicja: ['Rano ktoś sprawdzał Twój PESEL przy pożyczce. Na ekranie Start dotknij „To nie ja” i zablokuj numer.', 'OC Kii nie odnowi się samo. Sprawdź polisę, historię badań i licznik w Moich pojazdach.', 'Odpowiedz na pismo o odpadach. Deklaracja jest już wypełniona, wystarczy podpis PIN-em.'],
+  rafal: ['ZUS pisze o niedopłacie składki. Odpowiedz z korektą w załączniku.', 'W Moich pojazdach przełącz się między Mazdą a Transitem w leasingu.', 'Zarejestruj wyjazd do Tajlandii w Bezpiecznej podróży i zobacz ostrzeżenie o paszporcie Neli.'],
+  bozena: ['Dowód traci ważność za 35 dni. Złóż wniosek o nowy prosto z ekranu Start.', 'W Usługach otwórz Recepty i pokaż w aptece kod dla męża.', 'Sprawdź Moją emeryturę: jak zmieni się kwota, jeśli popracujesz jeszcze rok albo dwa.'],
+  wiktor: ['Zapłać mandat. Płatność potwierdzisz Face ID.', 'Sprawdź punkty karne i niższy limit w okresie próbnym.', 'Pokaż mLegitymację i policz zniżkę na pociąg do Opola w Ulgach studenta.'],
 };
 
 const CSS = `
@@ -71,7 +71,7 @@ const IkonyStatusu = ({ c }: { c: string }) => (
 );
 
 export function Prezentacja() {
-  const start = OSOBA_Z_ADRESU && OSOBY[OSOBA_Z_ADRESU] ? OSOBA_Z_ADRESU : 'ewa';
+  const start = OSOBA_Z_ADRESU && OSOBY[OSOBA_Z_ADRESU] ? OSOBA_Z_ADRESU : 'alicja';
   const [osoba, setOsoba] = useState(start);
   const [motyw, setMotyw] = useState<'jasny' | 'ciemny'>(() => (typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'ciemny' : 'jasny'));
   const [pasek, setPasek] = useState({ jasny: true, ciemny: false });

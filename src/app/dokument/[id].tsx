@@ -75,10 +75,10 @@ function SzczegolyPojazdu({ plate, w }: { plate: string; w: number }) {
         <DoSkopiowania k="Numer rejestracyjny" w={plate} />
         <DoSkopiowania k="Numer VIN" w={p.vin} />
         <Para k="Badanie techniczne ważne do" w={p.badanieDo} />
-        <Para k="Stan licznika" w={`${tys(ost.licznik)}, ${ost.data}`} />
+        {ost ? <Para k="Stan licznika" w={`${tys(ost.licznik)}, ${ost.data}`} /> : null}
         <Para k="Ubezpieczenie OC" w={`${p.oc.tu}, do ${p.oc.do}`} />
       </Grupa>
-      <Rozwijane ik="check" t="Badanie techniczne" opis={`${p.badania.length} ${p.badania.length === 1 ? 'badanie' : p.badania.length < 5 ? 'badania' : 'badań'} w historii`}>
+      <Rozwijane ik="check" t="Badanie techniczne" opis={p.badania.length ? `${p.badania.length} ${p.badania.length === 1 ? 'badanie' : p.badania.length < 5 ? 'badania' : 'badań'} w historii` : `Pierwsze badanie do ${p.badanieDo}`}>
         {p.badania.map((b, i) => (
           <View key={b.data} style={{ flexDirection: 'row', gap: 12, padding: 14, borderTopWidth: i ? 0.5 : 0, borderTopColor: k.hair }}>
             <View style={{ width: 26, height: 26, borderRadius: 13, backgroundColor: b.wynik === 'pozytywny' ? k.okBg : k.accBg, alignItems: 'center', justifyContent: 'center' }}><Ikona n={b.wynik === 'pozytywny' ? 'ok' : 'x'} size={14} color={b.wynik === 'pozytywny' ? k.ok : k.accInk} sw={2.6} /></View>
@@ -97,9 +97,11 @@ function SzczegolyPojazdu({ plate, w }: { plate: string; w: number }) {
         <Para k="Wariant" w={p.oc.wariant} />
         {p.oc.leasing ? <T v="small" style={{ padding: 14, paddingTop: 0 }}>Auto jest w leasingu, polisę zwykle odnawia leasingodawca.</T> : null}
       </Rozwijane>
-      <Rozwijane ik="history" t="Stan licznika" opis="Odczyty ze stacji kontroli pojazdów">
-        <View style={{ padding: 10 }}><Wykres w={{ t: '', jedn: 'tys. km', dane: odczyty.map(b => [b.data.slice(6), Math.round(b.licznik / 1000)] as [string, number]) }} /></View>
-      </Rozwijane>
+      {odczyty.length > 1 ? (
+        <Rozwijane ik="history" t="Stan licznika" opis="Odczyty ze stacji kontroli pojazdów">
+          <View style={{ padding: 10 }}><Wykres w={{ t: '', jedn: 'tys. km', dane: odczyty.map(b => [b.data.slice(6), Math.round(b.licznik / 1000)] as [string, number]) }} /></View>
+        </Rozwijane>
+      ) : null}
       <Rozwijane ik="doc" t="Dowód rejestracyjny" opis={p.dr.nr.replace('DR/', '')}>
         <DoSkopiowania k="Seria i numer" w={p.dr.nr.replace('DR/', '')} />
         <Para k="Pierwsza rejestracja" w={p.dr.pierwsza} />

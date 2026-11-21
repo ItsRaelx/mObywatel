@@ -32,10 +32,10 @@ Zgłoszenia błędów w danych, brakującego dokumentu albo nieznanego sprawdzen
 
 | Osoba | Sprawy do sprawdzenia |
 |---|---|
-| **Marta Kowalska**, Warszawa | pismo z urzędu skarbowego, kończące się OC, zgubiony portfel, stłuczka, nowe dziecko |
-| **Jan Wiśniewski**, Kraków | pismo w sprawie VAT, dwa samochody, zastrzeżony PESEL |
-| **Ewa Nowak**, Lublin | dowód ważny jeszcze kilka tygodni, prognoza emerytury, recepty dla mamy |
-| **Kacper Zieliński**, Gdańsk | mandat i punkty karne, legitymacja studencka, miejsce głosowania |
+| **Alicja Wróbel**, Poznań, fizjoterapeutka | ktoś sprawdzał jej PESEL przy pożyczce, OC auta nie odnowi się samo, nowa deklaracja za odpady po narodzinach córki, Karta Dużej Rodziny |
+| **Rafał Sikora**, Łódź, warsztat samochodowy | niedopłata składki w ZUS, auto osobowe i dostawcze w leasingu, zastrzeżony PESEL, wyjazd do Tajlandii z dzieckiem, którego paszport jest za krótko ważny |
+| **Bożena Kaczmarek**, Szczecin, księgowa | dowód traci ważność za 35 dni, badanie auta, prognoza emerytury, recepty męża po operacji |
+| **Wiktor Szulc**, Wrocław, student | mandat i punkty w okresie próbnym, mLegitymacja i ulgi, głosowanie we Wrocławiu przy meldunku w Opolu |
 
 W pokazie działa **dowolny 4-cyfrowy PIN**, a Face ID jest tylko animacją.
 
@@ -59,7 +59,7 @@ npx serve -s dist
 ```
 
 Na szerokim ekranie strona pokazuje aplikację w ramce telefonu, z wyborem osoby, motywem i kodem QR do otwarcia na telefonie.
-Na telefonie od razu otwiera się sama aplikacja. Osobę można wskazać w adresie, na przykład `/?osoba=ewa`.
+Na telefonie od razu otwiera się sama aplikacja. Osobę można wskazać w adresie, na przykład `/?osoba=bozena`.
 
 ## Struktura
 
@@ -102,7 +102,7 @@ Treść do formularza na [mobywatel.ai](https://mobywatel.ai/#zglos).
 
 > Problem: dziś wiele spraw w mObywatelu kończy się przekierowaniem na stronę, długim formularzem albo wizytą w urzędzie. Trudno też sprawdzić, kto i kiedy korzystał z naszych danych.
 >
-> Dla kogo: dla każdego, kto ma telefon, od studenta po osobę na emeryturze. Prototyp pokazuje cztery osoby z różnymi sprawami: mamę trojga dzieci z Warszawy, przedsiębiorcę z Krakowa, nauczycielkę z Lublina i studenta z Gdańska.
+> Dla kogo: dla każdego, kto ma telefon, od studenta po osobę na emeryturze. Prototyp pokazuje cztery osoby z różnymi sprawami: mamę trojga dzieci z Poznania, właściciela warsztatu z Łodzi, księgową ze Szczecina, która opiekuje się mężem, i studenta z Wrocławia.
 >
 > Co jest najważniejsze:
 > 1. Każda sprawa w kilku krokach. Karta usługi mówi, ile to trwa i co będzie potrzebne, potem są krótkie pytania z gotowymi odpowiedziami, podsumowanie z możliwością poprawy i wynik z informacją, co dalej. Ponad 40 usług działa w ten sam sposób.
@@ -121,4 +121,3 @@ Zgody: zaznacz akceptację zasad (wymagana) i, jeśli chcesz, zgodę na publikac
 Wszelkie prawa zastrzeżone. Kod jest publiczny wyłącznie jako zgłoszenie do mObywatel Challenge: organizator i jury mogą go przeglądać, uruchamiać, oceniać i prezentować w zakresie potrzebnym do konkursu. Każde inne użycie wymaga zgody autora. Szczegóły w pliku [`LICENSE`](LICENSE).
 
 Godło, nazwa i znaki mObywatela oraz znak Karty Dużej Rodziny należą do ich właścicieli i są tu wyłącznie w celach pokazowych.
-Osoby z pokazu i ich scenariusze powstały na podstawie prototypu [mobywatel.ai](https://mobywatel.ai/), z zachowaniem informacji o jego autorze (patrz `LICENSE`).

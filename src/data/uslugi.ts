@@ -179,7 +179,7 @@ export const USLUGI: Usluga[] = [
     karta: () => ({ czas: 'ok. 2 minut, odpowiedź zwykle do 7 dni', oplata: 'bezpłatnie', potrzebne: ['Wiesz, kto wydał dokument'], jak: ['Nie znaleźliśmy tego dokumentu w rejestrach', 'Wysyłamy zapytanie do wystawcy, np. szkoły albo uczelni', 'Gdy wystawca go doda, pojawi się w Twoim portfelu'] }),
     kroki: (_, __, p) => [
       { t: 'Którego dokumentu brakuje?', pola: [{ k: 'dok', l: 'Którego dokumentu brakuje?', typ: 'wybor', v: p.dok, opcje: ['mLegitymacja szkolna', 'mLegitymacja studencka', 'mLegitymacja doktoranta', 'Karta Dużej Rodziny', 'Legitymacja emeryta-rencisty', 'Legitymacja osoby niepełnosprawnej', 'Diia.pl'] }] },
-      { t: 'Kto go wydał?', pola: [{ k: 'kto', l: 'Wystawca', ph: 'Np. Szkoła Podstawowa nr 12, Politechnika', wym: true }, { k: 'nr', l: 'Numer dokumentu (opcjonalnie)' }, { k: 'foto', l: 'Zdjęcie dokumentu (opcjonalnie)', typ: 'plik', plik: 'zdjecie-dokumentu.jpg' }] },
+      { t: 'Kto go wydał?', pola: [{ k: 'kto', l: 'Wystawca', ph: 'Np. Szkoła Podstawowa nr 41, Uniwersytet', wym: true }, { k: 'nr', l: 'Numer dokumentu (opcjonalnie)' }, { k: 'foto', l: 'Zdjęcie dokumentu (opcjonalnie)', typ: 'plik', plik: 'zdjecie-dokumentu.jpg' }] },
     ],
     przycisk: 'Wyślij zapytanie', bezFaceId: true, wysylka: ['Wysyłam zapytanie do wystawcy…'],
     wynik: v => ({ tytul: 'Zapytanie wysłane', opis: `${v.kto} dostał prośbę o dodanie dokumentu do rejestru.`, wiersze: [['Dokument', v.dok], ['Wystawca', v.kto]],
@@ -279,7 +279,7 @@ export const USLUGI: Usluga[] = [
   {
     id: 'historia-pojazdu', t: 'Historia pojazdu', opis: 'Sprawdź auto przed zakupem', kat: 'pojazdy', ik: 'search', slowa: 'kupuje auto uzywane vin przebieg licznik', bezFaceId: true,
     karta: () => ({ czas: 'kilka sekund', oplata: 'bezpłatnie', potrzebne: ['Numer rejestracyjny, VIN i data pierwszej rejestracji (z dowodu rejestracyjnego)'], jak: ['Wpisujesz dane z dowodu rejestracyjnego', 'Pokazujemy przebieg z badań, właścicieli, szkody i polisy'] }),
-    kroki: () => [{ t: 'Dane pojazdu', opis: 'Poproś sprzedającego o zdjęcie dowodu rejestracyjnego.', pola: [{ k: 'nr', l: 'Numer rejestracyjny', v: 'WE 4K221', wym: true }, { k: 'vin', l: 'VIN', v: 'WVWZZZAUZKW118204', wym: true }, { k: 'data', l: 'Data pierwszej rejestracji', v: '14.03.2019', wym: true }] }],
+    kroki: () => [{ t: 'Dane pojazdu', opis: 'Numer rejestracyjny, VIN i datę pierwszej rejestracji znajdziesz w dowodzie rejestracyjnym auta.', pola: [{ k: 'nr', l: 'Numer rejestracyjny', v: 'WE 4K221', wym: true }, { k: 'vin', l: 'VIN', v: 'WVWZZZAUZKW118204', wym: true }, { k: 'data', l: 'Data pierwszej rejestracji', v: '14.03.2019', wym: true }] }],
     przycisk: 'Sprawdź historię', wysylka: ['Szukam w CEPiK…', 'Sprawdzam bazę UFG…'],
     wynik: v => ({
       tytul: 'Volkswagen Golf 1.5 TSI, 2019', ikona: 'alert', opis: 'Uwaga: przebieg się cofnął. Zapytaj sprzedającego o różnicę albo sprawdź auto u mechanika.',
@@ -392,10 +392,10 @@ export const USLUGI: Usluga[] = [
   {
     id: 'sms', t: 'Dziwny SMS lub strona', opis: 'Sprawdzimy i zgłosimy do CERT', kat: 'bezp', ik: 'alert', slowa: 'oszustwo phishing link sms dziwny', bezFaceId: true,
     karta: () => ({ czas: 'kilka sekund', oplata: 'bezpłatnie', potrzebne: ['Treść wiadomości albo adres strony'], jak: ['Wklejasz wiadomość', 'Sprawdzamy ją na Liście Ostrzeżeń CERT Polska', 'Jeśli to oszustwo, zgłaszamy je za Ciebie'] }),
-    kroki: () => [{ t: 'Wiadomość', pola: [{ k: 'tresc', l: 'Wklej treść albo adres strony', typ: 'dlugi', v: 'Poczta: paczka zatrzymana z powodu braku opłaty 1,20 zł. Opłać: poczta-dostawa24.top/pl', wym: true }, { k: 'skad', l: 'Skąd ją masz?', typ: 'wybor', opcje: ['SMS', 'E-mail', 'Komunikator', 'Strona internetowa'] }, { k: 'dane', l: 'Czy wpisano tam Twoje dane?', typ: 'wybor', opcje: ['Nie', 'Tak, dane karty', 'Tak, login do banku'] }] }],
+    kroki: () => [{ t: 'Wiadomość', pola: [{ k: 'tresc', l: 'Wklej treść albo adres strony', typ: 'dlugi', v: 'Twoja przesyłka czeka w magazynie. Dopłać 2,49 zł za ponowne doręczenie: kurier-dopłata.click/pl', wym: true }, { k: 'skad', l: 'Skąd ją masz?', typ: 'wybor', opcje: ['SMS', 'E-mail', 'Komunikator', 'Strona internetowa'] }, { k: 'dane', l: 'Czy wpisano tam Twoje dane?', typ: 'wybor', opcje: ['Nie', 'Tak, dane karty', 'Tak, login do banku'] }] }],
     przycisk: 'Sprawdź', wysylka: ['Sprawdzam Listę Ostrzeżeń CERT Polska…', 'Analizuję adres…'],
     wynik: v => ({
-      tytul: 'To oszustwo', ikona: 'alert', opis: 'Nie otwieraj linku. Zgłosiliśmy go do CERT Polska.', wiersze: [['Domena', 'poczta-dostawa24.top']],
+      tytul: 'To oszustwo', ikona: 'alert', opis: 'Nie otwieraj linku. Zgłosiliśmy go do CERT Polska.', wiersze: [['Domena', 'kurier-dopłata.click']],
       kontrola: [['Domena zarejestrowana 3 dni temu', 'podejrzane', false], ['Na Liście Ostrzeżeń CERT', 'od wczoraj', false], ['Podszywa się pod Pocztę', 'tak', false], ['Prosi o drobną dopłatę', 'typowy wzorzec', false]],
       coDalej: v.dane === 'Nie' ? ['Usuń wiadomość.', 'Prześlij SMS na bezpłatny numer 8080, operator zablokuje nadawcę.'] : ['Od razu zablokuj kartę w aplikacji banku albo pod +48 828 828 828.', 'Zmień hasło do bankowości i zadzwoń do banku.', 'Zgłoś sprawę na policji.', 'Zastrzeż PESEL, jeśli nie jest jeszcze zastrzeżony.'],
       dalej: v.dane === 'Nie' ? [] : [{ t: 'Zastrzeż PESEL', trasa: '/usluga/zastrzez-pesel' }],
@@ -437,16 +437,16 @@ export const USLUGI: Usluga[] = [
   {
     id: 'rejestr-wyborcow', t: 'Rejestr wyborców', opis: 'Głosuj tam, gdzie mieszkasz', kat: 'inne', ik: 'vote', slowa: 'wybory glosowanie obwod',
     karta: o => ({ czas: 'ok. 1 minuty, decyzja w 3 dni', oplata: 'bezpłatnie', potrzebne: ['Adres, pod którym mieszkasz'], jak: [`Dopisujemy Cię do rejestru wyborców w gminie ${o.sc.miasto}`, 'Meldunek się nie zmienia', 'Głosujesz tam w każdych wyborach'] }),
-    kroki: o => [{ t: 'Gdzie mieszkasz', opis: o.sc.meldunek ? `Meldunek masz w ${o.sc.meldunek === 'Elbląg' ? 'Elblągu' : o.sc.meldunek}, a mieszkasz gdzie indziej? Tu to zmienisz.` : undefined, pola: [{ k: 'adres', l: 'Adres zamieszkania', v: o.moje.adres, wym: true }, { k: 'gmina', l: 'Gmina', v: o.sc.miasto, wym: true }] }],
+    kroki: o => [{ t: 'Gdzie mieszkasz', opis: o.sc.meldunek ? `Meldunek masz w ${o.sc.meldunek === 'Opole' ? 'Opolu' : o.sc.meldunek}, a mieszkasz gdzie indziej? Tu to zmienisz.` : undefined, pola: [{ k: 'adres', l: 'Adres zamieszkania', v: o.moje.adres, wym: true }, { k: 'gmina', l: 'Gmina', v: o.sc.miasto, wym: true }] }],
     wynik: (v, _, api) => { api.zalatw('glos'); return { tytul: 'Wniosek wysłany', opis: 'Decyzja przyjdzie do skrzynki.', wiersze: [['Gmina', v.gmina], ['Decyzja', 'do ' + za(3)]], sprawa: sprawa('Wpis do rejestru wyborców', `Urząd, ${v.gmina}`, 'wybory', 'Decyzja do ' + za(3).slice(0, 5), [['Wniosek', dzis.slice(0, 5), 2], ['Decyzja urzędu', 'do ' + za(3).slice(0, 5), 1], ['Wpis do rejestru', '', 0]], 'Swój lokal wyborczy zobaczysz w aplikacji przed wyborami.') }; },
   },
   {
-    id: 'podroz', t: 'Bezpieczna podróż', opis: 'Zarejestruj wyjazd w Odyseuszu', kat: 'inne', ik: 'plane', slowa: 'wakacje wyjazd egipt zagranica odyseusz paszport',
+    id: 'podroz', t: 'Bezpieczna podróż', opis: 'Zarejestruj wyjazd w Odyseuszu', kat: 'inne', ik: 'plane', slowa: 'wakacje wyjazd tajlandia zagranica odyseusz paszport',
     karta: () => ({ czas: 'ok. 2 minut', oplata: 'bezpłatnie', potrzebne: ['Kraj i daty wyjazdu'], jak: ['Rejestrujesz podróż', 'Sprawdzamy ważność paszportów', 'W razie zagrożenia konsul wyśle Ci SMS'] }),
-    wstep: o => o.id === 'jan' ? { flaga: 'Paszport Olka traci ważność 02.01.2027. Egipt wymaga paszportu ważnego co najmniej 6 miesięcy od wjazdu, więc trzeba go wymienić przed wyjazdem.' } : {},
+    wstep: o => o.id === 'rafal' ? { flaga: 'Paszport Neli traci ważność 14.03.2027. Tajlandia wymaga paszportu ważnego co najmniej 6 miesięcy od wjazdu, więc przed wyjazdem trzeba wyrobić nowy.' } : {},
     kroki: o => [
-      { t: 'Dokąd jedziesz?', pola: [{ k: 'kraj', l: 'Dokąd jedziesz?', typ: 'lista', opcje: KRAJE, v: o.id === 'jan' ? 'Egipt' : '', ph: 'Wybierz kraj', wym: true }] },
-      { t: 'Kiedy jedziesz?', opis: 'Dotknij dnia wyjazdu, a potem dnia powrotu.', pola: [{ k: 'kiedy', l: 'Termin', typ: 'okres', v: o.id === 'jan' ? '20.12.2026|03.01.2027' : '', wym: true }] },
+      { t: 'Dokąd jedziesz?', pola: [{ k: 'kraj', l: 'Dokąd jedziesz?', typ: 'lista', opcje: KRAJE, v: o.id === 'rafal' ? 'Tajlandia' : '', ph: 'Wybierz kraj', wym: true }] },
+      { t: 'Kiedy jedziesz?', opis: 'Dotknij dnia wyjazdu, a potem dnia powrotu.', pola: [{ k: 'kiedy', l: 'Termin', typ: 'okres', v: o.id === 'rafal' ? '27.12.2026|08.01.2027' : '', wym: true }] },
       { t: 'Kto jedzie?', pola: [{ k: 'kto', l: 'Kto jedzie?', typ: 'wiele', opcje: [o.imie, ...o.rodzina.map(m => m.imie)], v: o.imie }, { k: 'tel', l: 'Telefon w podróży', v: o.dane.tel, wym: true }] },
     ],
     podsumowanie: v => [['Kraj', v.kraj], ['Termin', okresTxt(v.kiedy)], ['Osoby', wiele(v.kto).join(', ')], ['Telefon', v.tel]],
@@ -468,10 +468,10 @@ export function trasaDla(q: string | null | undefined): string | null {
     [/dowod.*(waz|traci)/, '/usluga/wniosek-dowod'], [/portfel|zgubil|ukradl/, '/usluga/zgubiony-dowod'],
     [/stluczk|kolizj/, '/usluga/mstluczka'], [/kupuj|uzywan|historia pojazdu/, '/usluga/historia-pojazdu'],
     [/urodzil|urodzi/, '/usluga/narodziny'], [/sms|oszust|dziwn/, '/usluga/sms'], [/punkt/, '/usluga/punkty'],
-    [/egipt|wyjazd|wakacj/, '/usluga/podroz'], [/recept/, '/usluga/recepty'], [/emerytur/, '/usluga/emerytura'],
+    [/tajland|wyjazd|wakacj/, '/usluga/podroz'], [/recept/, '/usluga/recepty'], [/emerytur/, '/usluga/emerytura'],
     [/glosow|obwod|wybor/, '/usluga/rejestr-wyborcow'], [/niekaraln/, '/usluga/niekaralnosc'], [/szczepi/, '/usluga/szczepienia'],
     [/legitymac|znizk.*pociag/, '/usluga/ulgi-studenta'], [/prawo jazdy|prawk/, '/usluga/prawo-jazdy'],
-    [/pism|urzad\w* skarbow|decyzj|politechni|stypendi/, '/skrzynka'],
+    [/pism|urzad\w* skarbow|decyzj|stypendi/, '/skrzynka'],
     [/\boc\b|badani|przeglad|ubezpiecz/, '/usluga/oc-badanie'], [/podatek|zaplac|mandat|zus|sklad/, '/platnosci'],
     [/duzej rodziny|\bkdr\b/, '/usluga/kdr'],
   ];

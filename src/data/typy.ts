@@ -25,7 +25,7 @@ export type Osoba = {
     letter: { info: { title: string; source: string; body: string }; say?: string; draft?: string; to?: string; att?: string; after?: string };
     oc: { title: string; rows: Wiersz[]; note: string; remind: string };
     pay: Platnosc[];
-    punkty: { rows: Wiersz[]; n: number; note: string };
+    punkty: { rows: Wiersz[]; n: number; note: string; wyk?: string; data?: string; wyg?: string; gdzie?: string; probny?: string; limit20?: string };
   };
   status: string; toku: Sprawa[]; os: Termin[]; rodzina: Czlonek[];
   priv: { pesel: boolean; log: Wpis[]; zgody: [string, string, string][] };
@@ -33,7 +33,7 @@ export type Osoba = {
 };
 
 export const OSOBY = surowe as unknown as Record<string, Osoba>;
-export const OSOBY_IDS = ['marta', 'jan', 'ewa', 'kacper'] as const;
+export const OSOBY_IDS = ['alicja', 'rafal', 'bozena', 'wiktor'] as const;
 
 /* dzień pokazu: wszystkie terminy w danych liczone są od 18.10.2026 */
 export const DZIS = new Date(2026, 9, 18);

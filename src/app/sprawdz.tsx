@@ -45,7 +45,7 @@ export default function Sprawdz() {
           <View key={t} style={{ flexDirection: 'row', gap: 12, padding: 14, alignItems: 'center' }}><Ikona n={i} size={22} color={k.ink2} /><View style={{ flex: 1 }}><T v="bodyB">{t}</T><T v="sub">{o}</T></View></View>
         ))}
       </Grupa>
-      <Pressable onPress={() => setWynik(OSOBY_IDS.find(i => i !== os.id) ?? 'jan')} style={{ alignItems: 'center', padding: 16 }}>
+      <Pressable onPress={() => setWynik(OSOBY_IDS.find(i => i !== os.id) ?? 'rafal')} style={{ alignItems: 'center', padding: 16 }}>
         <T v="sub" c={k.accInk} style={{ fontWeight: '700' }}>Pokaz: zasymuluj odpowiedź drugiej osoby</T>
       </Pressable>
     </Ekran>

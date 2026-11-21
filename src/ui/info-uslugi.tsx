@@ -60,9 +60,9 @@ const PIERWSZA = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 /* ---------- punkty karne ---------- */
 function Punkty({ u, os }: { u: Usluga; os: Osoba }) {
   const { k } = useApp(); const p = os.sc.punkty;
-  const probny = os.id === 'kacper'; const limit = probny ? 20 : 24;
+  const probny = !!p.probny; const limit = probny ? 20 : 24;
   const f = p.n / limit; const kol = f > 0.6 ? k.acc : f > 0.3 ? k.warn : k.ok;
-  const wyk = p.n ? [{ t: os.id === 'kacper' ? 'Przekroczenie prędkości o 18 km/h' : 'Przekroczenie prędkości o 21-25 km/h', d: os.id === 'kacper' ? '14.10.2026' : '12.05.2026', n: p.n, wyg: os.id === 'kacper' ? '14.10.2027' : '12.05.2027', gdzie: os.id === 'kacper' ? 'Gdańsk, al. Grunwaldzka' : 'Warszawa, ul. Puławska' }] : [];
+  const wyk = p.n && p.wyk && p.data && p.wyg ? [{ t: p.wyk, d: p.data, n: p.n, wyg: p.wyg, gdzie: p.gdzie ?? '' }] : [];
   return (
     <>
       <Hero u={u} />
@@ -77,8 +77,8 @@ function Punkty({ u, os }: { u: Usluga; os: Osoba }) {
       </Karta>
       {probny ? (
         <Grupa style={{ marginTop: 12 }}>
-          <Para k="Okres próbny" w="do 14.01.2028" />
-          <Para k="Limit 20 pkt" w="do 14.01.2027" />
+          <Para k="Okres próbny" w={p.probny ?? ''} />
+          <Para k="Limit 20 pkt" w={p.limit20 ?? ''} />
         </Grupa>
       ) : null}
       <Sekcja tytul="Wykroczenia" i={3} style={{ marginTop: 22 }}>
@@ -97,27 +97,27 @@ function Punkty({ u, os }: { u: Usluga; os: Osoba }) {
 /* ---------- recepty i skierowania ---------- */
 type Recepta = { lek: string; dawka: string; do: string; kod: string; dla: string; stan: 'aktywna' | 'czesc' | 'wykupiona'; lekarz: string };
 const RECEPTY: Record<string, Recepta[]> = {
-  marta: [
-    { lek: 'Amoksycylina 250 mg/5 ml', dawka: '5 ml 2 razy dziennie, 7 dni', do: '25.10.2026', kod: '8314', dla: 'Zosia', stan: 'aktywna', lekarz: 'lek. A. Wiśniewska, Przychodnia Mokotów' },
-    { lek: 'Witamina D3 1000 j.m.', dawka: '1 kapsułka dziennie', do: '14.04.2027', kod: '2209', dla: 'Marta', stan: 'czesc', lekarz: 'lek. P. Zając' },
-    { lek: 'Ibuprofen 100 mg/5 ml', dawka: 'doraźnie przy gorączce', do: '02.10.2026', kod: '7731', dla: 'Staś', stan: 'wykupiona', lekarz: 'lek. A. Wiśniewska' },
+  alicja: [
+    { lek: 'Paracetamol 120 mg/5 ml, zawiesina', dawka: '5 ml do 4 razy dziennie przy gorączce', do: '15.11.2026', kod: '3092', dla: 'Ida', stan: 'aktywna', lekarz: 'lek. E. Grabowska, Przychodnia Rodzinna Łazarz' },
+    { lek: 'Mometazon, aerozol do nosa', dawka: '1 dawka do każdego otworu raz dziennie', do: '02.03.2027', kod: '7715', dla: 'Lena', stan: 'czesc', lekarz: 'lek. T. Banaś, Poradnia laryngologiczna' },
+    { lek: 'Kwas foliowy 0,4 mg', dawka: '1 tabletka dziennie', do: '30.09.2026', kod: '1408', dla: 'Alicja', stan: 'wykupiona', lekarz: 'lek. E. Grabowska' },
   ],
-  jan: [
-    { lek: 'Salbutamol 100 µg, inhalator', dawka: '1-2 wdechy doraźnie', do: '18.11.2026', kod: '5420', dla: 'Igor', stan: 'aktywna', lekarz: 'lek. M. Kowal, Poradnia alergologiczna' },
-    { lek: 'Budezonid 200 µg', dawka: '1 wdech 2 razy dziennie', do: '18.01.2027', kod: '5421', dla: 'Igor', stan: 'czesc', lekarz: 'lek. M. Kowal' },
+  rafal: [
+    { lek: 'Diklofenak, żel 1%', dawka: 'na bolące miejsce 3 razy dziennie', do: '20.11.2026', kod: '6024', dla: 'Rafał', stan: 'aktywna', lekarz: 'lek. P. Woźniak, Przychodnia Górna' },
+    { lek: 'Montelukast 10 mg', dawka: '1 tabletka wieczorem', do: '11.01.2027', kod: '6187', dla: 'Szymon', stan: 'czesc', lekarz: 'lek. A. Kurek, Poradnia alergologiczna' },
   ],
-  ewa: [
-    { lek: 'Bisoprolol 5 mg', dawka: '1 tabletka rano', do: '12.11.2026', kod: '4471', dla: 'Halina', stan: 'aktywna', lekarz: 'lek. J. Lis, Przychodnia Czechów' },
-    { lek: 'Atorwastatyna 20 mg', dawka: '1 tabletka wieczorem', do: '02.12.2026', kod: '4472', dla: 'Halina', stan: 'aktywna', lekarz: 'lek. J. Lis' },
-    { lek: 'Lewotyroksyna 50 µg', dawka: '1 tabletka na czczo', do: '20.03.2027', kod: '6610', dla: 'Ewa', stan: 'czesc', lekarz: 'lek. K. Pawlak' },
+  bozena: [
+    { lek: 'Enoksaparyna 40 mg, zastrzyki', dawka: '1 zastrzyk dziennie przez 4 tygodnie', do: '06.11.2026', kod: '9120', dla: 'Zbigniew', stan: 'aktywna', lekarz: 'lek. M. Stelmach, Klinika Ortopedii' },
+    { lek: 'Metamizol 500 mg', dawka: 'doraźnie przy bólu, do 3 razy dziennie', do: '30.11.2026', kod: '9121', dla: 'Zbigniew', stan: 'aktywna', lekarz: 'lek. M. Stelmach' },
+    { lek: 'Ramipryl 5 mg', dawka: '1 tabletka rano', do: '14.04.2027', kod: '2851', dla: 'Bożena', stan: 'czesc', lekarz: 'lek. R. Olszewska, Przychodnia Pogodno' },
   ],
-  kacper: [{ lek: 'Cetyryzyna 10 mg', dawka: '1 tabletka dziennie w sezonie', do: '30.09.2026', kod: '1185', dla: 'Kacper', stan: 'wykupiona', lekarz: 'lek. R. Nowicki' }],
+  wiktor: [{ lek: 'Desloratadyna 5 mg', dawka: '1 tabletka dziennie w okresie pylenia', do: '31.08.2026', kod: '4430', dla: 'Wiktor', stan: 'wykupiona', lekarz: 'lek. J. Sowa, Studencka Przychodnia Zdrowia' }],
 };
 const SKIEROWANIA: Record<string, [string, string, string, string][]> = {
-  marta: [['Poradnia ortopedyczna', 'Staś', 'Termin: 06.11.2026, 10:30', 'Szpital Dziecięcy, ul. Niekłańska 4']],
-  jan: [['Spirometria', 'Igor', 'Do umówienia', 'kod skierowania 3390']],
-  ewa: [['Poradnia kardiologiczna', 'Halina', 'Termin: 14.11.2026, 9:00', 'SPSK4, ul. Jaczewskiego 8'], ['USG tarczycy', 'Ewa', 'Do umówienia', 'kod skierowania 8820']],
-  kacper: [],
+  alicja: [['Poradnia laryngologiczna', 'Lena', 'Termin: 12.11.2026, 15:20', 'Szpital Miejski im. F. Raszei, ul. Mickiewicza 2']],
+  rafal: [['Rezonans kręgosłupa lędźwiowego', 'Rafał', 'Do umówienia', 'kod skierowania 4472']],
+  bozena: [['Rehabilitacja stacjonarna', 'Zbigniew', 'Termin: 09.11.2026, 8:00', 'Centrum Rehabilitacji Pogodno'], ['Mammografia', 'Bożena', 'Do umówienia', 'kod skierowania 7301']],
+  wiktor: [],
 };
 function KartaRecepty({ r }: { r: Recepta }) {
   const { k, os } = useApp(); const [kod, setKod] = useState(false);
@@ -148,7 +148,7 @@ function Recepty({ u, os }: { u: Usluga; os: Osoba }) {
   return (
     <>
       <Hero u={u} />
-      {os.id === 'ewa' ? <Przypis>Masz upoważnienie do konta pacjenta mamy, Haliny Nowak. Jej recepty widzisz razem ze swoimi.</Przypis> : null}
+      {os.id === 'bozena' ? <Przypis>Masz upoważnienie do konta pacjenta męża, Zbigniewa Kaczmarka. Jego recepty widzisz razem ze swoimi.</Przypis> : null}
       <View style={{ marginTop: 14, marginBottom: 14 }}><Segment opcje={['Recepty', 'Skierowania']} v={tab} set={setTab} /></View>
       {tab === 'Recepty' ? (
         <Animated.View key="r" entering={FadeIn}>
@@ -223,9 +223,9 @@ function Emerytura({ u, os }: { u: Usluga; os: Osoba }) {
   const rok = +os.moje.data_urodzenia.slice(6); const ustaw = os.plec === 'K' ? 60 : 65;
   const opcje = os.plec === 'K' ? [60, 62, 65, 67] : [65, 67, 70];
   const [w, setW] = useState(ustaw);
-  const baza = { marta: 3150, jan: 3980, ewa: 3400, kacper: 4100 }[os.id] ?? 3500;
+  const baza = ({ alicja: 3280, rafal: 3610, bozena: 3720, wiktor: 4350 } as Record<string, number>)[os.id] ?? 3500;
   const kwota = Math.round(baza * (1 + (w - ustaw) * 0.085) / 10) * 10;
-  const skladki = { marta: '228 140 zł', jan: '402 910 zł', ewa: '612 480 zł', kacper: '6 120 zł' }[os.id] ?? 'brak';
+  const skladki = ({ alicja: '254 610 zł', rafal: '371 880 zł', bozena: '598 330 zł', wiktor: '9 840 zł' } as Record<string, string>)[os.id] ?? 'brak';
   const lat = rok + w - 2026;
   return (
     <>
@@ -254,7 +254,7 @@ function Emerytura({ u, os }: { u: Usluga; os: Osoba }) {
         <Grupa>
           <Para k="Wiek emerytalny" w={`${os.moje.data_urodzenia.slice(0, 6)}${rok + ustaw}`} />
           <Para k="Zwaloryzowane składki" w={skladki} />
-          <Para k="Kapitał początkowy" w={rok < 1969 || os.id === 'ewa' ? '84 210 zł' : 'nie dotyczy'} />
+          <Para k="Kapitał początkowy" w={rok < 1969 ? '91 470 zł' : 'nie dotyczy'} />
           <Para k="Staż ubezpieczeniowy" w={`${Math.max(0, 2026 - rok - 22)} lat`} />
         </Grupa>
       </Sekcja>
@@ -330,7 +330,7 @@ function Kdr({ u, os }: { u: Usluga; os: Osoba }) {
 /* ---------- ulgi studenta ---------- */
 function Ulgi({ u }: { u: Usluga }) {
   const { k } = useApp();
-  const trasy: [string, number][] = [['Gdańsk-Warszawa', 169], ['Gdańsk-Kraków', 219], ['Gdańsk-Poznań', 129], ['Gdańsk-Słupsk', 49]];
+  const trasy: [string, number][] = [['Wrocław-Opole', 39], ['Wrocław-Poznań', 79], ['Wrocław-Kraków', 99], ['Wrocław-Warszawa', 149]];
   const [t, setT] = useState(trasy[0][0]); const cena = trasy.find(x => x[0] === t)![1];
   return (
     <>

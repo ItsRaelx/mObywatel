@@ -32,9 +32,9 @@ const C = createContext<Ctx | null>(null);
 export function AppProvider({ children }: { children: ReactNode }) {
   const sys = useColorScheme();
   const [gotowe, setGotowe] = useState(false);
-  const [t, setT] = useState<Trwale>({ osobaId: 'marta', motyw: 'system', pin: null, wprowadzenie: false });
+  const [t, setT] = useState<Trwale>({ osobaId: 'alicja', motyw: 'system', pin: null, wprowadzenie: false });
   const [odblokowana, setOdbl] = useState(false);
-  const [s, setS] = useState<Sesja>(() => sesjaDla(OSOBY.marta));
+  const [s, setS] = useState<Sesja>(() => sesjaDla(OSOBY.alicja));
   const [toastTxt, setToast] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,8 +42,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       let z: Trwale | null = v ? JSON.parse(v) as Trwale : null;
       /* strona pokazowa: osoba z adresu, bez wprowadzenia i bez blokady PIN-em */
       if (OSOBA_Z_ADRESU && OSOBY[OSOBA_Z_ADRESU]) { z = { ...(z ?? { motyw: 'system', pin: null, wprowadzenie: true }), osobaId: OSOBA_Z_ADRESU, wprowadzenie: true, pin: z?.pin ?? '1234' }; setOdbl(true); }
-      if (OSADZONA) { z = { ...(z ?? { osobaId: 'marta', motyw: 'system', pin: null, wprowadzenie: true }), wprowadzenie: true, pin: z?.pin ?? '1234' }; setOdbl(true); }
-      if (z) { if (!OSOBY[z.osobaId]) z.osobaId = 'marta'; setT(z); setS(sesjaDla(OSOBY[z.osobaId])); }
+      if (OSADZONA) { z = { ...(z ?? { osobaId: 'alicja', motyw: 'system', pin: null, wprowadzenie: true }), wprowadzenie: true, pin: z?.pin ?? '1234' }; setOdbl(true); }
+      if (z) { if (!OSOBY[z.osobaId]) z.osobaId = 'alicja'; setT(z); setS(sesjaDla(OSOBY[z.osobaId])); }
     }).finally(() => setGotowe(true));
   }, []);
 
@@ -59,7 +59,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const toast = useCallback((txt: string) => { setToast(txt); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); setTimeout(() => setToast(c => (c === txt ? null : c)), 2600); }, []);
 
   const ciemny = t.motyw === 'ciemny' || (t.motyw === 'system' && sys === 'dark');
-  const os = OSOBY[t.osobaId] ?? OSOBY.marta;
+  const os = OSOBY[t.osobaId] ?? OSOBY.alicja;
   const skrzynka = useMemo(() => [...s.pisma, ...os.skrzynka], [s.pisma, os]);
   const sprawy = useMemo(() => [...s.noweSprawy, ...os.toku], [s.noweSprawy, os]);
   const v: Ctx = {

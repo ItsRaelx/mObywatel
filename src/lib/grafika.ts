@@ -3,20 +3,19 @@
 type Portret = { skin: string; shade: string; hair: string; styl: 'long' | 'short' | 'bob' | 'messy' | 'ponytail' | 'curly' | 'kid'; shirt: string; collar: string; zarost?: boolean; okulary?: boolean; dziecko?: boolean };
 
 const P: Record<string, Portret> = {
-  marta: { skin: '#EFC6A6', shade: '#DDA987', hair: '#3F271D', styl: 'long', shirt: '#2E3646', collar: '#3B4558' },
-  jan: { skin: '#E6B591', shade: '#CF9875', hair: '#5E4E42', styl: 'short', shirt: '#DCD8D2', collar: '#C4BFB8', zarost: true },
-  ewa: { skin: '#F0C9AE', shade: '#DDAA8D', hair: '#B9A58F', styl: 'bob', shirt: '#4E5664', collar: '#5E6676', okulary: true },
-  kacper: { skin: '#EBC09E', shade: '#D6A27F', hair: '#7A5B3B', styl: 'messy', shirt: '#3A3E46', collar: '#2C2F35' },
-  tomasz: { skin: '#E9BC98', shade: '#D19C79', hair: '#2F2622', styl: 'short', shirt: '#5B6B7F', collar: '#4A586B', zarost: true },
-  zosia: { skin: '#F2CDB1', shade: '#E0B092', hair: '#6B4A33', styl: 'ponytail', shirt: '#B44B5C', collar: '#9E3E4E', dziecko: true },
-  stas: { skin: '#F3D0B6', shade: '#E2B497', hair: '#C9A56A', styl: 'kid', shirt: '#3F7A68', collar: '#356857', dziecko: true },
-  tymek: { skin: '#F5D5BD', shade: '#E5B99C', hair: '#D8B98A', styl: 'kid', shirt: '#E1B94B', collar: '#C9A43E', dziecko: true },
-  anna: { skin: '#F0C7A8', shade: '#DCA888', hair: '#C79A5B', styl: 'long', shirt: '#6A4B5E', collar: '#5A3F50' },
-  igor: { skin: '#E8BA97', shade: '#D29D7A', hair: '#2B211C', styl: 'messy', shirt: '#2F3E57', collar: '#273349', dziecko: true },
-  maja: { skin: '#F1CBAE', shade: '#DEAD8F', hair: '#5A3A28', styl: 'curly', shirt: '#4C6E9E', collar: '#3F5C85', dziecko: true },
-  olek: { skin: '#F2CFB4', shade: '#E1B396', hair: '#8C6A44', styl: 'kid', shirt: '#9E5B3B', collar: '#874D32', dziecko: true },
-  halina: { skin: '#EFCAB3', shade: '#DBAD94', hair: '#D7D3CF', styl: 'bob', shirt: '#6D5B66', collar: '#5D4D57', okulary: true },
-  michal: { skin: '#E7B793', shade: '#CF9A77', hair: '#4B3A2E', styl: 'short', shirt: '#3D4B3F', collar: '#323E34' },
+  alicja: { skin: '#F1C9AA', shade: '#DEAB8C', hair: '#8A5A36', styl: 'ponytail', shirt: '#3D5A6C', collar: '#324B5A' },
+  rafal: { skin: '#E3B08C', shade: '#CB936F', hair: '#3A302A', styl: 'short', shirt: '#4A4F57', collar: '#3C4047', zarost: true },
+  bozena: { skin: '#F0CBB2', shade: '#DCAD93', hair: '#A0522D', styl: 'bob', shirt: '#7A4E5E', collar: '#683F4F', okulary: true },
+  wiktor: { skin: '#EDC3A2', shade: '#D8A584', hair: '#1F1B19', styl: 'messy', shirt: '#2D5B4A', collar: '#244A3C' },
+  pawel: { skin: '#E8BB98', shade: '#D19D7A', hair: '#6A4E3A', styl: 'short', shirt: '#2F3D57', collar: '#273349' },
+  lena: { skin: '#F2CEB3', shade: '#E0B194', hair: '#9A6B42', styl: 'long', shirt: '#B65A7A', collar: '#9E4C68', dziecko: true },
+  franek: { skin: '#F3D1B7', shade: '#E2B598', hair: '#B98A55', styl: 'kid', shirt: '#3F7A68', collar: '#356857', dziecko: true },
+  ida: { skin: '#F6D8C2', shade: '#E7BDA1', hair: '#D9BC8F', styl: 'kid', shirt: '#E7A6B8', collar: '#D493A6', dziecko: true },
+  kasia: { skin: '#EFC5A6', shade: '#DBA787', hair: '#2E211B', styl: 'curly', shirt: '#5C6F4E', collar: '#4E5F42' },
+  szymon: { skin: '#E6B793', shade: '#CF9A77', hair: '#4B3628', styl: 'messy', shirt: '#2F3E57', collar: '#273349', dziecko: true },
+  nela: { skin: '#F1CBAE', shade: '#DEAD8F', hair: '#3E2A20', styl: 'ponytail', shirt: '#D08A3C', collar: '#B87632', dziecko: true },
+  zbigniew: { skin: '#EBC2A5', shade: '#D6A588', hair: '#CFCBC6', styl: 'short', shirt: '#5D6A73', collar: '#4E5961', okulary: true },
+  agata: { skin: '#F0C9AE', shade: '#DDAA8D', hair: '#6E3F2A', styl: 'long', shirt: '#2E3646', collar: '#3B4558' },
 };
 
 const BACK: Record<string, string> = {
@@ -36,7 +35,7 @@ const FRONT: Record<string, string> = {
 };
 
 export function portretSvg(id: string): string {
-  const p = P[id] ?? P.marta;
+  const p = P[id] ?? P.alicja;
   const k = p.dziecko;
   const head = k ? '<ellipse cx="60" cy="66" rx="23" ry="25" fill="SKIN"/>' : '<ellipse cx="60" cy="64" rx="22" ry="27" fill="SKIN"/>';
   return `<svg viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg">
@@ -68,7 +67,7 @@ const T: Record<string, Typ> = {
   van: { w: [60, 184], body: 'M18 78V26c0-6 4-10 10-10h122c10 0 16 4 22 12l18 20 18 5c8 2 14 8 14 15v10c0 3-2 5-5 5h-17a16 16 0 0 0-32 0H76a16 16 0 0 0-32 0H22c-3 0-4-2-4-5z', glass: ['M26 24h34v20H26z', 'M66 24h46v20H66z', 'M118 24h32c6 0 10 2 14 7l14 15h-60z'], door: 115 },
   city: { w: [64, 170], body: 'M34 76 33 52c0-12 5-20 17-22l70-2c14 0 22 5 32 16l8 8 30 5c8 2 14 7 14 14v5c0 4-3 6-7 6h-11a16 16 0 0 0-32 0H80a16 16 0 0 0-32 0h-8c-4 0-6-2-6-6z', glass: ['M42 47l1-8c1-4 5-5 11-5l34-1v14z', 'M94 33l24-1c10 0 18 4 26 13l2 2H94z'], door: 91 },
 };
-export const typAuta = (m: string) => { const n = (m || '').toLowerCase(); return /transporter|van|bus|sprinter|vito/.test(n) ? 'van' : /panda|yaris|aygo|\bup\b|500/.test(n) ? 'city' : /combi|kombi|touring|variant|avant|estate/.test(n) ? 'kombi' : /golf|corolla|polo|astra|focus|hatch/.test(n) ? 'hatch' : 'sedan'; };
+export const typAuta = (m: string) => { const n = (m || '').toLowerCase(); return /transporter|transit|van|bus|sprinter|vito/.test(n) ? 'van' : /panda|yaris|aygo|\bup\b|500/.test(n) ? 'city' : /combi|kombi|touring|variant|avant|estate/.test(n) ? 'kombi' : /golf|corolla|polo|astra|focus|hatch/.test(n) ? 'hatch' : 'sedan'; };
 let uid = 0;
 export function autoSvg(model: string, kolor?: string, cien = true): string {
   const t = T[typAuta(model)], c = KOLOR[(kolor || '').toLowerCase()] || KOLOR.srebrny, id = 'a' + (++uid), van = t === T.van;
