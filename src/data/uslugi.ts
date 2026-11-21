@@ -28,7 +28,9 @@ export type Usluga = {
   karta?: (o: Osoba, st: Stan) => KartaInfo; wstep?: (o: Osoba, st: Stan) => Info;
   kroki?: (o: Osoba, st: Stan, p: V) => Krok[]; ukryta?: boolean; podsumowanie?: (v: V, o: Osoba) => Wiersz[];
   zgoda?: string; przycisk?: string; bezFaceId?: boolean; platnosc?: boolean; wysylka?: string[];
-  wynik?: (v: V, o: Osoba, api: Api) => Wynik; blokada?: (o: Osoba, st: Stan) => Info | null;
+  wynik?: (v: V, o: Osoba, api: Api) => Wynik;
+  qr?: (v: V, o: Osoba) => { tytul: string; opis: string; kto: string; druga: Wiersz[] };
+  blokada?: (o: Osoba, st: Stan) => Info | null;
 };
 
 export const KATEGORIE = [
@@ -249,23 +251,30 @@ export const USLUGI: Usluga[] = [
   { id: 'mandaty', t: 'Mandaty', opis: 'Opłać i sprawdź historię', kat: 'pojazdy', ik: 'receipt', slowa: 'mandat kara grzywna policja', ekran: '/platnosci' },
   {
     id: 'mstluczka', t: 'mStłuczka', opis: 'Oświadczenie o kolizji bez druku', kat: 'pojazdy', ik: 'car', slowa: 'kolizja stluczka wypadek oswiadczenie szkoda', dostepna: o => o.docs.some(d => d.id === 'auto'),
-    karta: () => ({ czas: 'ok. 5 minut', oplata: 'bezpłatnie', potrzebne: ['Drugi kierowca z mObywatelem', 'Oba auta z polską rejestracją', 'Zgoda co do tego, kto zawinił'], jak: ['Sprawdzamy, czy nikt nie jest ranny', 'Pobieramy dane obu aut i polis z CEPiK i UFG', 'Opisujecie zdarzenie i dodajecie zdjęcia', 'Oboje podpisujecie oświadczenie w telefonach'] }),
+    karta: () => ({ czas: 'ok. 5 minut', oplata: 'bezpłatnie', potrzebne: ['Drugi kierowca z mObywatelem w telefonie', 'Oba auta zarejestrowane w Polsce', 'Zgoda co do tego, kto spowodował zdarzenie'], jak: ['Wybierasz swoją rolę i opisujesz zdarzenie', 'Pokazujesz kod QR drugiemu kierowcy', 'Drugi kierowca skanuje go w swoim mObywatelu i potwierdza szczegóły', 'Oświadczenie trafia do Was obu i do ubezpieczyciela'] }),
     kroki: o => [
       { t: 'Bezpieczeństwo', pola: [{ k: 'ranni', l: 'Czy ktoś jest ranny?', typ: 'wybor', opcje: [{ t: 'Nie, nikt', o: 'Możemy spisać oświadczenie' }, { t: 'Tak albo nie wiem', o: 'Zadzwoń pod 112' }] }, { k: 'znaki', l: 'Włączone światła awaryjne i trójkąt', typ: 'tak', v: 'tak' }], stop: v => (v.ranni.startsWith('Tak') ? 'Przy rannych nie spisujemy oświadczenia. Zadzwoń pod 112 i udziel pomocy. Policja spisze zdarzenie.' : null) },
-      { t: 'Drugi pojazd', opis: 'Dane kierowcy i polisy pobierzemy automatycznie.', pola: [{ k: 'nr', l: 'Numer rejestracyjny drugiego auta', v: 'WPI 22R31', wym: true }, { k: 'tw', l: 'Twoje auto', typ: 'wybor', opcje: auta(o) }] },
-      { t: 'Okoliczności', opis: 'Zaznacz wszystko, co pasuje.', pola: [{ k: 'kto', l: 'Kto spowodował zdarzenie?', typ: 'wybor', opcje: [{ t: 'Drugi kierowca', o: 'Szkodę pokryje jego OC' }, { t: 'Ja', o: 'Szkodę drugiego kierowcy pokryje Twoje OC' }] }, { k: 'co', l: 'Co się stało?', typ: 'wiele', opcje: ['Cofanie', 'Wyjazd z parkingu', 'Brak odstępu', 'Zmiana pasa', 'Wymuszenie pierwszeństwa', 'Skręt w lewo', 'Otwarcie drzwi'] }, { k: 'opis', l: 'Opis (opcjonalnie)', typ: 'dlugi', ph: 'Krótko, własnymi słowami' }] },
+      { t: 'Kim jesteś w tym zdarzeniu?', pola: [{ k: 'rola', l: 'Kim jesteś w tym zdarzeniu?', typ: 'wybor', opcje: [{ t: K(o, 'Poszkodowana', 'Poszkodowany'), o: 'Zdarzenie spowodował drugi kierowca. Szkodę pokryje jego OC.' }, { t: K(o, 'Sprawczyni', 'Sprawca'), o: 'Zdarzenie spowodowało Twoje auto. Szkodę drugiego kierowcy pokryje Twoje OC.' }] }] },
+      { t: 'Które auto brało udział?', pola: [{ k: 'tw', l: 'Które auto brało udział?', typ: 'wybor', opcje: auta(o) }] },
+      { t: 'Co się stało?', opis: 'Zaznacz wszystko, co pasuje.', pola: [{ k: 'co', l: 'Okoliczności', typ: 'wiele', opcje: ['Cofanie', 'Wyjazd z parkingu', 'Brak odstępu', 'Zmiana pasa', 'Wymuszenie pierwszeństwa', 'Skręt w lewo', 'Otwarcie drzwi'] }, { k: 'opis', l: 'Opis (opcjonalnie)', typ: 'dlugi', ph: 'Krótko, własnymi słowami' }] },
       { t: 'Miejsce i zdjęcia', pola: [{ k: 'gdzie', l: 'Miejsce', v: o.sc.miejsce, wym: true, podp: 'Ustaliliśmy je z lokalizacji telefonu.' }, { k: 'foto', l: 'Zdjęcia uszkodzeń', typ: 'plik', plik: '4 zdjęcia', wym: true }] },
     ],
     zgoda: 'Potwierdzam, że opis zdarzenia jest zgodny z prawdą.',
-    podsumowanie: (v, o) => [['Twoje auto', v.tw], ['Drugie auto', v.nr + ', OC TU Bałtyk'], ['Sprawca', v.kto === 'Ja' ? o.moje.imie_nazwisko : 'kierowca ' + v.nr], ['Okoliczności', wiele(v.co).join(', ') || 'brak'], ['Miejsce', v.gdzie], ['Zdjęcia', v.foto], ['Data', `${dzis}, ${new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}`]],
-    przycisk: 'Podpisz oświadczenie', wysylka: ['Podpisuję oświadczenie…', 'Czekam na podpis drugiego kierowcy…', 'Wysyłam do ubezpieczyciela…'],
-    wynik: (v, o) => ({
-      tytul: 'Oświadczenie podpisane', opis: v.kto === 'Ja' ? 'Drugi kierowca zgłosi szkodę z Twojego OC. Oświadczenie już ma.' : 'Zgłosiliśmy szkodę do ubezpieczyciela sprawcy.',
-      wiersze: [['Numer oświadczenia', nr('mS')], ...(v.kto === 'Ja' ? [] : [['Numer szkody', nr('SZ')] as Wiersz])],
-      dok: { naglowek: 'mStłuczka', tytul: 'Wspólne oświadczenie o zdarzeniu drogowym', nr: nr('mS'), tresc: [['Kierowca A', o.moje.imie_nazwisko], ['Pojazd A', v.tw], ['Pojazd B', v.nr], ['Sprawca', v.kto === 'Ja' ? 'kierowca A' : 'kierowca B'], ['Miejsce', v.gdzie]], stopka: 'Podpisane przez obu kierowców w aplikacji mObywatel' },
-      coDalej: v.kto === 'Ja' ? ['Nie musisz nic więcej robić.', 'Twoja zniżka w OC może się zmniejszyć przy odnowieniu polisy.'] : ['Ubezpieczyciel skontaktuje się w ciągu 7 dni.', 'Zrób wycenę albo naprawę w warsztacie partnerskim.', 'Wypłata zwykle do 30 dni.'],
-      sprawa: v.kto === 'Ja' ? undefined : sprawa('Szkoda z OC sprawcy', 'TU Bałtyk', 'pojazd', 'Odpowiedź do 7 dni', [['Zgłoszenie szkody', dzis.slice(0, 5), 2], ['Oględziny pojazdu', 'w toku', 1], ['Decyzja ubezpieczyciela', '', 0], ['Wypłata', 'do 30 dni', 0]], 'Ubezpieczyciel zadzwoni, żeby umówić oględziny.'),
-    }),
+    podsumowanie: (v, o) => [['Twoja rola', v.rola], ['Twoje auto', v.tw], ['Kierowca', o.moje.imie_nazwisko], ['Okoliczności', wiele(v.co).join(', ') || 'brak'], ['Miejsce', v.gdzie], ['Zdjęcia', v.foto], ['Data', `${dzis}, ${new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}`], ['Drugi kierowca', 'dane pobierzemy z jego kodu']],
+    przycisk: 'Podpisz i pokaż kod',
+    qr: v => ({ tytul: 'Pokaż kod drugiemu kierowcy', opis: 'Drugi kierowca otwiera mStłuczkę w swoim mObywatelu, wybiera „Dołącz” i skanuje ten kod.', kto: 'Piotr Lis',
+      druga: [['Kierowca', 'Piotr Lis'], ['Pojazd', 'WPI 22R31, Volkswagen Passat'], ['OC', 'TU Bałtyk, polisa BA/2026/118 204'], ['Rola', v.rola.startsWith('Poszkodowan') ? 'sprawca' : 'poszkodowany']] }),
+    wysylka: ['Pieczętuję oświadczenie…', 'Wysyłam do ubezpieczyciela…'],
+    wynik: (v, o) => {
+      const sprawca = !v.rola.startsWith('Poszkodowan');
+      return {
+        tytul: 'Oświadczenie gotowe', opis: sprawca ? 'Drugi kierowca zgłosi szkodę z Twojego OC. Oświadczenie już ma.' : 'Zgłosiliśmy szkodę do ubezpieczyciela sprawcy.',
+        wiersze: [['Numer oświadczenia', nr('mS')], ['Drugi kierowca', 'Piotr Lis, WPI 22R31'], ...(sprawca ? [] : [['Numer szkody', nr('SZ')] as Wiersz])],
+        dok: { naglowek: 'mStłuczka', tytul: 'Wspólne oświadczenie o zdarzeniu drogowym', nr: nr('mS'), tresc: [['Kierowca A', o.moje.imie_nazwisko], ['Pojazd A', v.tw], ['Kierowca B', 'Piotr Lis'], ['Pojazd B', 'WPI 22R31, Volkswagen Passat'], ['Sprawca', sprawca ? 'kierowca A' : 'kierowca B'], ['Miejsce', v.gdzie]], stopka: 'Potwierdzone przez obu kierowców, opatrzone pieczęcią elektroniczną' },
+        coDalej: sprawca ? ['Nie musisz nic więcej robić.', 'Oświadczenie jest w mStłuczce przez 3 lata.'] : ['Ubezpieczyciel skontaktuje się w ciągu 7 dni.', 'Zrób wycenę albo naprawę w warsztacie partnerskim.', 'Wypłata zwykle do 30 dni.'],
+        sprawa: sprawca ? undefined : sprawa('Szkoda z OC sprawcy', 'TU Bałtyk', 'pojazd', 'Odpowiedź do 7 dni', [['Zgłoszenie szkody', dzis.slice(0, 5), 2], ['Oględziny pojazdu', 'w toku', 1], ['Decyzja ubezpieczyciela', '', 0], ['Wypłata', 'do 30 dni', 0]], 'Ubezpieczyciel zadzwoni, żeby umówić oględziny.'),
+      };
+    },
   },
   {
     id: 'historia-pojazdu', t: 'Historia pojazdu', opis: 'Sprawdź auto przed zakupem', kat: 'pojazdy', ik: 'search', slowa: 'kupuje auto uzywane vin przebieg licznik', bezFaceId: true,

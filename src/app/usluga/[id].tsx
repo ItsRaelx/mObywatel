@@ -4,20 +4,20 @@
 import * as Haptics from 'expo-haptics';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, useWindowDimensions, View } from 'react-native';
 import { FadeIn, LinearTransition } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { lab, okresTxt, usluga, wiele, type Api, type Info, type Krok, type Pole, type Usluga, type V, type Wynik } from '@/data/uslugi';
 import { DZIS, MIESIACE, dataZ, type Osoba, type Wiersz as Wrsz } from '@/data/typy';
 import { useApp } from '@/state/app';
-import { Grupa, Ikona, IkonaKafel, Karta, Para, Przycisk, Sekcja, T, Wiersz } from '@/ui/elementy';
+import { Grupa, Ikona, IkonaKafel, Karta, KodQR, Para, Przycisk, Sekcja, T, Wiersz } from '@/ui/elementy';
 import { EkranInfo } from '@/ui/info-uslugi';
 import { potwierdz } from '@/ui/potwierdzenie';
 import { Animated, Pasek, Sprezyna } from '@/ui/ruch';
 import { DokumentPapier, Kontrola, Os, Wykres } from '@/ui/wynik';
 
-type Faza = 'karta' | 'krok' | 'sum' | 'wysylka' | 'done';
+type Faza = 'karta' | 'krok' | 'sum' | 'qr' | 'wysylka' | 'done';
 const widoczne = (k: Krok, v: V) => k.pola.filter(p => !p.gdy || p.gdy(v));
 const pusta = (p: Pole, v: V) => (p.typ === 'okres' ? !String(v[p.k] ?? '').includes('|') : !String(v[p.k] ?? '').trim());
 const czekaj = (ms: number) => new Promise(r => setTimeout(r, ms));
@@ -296,6 +296,48 @@ function Kalendarz({ wart, ustaw }: { wart: string; ustaw: (w: string) => void }
   );
 }
 
+/* ---------- potwierdzenie przez drugą osobę: kod QR do zeskanowania ---------- */
+function PolaczenieQR({ d, dalej }: { d: NonNullable<ReturnType<NonNullable<Usluga['qr']>>>; dalej: () => void }) {
+  const { k } = useApp(); const { width } = useWindowDimensions();
+  const [etap, setEtap] = useState<'czeka' | 'sprawdza' | 'ok'>('czeka'); const [sek, setSek] = useState(180);
+  const [kod] = useState(() => String(100000 + Math.floor(Math.random() * 899999)));
+  useEffect(() => { const i = setInterval(() => setSek(x => Math.max(0, x - 1)), 1000); return () => clearInterval(i); }, []);
+  useEffect(() => {
+    if (etap === 'czeka') { const t = setTimeout(() => { setEtap('sprawdza'); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); }, 5000); return () => clearTimeout(t); }
+    if (etap === 'sprawdza') { const t = setTimeout(() => { setEtap('ok'); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); }, 3500); return () => clearTimeout(t); }
+  }, [etap]);
+  return (
+    <Uklad stopka={etap === 'ok' ? <Przycisk tytul="Dalej" onPress={dalej} /> : etap === 'czeka' ? <Przycisk tytul="Pokaz: drugi kierowca skanuje" rodzaj="link" onPress={() => setEtap('sprawdza')} /> : undefined}>
+      {etap === 'czeka' ? (
+        <>
+          <Tytul t={d.tytul} opis={d.opis} />
+          <Karta style={{ padding: 18, alignItems: 'center' }}>
+            <View style={{ padding: 10, backgroundColor: '#fff', borderRadius: 16 }}><KodQR tekst={`MSTLUCZKA:${kod}`} size={Math.min(width - 120, 240)} /></View>
+            <T v="small" style={{ marginTop: 14 }}>Albo kod do wpisania</T>
+            <T v="h1" style={{ fontSize: 34, letterSpacing: 6, marginTop: 2 }}>{kod.slice(0, 3)} {kod.slice(3)}</T>
+            <T v="sub" style={{ marginTop: 6 }}>Kod ważny jeszcze {Math.floor(sek / 60)}:{String(sek % 60).padStart(2, '0')}</T>
+          </Karta>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 18, justifyContent: 'center' }}>
+            <ActivityIndicator color={k.acc} /><T v="bodyB">Czekam na drugiego kierowcę</T>
+          </View>
+        </>
+      ) : (
+        <>
+          <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: etap === 'ok' ? k.okBg : k.surface2, alignItems: 'center', justifyContent: 'center', marginTop: 8 }}>
+            {etap === 'ok' ? <Ikona n="ok" size={32} color={k.ok} sw={2.4} /> : <ActivityIndicator color={k.acc} />}
+          </View>
+          <View style={{ height: 18 }} />
+          <Tytul t={etap === 'ok' ? `${d.kto} potwierdził` : `Połączono z: ${d.kto}`} opis={etap === 'ok' ? 'Oboje potwierdziliście szczegóły zdarzenia. Oświadczenia nie można już zmienić.' : 'Drugi kierowca sprawdza szczegóły zdarzenia w swoim telefonie.'} />
+          <Sekcja tytul="Dane drugiego kierowcy">
+            <Grupa>{d.druga.map(([a, b]) => <Para key={a} k={a} w={b} />)}</Grupa>
+          </Sekcja>
+          <T v="small" style={{ marginTop: 12, marginHorizontal: 4 }}>Dane pobraliśmy z CEPiK, rejestru PESEL i bazy UFG.</T>
+        </>
+      )}
+    </Uklad>
+  );
+}
+
 /* ---------- wysyłka ---------- */
 function Wysylka({ t }: { t: string }) {
   const { k } = useApp();
@@ -387,6 +429,10 @@ export default function UslugaEkran() {
   const wykonaj = async () => {
     if (u.zgoda && !zgoda) { setBladZgody(true); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {}); return; }
     if (!u.bezFaceId && !(await potwierdz(u.platnosc ? (u.przycisk ?? 'Zapłać') : u.t, u.platnosc ? 'faceid' : 'pin'))) return;
+    if (u.qr) { setFaza('qr'); return; }
+    await wyslij();
+  };
+  const wyslij = async () => {
     setFaza('wysylka');
     for (const e of etapy) { setEtap(e); await czekaj(900); }
     const w = u.wynik!(v, os, api);
@@ -411,6 +457,7 @@ export default function UslugaEkran() {
 
   if (blok) return <>{nag}<Blokada u={u} w={blok} /></>;
   if (faza === 'karta') return <>{nag}<Start u={u} os={os} st={st} dalej={() => setFaza('krok')} /></>;
+  if (faza === 'qr' && u.qr) return <>{nag}<PolaczenieQR d={u.qr(v, os)} dalej={wyslij} /></>;
   if (faza === 'wysylka') return <>{nag}<Wysylka t={etap} /></>;
   if (faza === 'done' && wynik) return <>{nag}<EkranWyniku w={wynik} /></>;
 
