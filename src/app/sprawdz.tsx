@@ -41,7 +41,7 @@ export default function Sprawdz() {
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 }}><ActivityIndicator color={k.acc} /><T v="sub">Czekam na dane…</T></View>
       </Karta>
       <Grupa style={{ marginTop: 16 }}>
-        {[['qr', '1. Pokaż kod', 'Kod zmienia się co 30 sekund.'], ['phone', '2. Druga osoba skanuje', 'W swoim mObywatelu wybiera Kod QR → Zeskanuj kod.'], ['check', '3. Widzisz potwierdzone dane', 'Ze zdjęciem i informacją, czy dokument jest ważny.']].map(([i, t, o]) => (
+        {[['qr', '1. Pokaż kod', 'Kod zmienia się co 30 sekund.'], ['phone', '2. Druga osoba skanuje', 'W swoim mObywatelu wybiera Kod QR, a potem Zeskanuj kod.'], ['check', '3. Widzisz potwierdzone dane', 'Ze zdjęciem i informacją, czy dokument jest ważny.']].map(([i, t, o]) => (
           <View key={t} style={{ flexDirection: 'row', gap: 12, padding: 14, alignItems: 'center' }}><Ikona n={i} size={22} color={k.ink2} /><View style={{ flex: 1 }}><T v="bodyB">{t}</T><T v="sub">{o}</T></View></View>
         ))}
       </Grupa>

@@ -1,279 +1,270 @@
-/* Przepływ usługi: karta informacyjna → kroki z polami → podsumowanie i zgoda → PIN albo Face ID → wysyłka → wynik. */
+/* Podstrona usługi, wzorowana na prostych kreatorach z aplikacji bankowych:
+   start (co to jest, ile trwa i kosztuje), jedno pytanie na ekran, podsumowanie, podpis PIN-em lub Face ID, wynik.
+   Główny przycisk zawsze na dole ekranu, cofanie strzałką w nagłówku. */
 import * as Haptics from 'expo-haptics';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
-import { useEffect, useMemo, useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, TextInput, View } from 'react-native';
-import { FadeIn, FadeInDown, FadeOut, LinearTransition } from 'react-native-reanimated';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Pressable, ScrollView, TextInput, View } from 'react-native';
+import { FadeIn, LinearTransition } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { lab, usluga, wiele, type Api, type Info, type Krok, type Pole, type Usluga, type V, type Wynik } from '@/data/uslugi';
 import type { Osoba, Wiersz as Wrsz } from '@/data/typy';
 import { useApp } from '@/state/app';
-import { potwierdz } from '@/ui/potwierdzenie';
-import { Ekran, Grupa, Ikona, IkonaKafel, Karta, Notka, Para, Pill, Przycisk, Sekcja, T } from '@/ui/elementy';
+import { Grupa, Ikona, IkonaKafel, Karta, Para, Przycisk, Sekcja, T, Wiersz } from '@/ui/elementy';
 import { EkranInfo } from '@/ui/info-uslugi';
-import { Animated, Pasek, Pop, Puls, Sprezyna, Wejscie } from '@/ui/ruch';
+import { potwierdz } from '@/ui/potwierdzenie';
+import { Animated, Pasek, Sprezyna } from '@/ui/ruch';
 import { DokumentPapier, Kontrola, Os, Wykres } from '@/ui/wynik';
 
 type Faza = 'karta' | 'krok' | 'sum' | 'wysylka' | 'done';
 const widoczne = (k: Krok, v: V) => k.pola.filter(p => !p.gdy || p.gdy(v));
 const pusta = (p: Pole, v: V) => !String(v[p.k] ?? '').trim();
 const czekaj = (ms: number) => new Promise(r => setTimeout(r, ms));
+const wybieralne = (p: Pole) => p.typ === 'wybor' || p.typ === 'wiele' || (!p.typ && !!p.opcje);
+/* jedno pole wyboru na kroku: pytanie staje się tytułem ekranu, jeśli jest pytaniem; inaczej tytułem jest nazwa kroku */
+const pytanie = (kr: Krok, pola: Pole[]) => (pola.length === 1 && wybieralne(pola[0]) && /\?$/.test(pola[0].l) ? pola[0].l : kr.t);
+const etykieta = (p: Pole, kr: Krok, ile: number) => (ile === 1 && wybieralne(p) && !/\?$/.test(p.l) ? kr.t : p.l.replace(/\s*\(opcjonalnie\)/, '').replace(/\?$/, ''));
 
-function Wstep({ w }: { w: Info }) {
-  const { k, toast } = useApp();
+/* ---------- układ: przewijana treść i przycisk przypięty na dole ---------- */
+function Uklad({ children, stopka, gora }: { children: ReactNode; stopka?: ReactNode; gora?: ReactNode }) {
+  const { k } = useApp(); const ins = useSafeAreaInsets();
   return (
-    <>
-      {w.flaga ? <Wejscie><Karta style={{ padding: 14, flexDirection: 'row', gap: 10, backgroundColor: k.warnBg, marginBottom: 14 }}><Ikona n="alert" size={20} color={k.warn} /><T v="sub" c={k.ink} style={{ flex: 1, fontWeight: '600' }}>{w.flaga}</T></Karta></Wejscie> : null}
-      {w.tekst ? <Wejscie i={1}><T v="body" c={k.ink2} style={{ marginBottom: 14 }}>{w.tekst}</T></Wejscie> : null}
-      {w.wiersze?.length ? <Grupa style={{ marginBottom: 6 }}>{w.wiersze.map(([a, b]) => <Para key={a} k={a} w={b} />)}</Grupa> : null}
-      {w.uwaga ? <Notka>{w.uwaga}</Notka> : null}
-      {w.dalej?.length ? <View style={{ gap: 10, marginTop: 16 }}>{w.dalej.map((d, i) => (
-        <Wejscie key={d.t} i={i + 2}><Przycisk tytul={d.t} ik={d.ik ?? 'arrow'} rodzaj="drugi" onPress={() => (d.trasa.startsWith('toast:') ? toast(d.trasa.slice(6)) : router.push(d.trasa as never))} /></Wejscie>
-      ))}</View> : null}
-    </>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={90} style={{ flex: 1, backgroundColor: k.bg }}>
+      {gora}
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 12, paddingBottom: 24 }} keyboardShouldPersistTaps="handled">
+        <Animated.View entering={FadeIn.duration(220)}>{children}</Animated.View>
+      </ScrollView>
+      {stopka ? <View style={{ paddingHorizontal: 20, paddingTop: 10, paddingBottom: ins.bottom + 12, backgroundColor: k.bg, gap: 4 }}>{stopka}</View> : null}
+    </KeyboardAvoidingView>
+  );
+}
+function Tytul({ t, opis }: { t: string; opis?: string }) {
+  const { k } = useApp();
+  return (
+    <View style={{ marginBottom: 20 }}>
+      <T v="h1" style={{ fontSize: 28, lineHeight: 33 }}>{t}</T>
+      {opis ? <T v="body" c={k.ink2} style={{ marginTop: 8 }}>{opis}</T> : null}
+    </View>
+  );
+}
+function Wstecz({ onPress }: { onPress: () => void }) {
+  const { k } = useApp();
+  return <Pressable onPress={onPress} hitSlop={12} accessibilityRole="button" accessibilityLabel="Wstecz" style={{ paddingRight: 8 }}><Ikona n="back" size={24} color={k.accInk} sw={2} /></Pressable>;
+}
+function Ostrzezenie({ t, ton = 'a' }: { t: string; ton?: 'a' | 'r' }) {
+  const { k } = useApp();
+  return (
+    <View style={{ flexDirection: 'row', gap: 10, padding: 14, borderRadius: 16, backgroundColor: ton === 'r' ? k.accBg : k.warnBg, marginBottom: 16 }}>
+      <Ikona n="alert" size={20} color={ton === 'r' ? k.accInk : k.warn} />
+      <T v="sub" c={k.ink} style={{ flex: 1, fontWeight: '600' }}>{t}</T>
+    </View>
   );
 }
 
-function Naglowek({ u }: { u: Usluga }) {
+/* ---------- ekran, gdy usługa nie dotyczy albo już załatwiona ---------- */
+function Blokada({ u, w }: { u: Usluga; w: Info }) {
+  const { toast } = useApp();
   return (
-    <Wejscie style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 18 }}>
+    <Uklad stopka={w.dalej?.length ? w.dalej.map((d, i) => (
+      <Przycisk key={d.t} tytul={d.t} rodzaj={i ? 'link' : 'glowny'} onPress={() => (d.trasa.startsWith('toast:') ? toast(d.trasa.slice(6)) : router.push(d.trasa as never))} />
+    )) : <Przycisk tytul="Wróć" onPress={() => router.back()} />}>
       <IkonaKafel n={u.ik} akcent size={52} />
-      <View style={{ flex: 1 }}><T v="h2">{u.t}</T><T v="sub" style={{ marginTop: 2 }}>{u.opis}</T></View>
-    </Wejscie>
+      <View style={{ height: 18 }} />
+      <Tytul t={u.t} opis={w.tekst} />
+      {w.wiersze?.length ? <Grupa>{w.wiersze.map(([a, b]) => <Para key={a} k={a} w={b} />)}</Grupa> : null}
+    </Uklad>
   );
 }
 
-/* ---------- karta usługi przed startem ---------- */
-function KartaStart({ u, os, st, start }: { u: Usluga; os: Osoba; st: { pesel: boolean; zaplacone: string[] }; start: () => void }) {
+/* ---------- start usługi (wzór: Kit, Wise) ---------- */
+function Start({ u, os, st, dalej }: { u: Usluga; os: Osoba; st: { pesel: boolean; zaplacone: string[] }; dalej: () => void }) {
   const { k } = useApp(); const c = u.karta!(os, st); const wst = u.wstep?.(os, st);
-  const kroki = u.kroki?.(os, st) ?? [];
+  const potrzebne = c.potrzebne.filter(p => !/^Nic więcej/.test(p));
+  const czas = c.czas.replace(/^ok\. /, 'Około ').replace(/^kilka/, 'Kilka');
   return (
-    <>
-      <Naglowek u={u} />
-      {wst ? <Wstep w={wst} /> : null}
-      <Wejscie i={1} style={{ flexDirection: 'row', gap: 10 }}>
-        {[['clock', 'Czas', c.czas], ['coin', 'Opłata', c.oplata]].map(([ik, t, w]) => (
-          <Karta key={t} style={{ flex: 1, padding: 14 }}>
-            <Ikona n={ik} size={20} color={k.ink2} />
-            <T v="cap" style={{ marginTop: 10 }}>{t}</T>
-            <T v="bodyB" style={{ marginTop: 3 }}>{w}</T>
-          </Karta>
-        ))}
-      </Wejscie>
-      <Sekcja tytul="Co przygotować" i={2} style={{ marginTop: 22 }}>
-        <Grupa>{c.potrzebne.map(p => (
-          <View key={p} style={{ flexDirection: 'row', gap: 12, padding: 14, alignItems: 'center' }}>
-            <View style={{ width: 26, height: 26, borderRadius: 13, backgroundColor: k.okBg, alignItems: 'center', justifyContent: 'center' }}><Ikona n="ok" size={15} color={k.ok} sw={2.6} /></View>
-            <T v="body" style={{ flex: 1 }}>{p}</T>
-          </View>
-        ))}</Grupa>
-      </Sekcja>
-      <Sekcja tytul="Jak to działa" i={3} style={{ marginTop: 22 }}>
-        <Karta style={{ padding: 16 }}>
-          {c.jak.map((j, i) => (
-            <Animated.View key={j} entering={FadeIn.delay(120 + i * 50).duration(260)} style={{ flexDirection: 'row', gap: 14 }}>
-              <View style={{ alignItems: 'center' }}>
-                <View style={{ width: 28, height: 28, borderRadius: 14, backgroundColor: i === 0 ? k.acc : k.surface2, alignItems: 'center', justifyContent: 'center' }}><T v="sub" c={i === 0 ? '#fff' : k.ink} style={{ fontWeight: '800' }}>{i + 1}</T></View>
-                {i < c.jak.length - 1 ? <View style={{ width: 2, flex: 1, minHeight: 14, backgroundColor: k.hair, marginVertical: 4 }} /> : null}
-              </View>
-              <T v="body" style={{ flex: 1, paddingTop: 3, paddingBottom: i < c.jak.length - 1 ? 14 : 0 }}>{j}</T>
-            </Animated.View>
+    <Uklad stopka={<Przycisk tytul="Rozpocznij" onPress={dalej} />}>
+      <IkonaKafel n={u.ik} akcent size={52} />
+      <View style={{ height: 18 }} />
+      <Tytul t={u.t} opis={wst?.tekst ?? u.opis} />
+      {wst?.flaga ? <Ostrzezenie t={wst.flaga} /> : null}
+      <View style={{ gap: 8, marginBottom: 26 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}><Ikona n="clock" size={18} color={k.ink2} /><T v="sub" c={k.ink}>{czas}</T></View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}><Ikona n="coin" size={18} color={k.ink2} /><T v="sub" c={k.ink}>{c.oplata.charAt(0).toUpperCase() + c.oplata.slice(1)}</T></View>
+      </View>
+      {potrzebne.length ? (
+        <View style={{ marginBottom: 26 }}>
+          <T v="bodyB" style={{ marginBottom: 10 }}>Przygotuj</T>
+          {potrzebne.map(p => (
+            <View key={p} style={{ flexDirection: 'row', gap: 12, marginBottom: 10 }}>
+              <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: k.ink, marginTop: 9 }} />
+              <T v="body" style={{ flex: 1 }}>{p}</T>
+            </View>
           ))}
-        </Karta>
-      </Sekcja>
-      <Wejscie i={5}>
-        <Przycisk tytul="Rozpocznij" ik="arrow" style={{ marginTop: 24 }} onPress={start} />
-        <T v="small" center style={{ marginTop: 10 }}>{kroki.length ? `${kroki.length + 1} ${kroki.length + 1 < 5 ? 'krótkie kroki' : 'krótkich kroków'}. Możesz wrócić w każdej chwili.` : 'Jeden krok.'}</T>
-      </Wejscie>
-    </>
+        </View>
+      ) : null}
+      <T v="bodyB" style={{ marginBottom: 10 }}>Jak to działa</T>
+      {c.jak.map((j, i) => (
+        <View key={j} style={{ flexDirection: 'row', gap: 12, marginBottom: 12 }}>
+          <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: k.surface2, alignItems: 'center', justifyContent: 'center' }}><T v="small" c={k.ink} style={{ fontWeight: '800' }}>{i + 1}</T></View>
+          <T v="body" style={{ flex: 1, paddingTop: 1 }}>{j}</T>
+        </View>
+      ))}
+    </Uklad>
   );
 }
 
-/* ---------- pola formularza ---------- */
-function PoleWidok({ p, v, setV, blad, i }: { p: Pole; v: V; setV: (k: string, w: string) => void; blad: boolean; i: number }) {
+/* ---------- pola ---------- */
+function Radio({ on }: { on: boolean }) {
+  const { k } = useApp();
+  return (
+    <View style={{ width: 24, height: 24, borderRadius: 12, borderWidth: on ? 7 : 2, borderColor: on ? k.acc : k.ink3, backgroundColor: k.surface }} />
+  );
+}
+function Checkbox({ on }: { on: boolean }) {
+  const { k } = useApp();
+  return (
+    <View style={{ width: 24, height: 24, borderRadius: 7, borderWidth: 2, borderColor: on ? k.acc : k.ink3, backgroundColor: on ? k.acc : 'transparent', alignItems: 'center', justifyContent: 'center' }}>
+      {on ? <Ikona n="ok" size={15} color="#fff" sw={2.8} /> : null}
+    </View>
+  );
+}
+function Wiersz2({ onPress, children, rola, on }: { onPress: () => void; children: ReactNode; rola: 'radio' | 'checkbox' | 'switch'; on: boolean }) {
+  const { k } = useApp();
+  return (
+    <Pressable onPress={() => { Haptics.selectionAsync().catch(() => {}); onPress(); }} accessibilityRole={rola} accessibilityState={{ checked: on }}
+      style={({ pressed }) => [{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 15, paddingHorizontal: 16, minHeight: 58 }, pressed && { backgroundColor: k.surface2 }]}>
+      {children}
+    </Pressable>
+  );
+}
+function Przelacznik({ on }: { on: boolean }) {
+  const { k } = useApp();
+  return (
+    <Animated.View layout={LinearTransition.duration(160)} style={{ width: 50, height: 30, borderRadius: 15, padding: 3, backgroundColor: on ? k.ok : k.surface2, alignItems: on ? 'flex-end' : 'flex-start' }}>
+      <Animated.View layout={LinearTransition.duration(160)} style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: '#fff', shadowColor: '#000', shadowOpacity: 0.18, shadowRadius: 2, shadowOffset: { width: 0, height: 1 }, elevation: 2 }} />
+    </Animated.View>
+  );
+}
+function Zalacznik({ nazwa, wart, ustaw, zly }: { nazwa: string; wart: string; ustaw: (w: string) => void; zly: boolean }) {
+  const { k } = useApp(); const [laduje, setLaduje] = useState(false);
+  const foto = /jpg|png|zdj/.test(nazwa);
+  const dodaj = async () => { setLaduje(true); await czekaj(800); setLaduje(false); ustaw(nazwa); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); };
+  if (wart) return (
+    <Karta style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 }}>
+      <IkonaKafel n={foto ? 'camera' : 'doc'} size={40} />
+      <View style={{ flex: 1 }}><T v="bodyB" n={1}>{wart}</T><T v="small">Dodano</T></View>
+      <Pressable onPress={() => ustaw('')} hitSlop={10} accessibilityLabel="Usuń plik"><T v="sub" c={k.accInk} style={{ fontWeight: '700' }}>Usuń</T></Pressable>
+    </Karta>
+  );
+  return (
+    <Sprezyna onPress={dodaj} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, height: 58, borderRadius: 16, borderWidth: 1.5, borderStyle: 'dashed', borderColor: zly ? k.acc : k.hair, backgroundColor: k.surface }}>
+      {laduje ? <ActivityIndicator color={k.ink2} /> : <Ikona n={foto ? 'camera' : 'plus'} size={20} color={k.ink} />}
+      <T v="bodyB">{laduje ? 'Dodaję' : foto ? 'Zrób zdjęcie' : 'Dodaj plik'}</T>
+    </Sprezyna>
+  );
+}
+
+function PoleWidok({ p, v, setV, blad, jedyne }: { p: Pole; v: V; setV: (k: string, w: string) => void; blad: boolean; jedyne: boolean }) {
   const { k } = useApp();
   const wart = v[p.k] ?? ''; const zly = blad && !!p.wym && !wart.trim();
   const typ = p.typ ?? (p.opcje ? 'wybor' : 'tekst');
-  let tresc;
+  const naglowek = jedyne && (typ === 'wybor' || typ === 'wiele') ? null : <T v="sub" c={k.ink} style={{ fontWeight: '700', marginBottom: 8 }}>{p.l}</T>;
+  let tresc: ReactNode;
   if (typ === 'wybor' && p.opcje) {
-    const opisowe = p.opcje.some(o => typeof o !== 'string' && o.o) || p.opcje.some(o => lab(o).length > 22);
-    tresc = opisowe ? (
-      <View style={{ gap: 8 }}>
-        {p.opcje.map(o => { const t = lab(o), on = wart === t, op = typeof o === 'string' ? undefined : o.o; return (
-          <Sprezyna key={t} skala={0.98} onPress={() => setV(p.k, t)} accessibilityRole="radio" accessibilityState={{ checked: on }}
-            style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 17, backgroundColor: k.surface, borderWidth: 1.5, borderColor: on ? k.acc : k.hair }}>
-            <View style={{ width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: on ? k.acc : k.ink3, alignItems: 'center', justifyContent: 'center' }}>
-              {on ? <Animated.View entering={FadeIn.duration(120)} style={{ width: 11, height: 11, borderRadius: 6, backgroundColor: k.acc }} /> : null}
-            </View>
-            <View style={{ flex: 1 }}>
-              <T v="bodyB">{t}</T>
-              {op ? <T v="sub" style={{ marginTop: 2 }}>{op}</T> : null}
-            </View>
-          </Sprezyna>
-        ); })}
-      </View>
-    ) : (
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-        {p.opcje.map(o => { const t = lab(o), on = wart === t; return (
-          <Sprezyna key={t} onPress={() => setV(p.k, t)} accessibilityRole="radio" accessibilityState={{ checked: on }}
-            style={{ paddingHorizontal: 15, paddingVertical: 11, borderRadius: 14, backgroundColor: on ? k.ink : k.surface, borderWidth: 1, borderColor: on ? k.ink : k.hair, flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-            {on ? <Ikona n="ok" size={15} color={k.bg} sw={2.6} /> : null}
-            <T v="sub" c={on ? k.bg : k.ink} style={{ fontWeight: '600' }}>{t}</T>
-          </Sprezyna>
-        ); })}
-      </View>
-    );
+    tresc = <Grupa>{p.opcje.map(o => { const t = lab(o), on = wart === t, op = typeof o === 'string' ? undefined : o.o; return (
+      <Wiersz2 key={t} rola="radio" on={on} onPress={() => setV(p.k, t)}>
+        <View style={{ flex: 1 }}><T v="bodyB">{t}</T>{op ? <T v="sub" style={{ marginTop: 2 }}>{op}</T> : null}</View>
+        <Radio on={on} />
+      </Wiersz2>
+    ); })}</Grupa>;
   } else if (typ === 'wiele' && p.opcje) {
     const zazn = wiele(wart);
-    const prz = (t: string) => setV(p.k, (zazn.includes(t) ? zazn.filter(x => x !== t) : [...zazn, t]).join('|'));
-    tresc = (
-      <Grupa>{p.opcje.map(o => { const t = lab(o), on = zazn.includes(t), ik = typeof o === 'string' ? undefined : o.ik; return (
-        <Pressable key={t} onPress={() => { Haptics.selectionAsync().catch(() => {}); prz(t); }} accessibilityRole="checkbox" accessibilityState={{ checked: on }}
-          style={({ pressed }) => [{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 }, pressed && { backgroundColor: k.surface2 }]}>
-          {ik ? <IkonaKafel n={ik} size={36} /> : null}
-          <T v="body" style={{ flex: 1 }}>{t}</T>
-          <View style={{ width: 26, height: 26, borderRadius: 8, borderWidth: 2, borderColor: on ? k.acc : k.ink3, backgroundColor: on ? k.acc : 'transparent', alignItems: 'center', justifyContent: 'center' }}>
-            {on ? <Animated.View entering={FadeIn.duration(120)}><Ikona n="ok" size={16} color="#fff" sw={2.8} /></Animated.View> : null}
-          </View>
-        </Pressable>
-      ); })}</Grupa>
-    );
+    tresc = <Grupa>{p.opcje.map(o => { const t = lab(o), on = zazn.includes(t); return (
+      <Wiersz2 key={t} rola="checkbox" on={on} onPress={() => setV(p.k, (on ? zazn.filter(x => x !== t) : [...zazn, t]).join('|'))}>
+        <T v="body" style={{ flex: 1 }}>{t}</T>
+        <Checkbox on={on} />
+      </Wiersz2>
+    ); })}</Grupa>;
   } else if (typ === 'tak') {
     return (
-      <Wejscie i={i} style={{ marginTop: 12 }}>
-        <Pressable onPress={() => { Haptics.selectionAsync().catch(() => {}); setV(p.k, wart === 'tak' ? 'nie' : 'tak'); }} accessibilityRole="switch" accessibilityState={{ checked: wart === 'tak' }}>
-          <Karta style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 15 }}>
-            <View style={{ flex: 1 }}>
-              <T v="bodyB">{p.l}</T>
-              {p.podp ? <T v="sub" style={{ marginTop: 3 }}>{p.podp}</T> : null}
-            </View>
-            <Przelacznik on={wart === 'tak'} />
-          </Karta>
-        </Pressable>
-      </Wejscie>
+      <Grupa style={{ marginBottom: 12 }}>
+        <Wiersz2 rola="switch" on={wart === 'tak'} onPress={() => setV(p.k, wart === 'tak' ? 'nie' : 'tak')}>
+          <View style={{ flex: 1 }}><T v="bodyB">{p.l}</T>{p.podp ? <T v="sub" style={{ marginTop: 2 }}>{p.podp}</T> : null}</View>
+          <Przelacznik on={wart === 'tak'} />
+        </Wiersz2>
+      </Grupa>
     );
   } else if (typ === 'plik') {
     tresc = <Zalacznik nazwa={p.plik ?? 'plik.pdf'} wart={wart} ustaw={w => setV(p.k, w)} zly={zly} />;
   } else {
     const dl = typ === 'dlugi';
     tresc = (
-      <TextInput value={wart} onChangeText={t => setV(p.k, t)} placeholder={p.ph} placeholderTextColor={k.ink3} keyboardType={p.num ? 'number-pad' : 'default'} multiline={dl}
-        accessibilityLabel={p.l}
-        style={{ minHeight: dl ? 140 : 54, borderRadius: 16, paddingHorizontal: 15, paddingTop: dl ? 14 : 0, paddingBottom: dl ? 14 : 0, fontSize: 16.5, lineHeight: dl ? 23 : undefined, color: k.ink, backgroundColor: k.surface, borderWidth: 1.5, borderColor: zly ? k.acc : k.hair, textAlignVertical: dl ? 'top' : 'center' }} />
+      <TextInput value={wart} onChangeText={t => setV(p.k, t)} placeholder={p.ph} placeholderTextColor={k.ink3} keyboardType={p.num ? 'number-pad' : 'default'} multiline={dl} accessibilityLabel={p.l}
+        style={{ minHeight: dl ? 150 : 54, borderRadius: 16, paddingHorizontal: 16, paddingVertical: dl ? 14 : 0, fontSize: 17, lineHeight: dl ? 24 : undefined, color: k.ink, backgroundColor: k.surface, borderWidth: 1.5, borderColor: zly ? k.acc : k.hair, textAlignVertical: dl ? 'top' : 'center' }} />
     );
   }
   return (
-    <Wejscie i={i} style={{ marginTop: 18 }}>
-      <T v="sub" c={k.ink} style={{ fontWeight: '700', marginBottom: 8, marginLeft: 4 }}>{p.l}</T>
+    <View style={{ marginBottom: 20 }}>
+      {naglowek}
       {tresc}
-      {zly ? <Animated.View entering={FadeIn}><T v="small" c={k.accInk} style={{ marginTop: 6, marginLeft: 4, fontWeight: '600' }}>{typ === 'plik' ? 'Dodaj plik, żeby przejść dalej.' : 'To pole jest potrzebne.'}</T></Animated.View>
-        : p.podp ? <T v="small" style={{ marginTop: 6, marginLeft: 4 }}>{p.podp}</T> : null}
-    </Wejscie>
+      {zly ? <T v="small" c={k.accInk} style={{ marginTop: 6, fontWeight: '600' }}>{typ === 'plik' ? 'Dodaj plik, żeby przejść dalej.' : 'Uzupełnij to pole.'}</T>
+        : p.podp ? <T v="small" style={{ marginTop: 6 }}>{p.podp}</T> : null}
+    </View>
   );
 }
 
-function Przelacznik({ on }: { on: boolean }) {
+/* ---------- wysyłka ---------- */
+function Wysylka({ t }: { t: string }) {
   const { k } = useApp();
   return (
-    <Animated.View layout={LinearTransition.duration(180)} style={{ width: 52, height: 32, borderRadius: 16, padding: 3, backgroundColor: on ? k.ok : k.surface2, alignItems: on ? 'flex-end' : 'flex-start', borderWidth: on ? 0 : 1, borderColor: k.hair }}>
-      <Animated.View layout={LinearTransition.duration(180)} style={{ width: 26, height: 26, borderRadius: 13, backgroundColor: '#fff', shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 3, shadowOffset: { width: 0, height: 1 }, elevation: 2 }} />
-    </Animated.View>
-  );
-}
-
-function Zalacznik({ nazwa, wart, ustaw, zly }: { nazwa: string; wart: string; ustaw: (w: string) => void; zly: boolean }) {
-  const { k } = useApp(); const [laduje, setLaduje] = useState(false);
-  const dodaj = async () => { setLaduje(true); await czekaj(900); setLaduje(false); ustaw(nazwa); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); };
-  if (wart) return (
-    <Animated.View entering={FadeIn.duration(200)}>
-      <Karta style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12 }}>
-        <View style={{ width: 44, height: 44, borderRadius: 12, backgroundColor: k.okBg, alignItems: 'center', justifyContent: 'center' }}><Ikona n={/jpg|png|zdj/.test(wart) ? 'camera' : 'doc'} size={22} color={k.ok} /></View>
-        <View style={{ flex: 1 }}><T v="bodyB" n={1}>{wart}</T><T v="small">Dodano · {/zdj/.test(wart) ? '4 × 2,1 MB' : '184 kB'}</T></View>
-        <Pressable onPress={() => ustaw('')} hitSlop={10} accessibilityLabel="Usuń plik"><Ikona n="x" size={20} color={k.ink3} /></Pressable>
-      </Karta>
-    </Animated.View>
-  );
-  return (
-    <Sprezyna onPress={dodaj} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, height: 64, borderRadius: 17, borderWidth: 1.5, borderStyle: 'dashed', borderColor: zly ? k.acc : k.ink3, backgroundColor: k.surface }}>
-      {laduje ? <Puls><Ikona n="download" size={22} color={k.ink2} /></Puls> : <Ikona n={/jpg|zdj/.test(nazwa) ? 'camera' : 'plus'} size={22} color={k.ink} />}
-      <T v="bodyB">{laduje ? 'Dodaję…' : /jpg|zdj/.test(nazwa) ? 'Zrób zdjęcie albo wybierz' : 'Dodaj plik'}</T>
-    </Sprezyna>
-  );
-}
-
-/* ---------- wysyłka: animowana lista etapów ---------- */
-function Wysylka({ etapy, n }: { etapy: string[]; n: number }) {
-  const { k } = useApp();
-  return (
-    <View style={{ alignItems: 'center', paddingTop: 60 }}>
-      <View style={{ width: 96, height: 96, borderRadius: 48, backgroundColor: k.accBg, alignItems: 'center', justifyContent: 'center' }}><Ikona n="spark" size={42} color={k.acc} sw={2} /></View>
-      <T v="h2" center style={{ marginTop: 22 }}>Chwileczkę…</T>
-      <View style={{ marginTop: 26, gap: 14, alignSelf: 'stretch', paddingHorizontal: 20 }}>
-        {etapy.map((e, i) => i > n ? null : (
-          <Animated.View key={e} entering={FadeInDown.duration(300)} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-            {i < n ? <Animated.View entering={FadeIn.duration(150)} style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: k.ok, alignItems: 'center', justifyContent: 'center' }}><Ikona n="ok" size={14} color="#fff" sw={2.8} /></Animated.View>
-              : <Puls style={{ width: 24, height: 24, borderRadius: 12, borderWidth: 2.5, borderColor: k.acc }}><View /></Puls>}
-            <T v="body" c={i < n ? k.ink2 : k.ink} style={{ fontWeight: i < n ? '500' : '700' }}>{i < n ? e.replace('…', '') : e}</T>
-          </Animated.View>
-        ))}
-      </View>
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: k.bg, paddingBottom: 80 }}>
+      <ActivityIndicator size="large" color={k.acc} />
+      <Animated.View key={t} entering={FadeIn.duration(200)}><T v="bodyB" center style={{ marginTop: 18 }}>{t.replace(/…$/, '')}</T></Animated.View>
     </View>
   );
 }
 
 /* ---------- wynik ---------- */
 function EkranWyniku({ w }: { w: Wynik }) {
-  const { k } = useApp();
+  const { k } = useApp(); const [dok, setDok] = useState(false);
   const zly = w.ikona === 'alert';
   return (
-    <>
-      <View style={{ alignItems: 'center', paddingTop: 12, paddingBottom: 22 }}>
-        <Pop kolor={zly ? k.warnBg : k.okBg}>
-          <View style={{ width: 92, height: 92, borderRadius: 46, backgroundColor: zly ? k.warnBg : k.okBg, alignItems: 'center', justifyContent: 'center' }}>
-            <Ikona n={zly ? 'alert' : 'ok'} size={46} color={zly ? k.warn : k.ok} sw={2.3} />
-          </View>
-        </Pop>
-        <Wejscie i={2}><T v="h1" center style={{ marginTop: 16, fontSize: 27, lineHeight: 32 }}>{w.tytul}</T></Wejscie>
-        {w.opis ? <Wejscie i={3}><T v="body" c={k.ink2} center style={{ marginTop: 8, paddingHorizontal: 8 }}>{w.opis}</T></Wejscie> : null}
+    <Uklad stopka={<>
+      {w.dalej?.map(d => <Przycisk key={d.t} tytul={d.t} rodzaj="drugi" style={{ marginBottom: 6 }} onPress={() => router.replace(d.trasa as never)} />)}
+      <Przycisk tytul="Gotowe" onPress={() => router.back()} />
+    </>}>
+      <View style={{ width: 64, height: 64, borderRadius: 32, backgroundColor: zly ? k.warnBg : k.okBg, alignItems: 'center', justifyContent: 'center', marginTop: 8 }}>
+        <Ikona n={zly ? 'alert' : 'ok'} size={32} color={zly ? k.warn : k.ok} sw={2.4} />
       </View>
-      {w.kontrola ? <Sekcja tytul="Wynik sprawdzenia" i={3}><Kontrola dane={w.kontrola} /></Sekcja> : null}
-      {w.dok ? <Wejscie i={4} style={{ marginBottom: 18 }}><DokumentPapier d={w.dok} /></Wejscie> : null}
-      {w.wiersze.length ? <Wejscie i={4}><Grupa>{w.wiersze.map(([a, b]) => <Para key={a} k={a} w={b} />)}</Grupa></Wejscie> : null}
-      {w.wykres ? <Sekcja tytul={w.wykres.t} i={5} style={{ marginTop: 22 }}><Wykres w={w.wykres} /></Sekcja> : null}
-      {w.os ? <Sekcja tytul="Historia" i={6} style={{ marginTop: 22 }}><Os dane={w.os} /></Sekcja> : null}
-      {w.sprawa ? (
-        <Wejscie i={6} style={{ marginTop: 18 }}>
-          <Karta onPress={() => router.push(`/sprawa/${w.sprawa!.id}` as never)} style={{ padding: 16 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-              <Ikona n="route" size={20} color={k.accInk} />
-              <T v="bodyB" style={{ flex: 1 }}>Dodaliśmy do Spraw w toku</T>
-              <Ikona n="chev" size={18} color={k.ink3} />
-            </View>
-            <View style={{ flexDirection: 'row', marginTop: 8 }}><Pill t={w.sprawa.eta} ton="a" ik="clock" /></View>
-            <View style={{ flexDirection: 'row', gap: 4, marginTop: 14 }}>
-              {w.sprawa.steps.map(([t, , s], i) => <View key={t + i} style={{ flex: 1, height: 6, borderRadius: 3, backgroundColor: s === 2 ? k.ok : s === 1 ? k.warn : k.surface2 }} />)}
-            </View>
-            <T v="sub" style={{ marginTop: 10 }}>Teraz: {w.sprawa.steps.find(s => s[2] === 1)?.[0].replace(/^./, c => c.toLowerCase()) ?? 'zakończone'}. Postęp sprawdzisz w Więcej → Terminy i sprawy.</T>
-          </Karta>
-        </Wejscie>
+      <View style={{ height: 18 }} />
+      <Tytul t={w.tytul} opis={w.opis} />
+      {w.kontrola ? <View style={{ marginBottom: 16 }}><Kontrola dane={w.kontrola} /></View> : null}
+      {w.wiersze.length ? <Grupa style={{ marginBottom: 16 }}>{w.wiersze.map(([a, b]) => <Para key={a} k={a} w={b} />)}</Grupa> : null}
+      {w.dok ? (
+        <View style={{ marginBottom: 16 }}>
+          <Grupa><Wiersz ik="doc" tytul={w.dok.tytul} opis={dok ? 'Ukryj podgląd' : 'Pokaż dokument'} onPress={() => setDok(!dok)} /></Grupa>
+          {dok ? <Animated.View entering={FadeIn.duration(200)} style={{ marginTop: 12 }}><DokumentPapier d={w.dok} /></Animated.View> : null}
+        </View>
       ) : null}
+      {w.sprawa ? (
+        <Grupa style={{ marginBottom: 16 }}>
+          <Wiersz ik="route" tytul="Śledź sprawę" opis={`${w.sprawa.eta}. Znajdziesz ją w Więcej, Terminy i sprawy.`} onPress={() => router.push(`/sprawa/${w.sprawa!.id}` as never)} />
+        </Grupa>
+      ) : null}
+      {w.wykres ? <Sekcja tytul={w.wykres.t} style={{ marginTop: 8, marginBottom: 16 }}><Wykres w={w.wykres} /></Sekcja> : null}
+      {w.os ? <Sekcja tytul="Historia" style={{ marginBottom: 16 }}><Os dane={w.os} /></Sekcja> : null}
       {w.coDalej?.length ? (
-        <Sekcja tytul="Co dalej" i={7} style={{ marginTop: 22 }}>
-          <Karta style={{ padding: 16, gap: 14 }}>
-            {w.coDalej.map((c, i) => (
-              <View key={c} style={{ flexDirection: 'row', gap: 12 }}>
-                <View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: k.surface2, alignItems: 'center', justifyContent: 'center' }}><T v="small" c={k.ink} style={{ fontWeight: '800' }}>{i + 1}</T></View>
-                <T v="body" style={{ flex: 1 }}>{c}</T>
-              </View>
-            ))}
-          </Karta>
+        <Sekcja tytul="Co dalej" style={{ marginTop: 8 }}>
+          <Grupa>{w.coDalej.map(c => (
+            <View key={c} style={{ flexDirection: 'row', gap: 12, padding: 15 }}>
+              <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: k.ink3, marginTop: 9 }} />
+              <T v="body" style={{ flex: 1 }}>{c}</T>
+            </View>
+          ))}</Grupa>
         </Sekcja>
       ) : null}
-      <Wejscie i={8}>
-        {w.dalej?.map(d => <Przycisk key={d.t} tytul={d.t} rodzaj="drugi" ik="arrow" style={{ marginTop: 12 }} onPress={() => router.replace(d.trasa as never)} />)}
-        <Przycisk tytul="Gotowe" style={{ marginTop: 14 }} onPress={() => router.back()} />
-      </Wejscie>
-    </>
+    </Uklad>
   );
 }
 
@@ -285,19 +276,18 @@ export default function UslugaEkran() {
   const [v, setVals] = useState<V>(() => Object.fromEntries(kroki.flatMap(kr => kr.pola).map(p => [p.k, p.v ?? (p.typ !== 'wiele' && p.typ !== 'plik' && p.opcje?.length ? lab(p.opcje[0]) : '')])));
   const [faza, setFaza] = useState<Faza>(u?.karta ? 'karta' : 'krok');
   const [nr, setNr] = useState(0); const [blad, setBlad] = useState(false); const [zgoda, setZgoda] = useState(false); const [bladZgody, setBladZgody] = useState(false);
-  const [etap, setEtap] = useState(0); const [wynik, setWynik] = useState<Wynik | null>(null);
-  const [blok] = useState(() => u?.blokada?.(os, st) ?? (u?.dostepna && !u.dostepna(os, st) ? { tekst: 'Ta usługa Cię teraz nie dotyczy. Wszystkie sprawy, które możesz załatwić, znajdziesz w zakładce Usługi.', dalej: [{ t: 'Wszystkie usługi', trasa: '/uslugi', ik: 'grid' }] } : null));
+  const [etap, setEtap] = useState(''); const [wynik, setWynik] = useState<Wynik | null>(null);
+  const [blok] = useState(() => u?.blokada?.(os, st) ?? (u?.dostepna && !u.dostepna(os, st) ? { tekst: 'Ta usługa Cię teraz nie dotyczy. Wszystkie sprawy, które możesz załatwić, znajdziesz w zakładce Usługi.', dalej: [{ t: 'Wszystkie usługi', trasa: '/uslugi' }] } : null));
   useEffect(() => { if (u?.ekran) router.replace(u.ekran as never); }, [u]);
-  if (!u) return <Ekran tytul="Nie znaleziono"><T>Tej usługi nie ma w prototypie.</T></Ekran>;
+  if (!u) return <Uklad><Tytul t="Nie znaleziono" opis="Tej usługi nie ma w prototypie." /></Uklad>;
   if (u.ekran) return null;
   if (u.ekranInfo && !blok) return <><Stack.Screen options={{ title: '' }} /><EkranInfo id={u.ekranInfo} u={u} /></>;
 
   const setV = (kl: string, w: string) => { setVals(s => ({ ...s, [kl]: w })); };
-  const etapy = u.wysylka ?? (u.bezFaceId ? ['Sprawdzam dane…'] : ['Podpisuję elektronicznie…', 'Wysyłam do urzędu…']);
+  const etapy = u.wysylka ?? (u.bezFaceId ? ['Sprawdzam dane'] : ['Podpisuję wniosek', 'Wysyłam do urzędu']);
   const krok = kroki[nr]; const pola = krok ? widoczne(krok, v) : [];
   const stop = krok?.stop?.(v); const ostrz = krok?.ostrzezenie?.(v);
   const razem = kroki.length + 1;
-  const postep = faza === 'sum' ? 1 : (nr + 1) / razem;
 
   const api: Api = {
     zalatw: z => zmien(s => ({ zalatwione: [...s.zalatwione, z] })),
@@ -305,17 +295,17 @@ export default function UslugaEkran() {
     pismo: p => zmien(s => ({ pisma: [{ ...p, id: 'n' + Date.now() + Math.random().toString(36).slice(2, 6), kiedy: '18.10' }, ...s.pisma] })),
     zaplac: (t, kw) => zmien(s => ({ historia: [['18.10', t, kw, 'EP/2026/7 3' + String(Date.now()).slice(-5)], ...s.historia] })),
   };
-  const podsum: Wrsz[] = u.podsumowanie ? u.podsumowanie(v, os) : kroki.flatMap(kr => widoczne(kr, v)).filter(p => v[p.k]).map(p => {
-    const w = v[p.k]; const t = p.typ === 'tak' ? (w === 'tak' ? 'tak' : 'nie') : p.typ === 'wiele' ? wiele(w).join(', ') : p.typ === 'dlugi' && w.length > 60 ? w.slice(0, 60) + '…' : w;
-    return [p.typ === 'tak' ? p.l : p.l.replace(/\?$/, ''), t] as Wrsz;
+  const auto = !u.podsumowanie;
+  const podsum: (Wrsz & { krok?: number })[] = u.podsumowanie ? u.podsumowanie(v, os) : kroki.flatMap((kr, ki) => widoczne(kr, v).map(p => ({ p, kr, ki, ile: widoczne(kr, v).length }))).filter(({ p }) => v[p.k]).map(({ p, kr, ki, ile }) => {
+    const w = v[p.k]; const t = p.typ === 'tak' ? (w === 'tak' ? 'tak' : 'nie') : p.typ === 'wiele' ? wiele(w).join(', ') : p.typ === 'dlugi' && w.length > 60 ? w.slice(0, 60) + '...' : w;
+    return Object.assign([p.typ === 'tak' ? p.l : etykieta(p, kr, ile), t] as Wrsz, { krok: ki });
   });
 
   const wykonaj = async () => {
-    if (u.zgoda && !zgoda) { setBladZgody(true); return; }
+    if (u.zgoda && !zgoda) { setBladZgody(true); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {}); return; }
     if (!u.bezFaceId && !(await potwierdz(u.platnosc ? (u.przycisk ?? 'Zapłać') : u.t, u.platnosc ? 'faceid' : 'pin'))) return;
-    setFaza('wysylka'); setEtap(0);
-    for (let i = 0; i < etapy.length; i++) { setEtap(i); await czekaj(850); }
-    setEtap(etapy.length); await czekaj(300);
+    setFaza('wysylka');
+    for (const e of etapy) { setEtap(e); await czekaj(900); }
     const w = u.wynik!(v, os, api);
     if (w.sprawa) { const s = w.sprawa; zmien(x => ({ noweSprawy: [s, ...x.noweSprawy] })); }
     Haptics.notificationAsync(w.ikona === 'alert' ? Haptics.NotificationFeedbackType.Warning : Haptics.NotificationFeedbackType.Success).catch(() => {});
@@ -327,69 +317,58 @@ export default function UslugaEkran() {
     setBlad(false);
     if (nr < kroki.length - 1) setNr(nr + 1); else setFaza('sum');
   };
-  const wstecz = () => { setBlad(false); if (faza === 'sum') setFaza('krok'); else if (nr > 0) setNr(nr - 1); else if (u.karta) setFaza('karta'); else router.back(); };
+  const wstecz = () => { setBlad(false); if (faza === 'sum') setFaza('krok'); else if (faza === 'krok' && nr > 0) setNr(nr - 1); else if (faza === 'krok' && u.karta) setFaza('karta'); else router.back(); };
 
-  const tytulNag = faza === 'done' || faza === 'wysylka' || faza === 'karta' || blok || (faza === 'krok' && nr === 0 && !u.karta) ? '' : u.t;
-  const nag = <Stack.Screen options={{ title: tytulNag, headerBackVisible: faza !== 'wysylka', gestureEnabled: faza !== 'wysylka' }} />;
+  const wKreatorze = faza === 'krok' || faza === 'sum';
+  const nag = <Stack.Screen options={{
+    title: wKreatorze ? u.t : '', headerBackVisible: faza === 'karta' || !!blok,
+    headerLeft: wKreatorze ? () => <Wstecz onPress={wstecz} /> : undefined, gestureEnabled: faza === 'karta' || !!blok,
+  }} />;
+  const pasek = <View style={{ paddingHorizontal: 20, paddingTop: 4 }}><Pasek f={faza === 'sum' ? 1 : (nr + 1) / razem} kolor={k.acc} tlo={k.surface2} h={4} /></View>;
 
-  if (blok) return <Ekran>{nag}<Naglowek u={u} /><Wstep w={blok} /></Ekran>;
-  if (faza === 'karta') return <Ekran key="karta">{nag}<KartaStart u={u} os={os} st={st} start={() => setFaza('krok')} /></Ekran>;
-  if (faza === 'wysylka') return <Ekran key="wys">{nag}<Wysylka etapy={etapy} n={etap} /></Ekran>;
-  if (faza === 'done' && wynik) return <Ekran key="done">{nag}<EkranWyniku w={wynik} /></Ekran>;
-
-  const pasek = (
-    <View style={{ marginBottom: 18 }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}>
-        <T v="cap" c={k.accInk}>Krok {faza === 'sum' ? razem : nr + 1} z {razem}</T>
-        <T v="cap">{faza === 'sum' ? 'Podsumowanie' : krok?.t}</T>
-      </View>
-      <Pasek f={postep} kolor={k.acc} tlo={k.surface2} />
-    </View>
-  );
+  if (blok) return <>{nag}<Blokada u={u} w={blok} /></>;
+  if (faza === 'karta') return <>{nag}<Start u={u} os={os} st={st} dalej={() => setFaza('krok')} /></>;
+  if (faza === 'wysylka') return <>{nag}<Wysylka t={etap} /></>;
+  if (faza === 'done' && wynik) return <>{nag}<EkranWyniku w={wynik} /></>;
 
   if (faza === 'sum') return (
-    <Ekran key="sum">{nag}{pasek}
-      <Wejscie><T v="h2">Sprawdź i potwierdź</T><T v="sub" style={{ marginTop: 4, marginBottom: 14 }}>Coś się nie zgadza? Wróć i popraw.</T></Wejscie>
-      <Wejscie i={1}><Grupa>{podsum.map(([a, b]) => <Para key={a} k={a} w={b} />)}</Grupa></Wejscie>
-      {u.zgoda ? (
-        <Wejscie i={2}>
-          <Pressable onPress={() => { setZgoda(!zgoda); setBladZgody(false); Haptics.selectionAsync().catch(() => {}); }} accessibilityRole="checkbox" accessibilityState={{ checked: zgoda }}
-            style={{ flexDirection: 'row', gap: 12, alignItems: 'center', marginTop: 16, padding: 14, borderRadius: 16, borderWidth: 1.5, borderColor: bladZgody ? k.acc : 'transparent', backgroundColor: bladZgody ? k.accBg : 'transparent' }}>
-            <View style={{ width: 26, height: 26, borderRadius: 8, borderWidth: 2, borderColor: zgoda ? k.acc : k.ink3, backgroundColor: zgoda ? k.acc : 'transparent', alignItems: 'center', justifyContent: 'center' }}>
-              {zgoda ? <Ikona n="ok" size={16} color="#fff" sw={2.8} /> : null}
-            </View>
-            <T v="sub" c={k.ink} style={{ flex: 1 }}>{u.zgoda}</T>
+    <>{nag}
+      <Uklad key="sum" gora={pasek} stopka={<>
+        <Przycisk tytul={u.przycisk ?? 'Podpisz i wyślij'} onPress={wykonaj} />
+        {!u.bezFaceId ? <T v="small" center style={{ marginTop: 6 }}>{u.platnosc ? 'Płatność potwierdzisz Face ID.' : 'Podpiszesz PIN-em mObywatela.'}</T> : null}
+      </>}>
+        <Tytul t="Czy wszystko się zgadza?" opis={auto ? 'Dotknij wiersza, żeby go poprawić.' : 'Jeśli coś się nie zgadza, cofnij się i popraw.'} />
+        <Grupa>{podsum.map(r => (
+          <Pressable key={r[0]} disabled={!auto} onPress={() => { setNr(r.krok ?? 0); setFaza('krok'); }}
+            style={({ pressed }) => [{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, paddingHorizontal: 16 }, pressed && { backgroundColor: k.surface2 }]}>
+            <T v="sub" c={k.ink2} style={{ flexShrink: 0, maxWidth: '45%' }}>{r[0]}</T>
+            <T v="sub" c={k.ink} n={2} style={{ flex: 1, textAlign: 'right', fontWeight: '600' }}>{r[1]}</T>
+            {auto ? <Ikona n="chev" size={16} color={k.ink3} /> : null}
           </Pressable>
-        </Wejscie>
-      ) : null}
-      <Wejscie i={3}>
-        <Przycisk tytul={u.przycisk ?? 'Podpisz i wyślij'} ik={u.bezFaceId ? undefined : u.platnosc ? 'faceid' : 'key'} style={{ marginTop: 18 }} onPress={wykonaj} />
-        <Przycisk tytul="Wróć i popraw" rodzaj="link" onPress={wstecz} />
-        {!u.bezFaceId ? <T v="small" center style={{ marginTop: 4 }}>{u.platnosc ? 'Płatność potwierdzisz Face ID, a wniosek podpiszemy Twoim profilem.' : 'Podpiszesz PIN-em mObywatela. To podpis zaufany.'}</T> : null}
-      </Wejscie>
-    </Ekran>
+        ))}</Grupa>
+        {u.zgoda ? (
+          <Grupa style={{ marginTop: 16, borderWidth: bladZgody ? 1.5 : 0, borderColor: k.acc }}>
+            <Wiersz2 rola="checkbox" on={zgoda} onPress={() => { setZgoda(!zgoda); setBladZgody(false); }}>
+              <T v="body" style={{ flex: 1 }}>{u.zgoda}</T>
+              <Checkbox on={zgoda} />
+            </Wiersz2>
+          </Grupa>
+        ) : null}
+        {bladZgody ? <T v="small" c={k.accInk} style={{ marginTop: 6, fontWeight: '600' }}>Zaznacz oświadczenie, żeby wysłać.</T> : null}
+      </Uklad>
+    </>
   );
 
+  const jedno = pola.length === 1;
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
-      <Ekran key={'k' + nr}>{nag}
-        {pasek}
-        {nr === 0 && !u.karta ? <Naglowek u={u} /> : null}
-        {nr === 0 && !u.karta && u.wstep ? <Wstep w={u.wstep(os, st)} /> : null}
-        <Wejscie><T v="h2">{krok?.t}</T>{krok?.opis ? <T v="sub" style={{ marginTop: 4 }}>{krok.opis}</T> : null}</Wejscie>
-        {pola.map((p, i) => <PoleWidok key={p.k} p={p} v={v} setV={setV} blad={blad} i={i + 1} />)}
-        {stop ? (
-          <Animated.View entering={FadeIn.duration(200)} exiting={FadeOut}>
-            <Karta style={{ padding: 16, marginTop: 18, backgroundColor: k.accBg, gap: 12 }}>
-              <View style={{ flexDirection: 'row', gap: 10 }}><Ikona n="alert" size={22} color={k.accInk} /><T v="body" c={k.ink} style={{ flex: 1, fontWeight: '600' }}>{stop}</T></View>
-              <Przycisk tytul="Zadzwoń 112" ik="phone" onPress={() => router.back()} />
-            </Karta>
-          </Animated.View>
-        ) : ostrz ? <Animated.View entering={FadeIn}><Karta style={{ padding: 14, marginTop: 18, backgroundColor: k.warnBg, flexDirection: 'row', gap: 10 }}><Ikona n="alert" size={20} color={k.warn} /><T v="sub" c={k.ink} style={{ flex: 1 }}>{ostrz}</T></Karta></Animated.View> : null}
-        {blad ? <Animated.View entering={FadeIn}><T v="sub" c={k.accInk} style={{ marginTop: 14, fontWeight: '600' }}>Uzupełnij zaznaczone pola.</T></Animated.View> : null}
-        {!stop ? <Wejscie i={pola.length + 1}><Przycisk tytul={nr < kroki.length - 1 ? 'Dalej' : 'Przejdź do podsumowania'} ik="arrow" style={{ marginTop: 26 }} onPress={dalej} /></Wejscie> : null}
-        <Przycisk tytul={nr === 0 && !u.karta ? 'Anuluj' : 'Wstecz'} rodzaj="link" onPress={wstecz} />
-      </Ekran>
-    </KeyboardAvoidingView>
+    <>{nag}
+      <Uklad key={'k' + nr} gora={pasek} stopka={stop ? <Przycisk tytul="Zadzwoń pod 112" onPress={() => router.back()} /> : <Przycisk tytul="Dalej" onPress={dalej} />}>
+        <Tytul t={krok ? pytanie(krok, pola) : ''} opis={krok?.opis} />
+        {nr === 0 && !u.karta && u.wstep?.(os, st).flaga ? <Ostrzezenie t={u.wstep(os, st).flaga!} /> : null}
+        {stop ? <Ostrzezenie t={stop} ton="r" /> : ostrz ? <Ostrzezenie t={ostrz} /> : null}
+        {pola.map(p => <PoleWidok key={p.k} p={p} v={v} setV={setV} blad={blad} jedyne={jedno} />)}
+        {blad ? <T v="sub" c={k.accInk} style={{ fontWeight: '600' }}>Uzupełnij zaznaczone pola.</T> : null}
+      </Uklad>
+    </>
   );
 }

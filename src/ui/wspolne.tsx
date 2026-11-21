@@ -24,7 +24,7 @@ export function ZadanieWiersz({ z }: { z: Zadanie }) {
         <View style={{ flex: 1 }}>
           <T v="bodyB">{z.h}</T>
           <T v="sub" c={z.u ? k.accInk : k.ink2} style={{ fontWeight: '600', marginTop: 1 }}>{z.d}</T>
-          <T v="small" c={k.accInk} style={{ fontWeight: '700', marginTop: 4 }}>{CZASOWNIK[z.k] ?? 'Sprawdź'} →</T>
+          <T v="small" c={k.accInk} style={{ fontWeight: '700', marginTop: 4 }}>{CZASOWNIK[z.k] ?? 'Sprawdź'}</T>
         </View>
         {n != null ? <Dni n={n} /> : <Ikona n="chev" size={18} color={k.ink3} />}
       </View>

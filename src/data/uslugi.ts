@@ -2,7 +2,7 @@ import type { Osoba, Pismo, Sprawa, Wiersz } from './typy';
 
 /* Katalog usług prototypu.
    Usługa to: ekran aplikacji (ekran), bogaty ekran informacyjny (ekranInfo, src/ui/info-uslugi.tsx)
-   albo przepływ: karta informacyjna → kroki z polami → podsumowanie i zgoda → PIN mObywatela (płatność: Face ID) → wysyłka → wynik
+   albo przepływ: karta informacyjna to kroki z polami to podsumowanie i zgoda to PIN mObywatela (płatność: Face ID) to wysyłka to wynik
    (z podglądem wydanego dokumentu, listą „co dalej” i nową sprawą w toku). Treści dopasowane do osoby. */
 
 export type V = Record<string, string>;
@@ -162,7 +162,7 @@ export const USLUGI: Usluga[] = [
   /* =================== ZAMELDOWANIE I AKTY =================== */
   {
     id: 'zameldowanie', t: 'Zameldowanie', opis: 'Online, bez wizyty w urzędzie', kat: 'mieszkanie', ik: 'house', slowa: 'meldunek przeprowadzka adres',
-    karta: () => ({ czas: 'ok. 4 minut, decyzja zwykle 1–3 dni', oplata: 'bezpłatnie', potrzebne: ['Nowy adres', 'Zgoda właściciela (potwierdzi w swoim mObywatelu) albo umowa najmu'], jak: ['Podajesz adres i rodzaj pobytu', 'Właściciel potwierdza online albo dodajesz umowę', 'Urząd melduje Cię i przysyła potwierdzenie'] }),
+    karta: () => ({ czas: 'ok. 4 minut, decyzja zwykle 1-3 dni', oplata: 'bezpłatnie', potrzebne: ['Nowy adres', 'Zgoda właściciela (potwierdzi w swoim mObywatelu) albo umowa najmu'], jak: ['Podajesz adres i rodzaj pobytu', 'Właściciel potwierdza online albo dodajesz umowę', 'Urząd melduje Cię i przysyła potwierdzenie'] }),
     kroki: o => [
       { t: 'Rodzaj pobytu', pola: [{ k: 'rodz', l: 'Jak długo tu mieszkasz?', typ: 'wybor', opcje: [{ t: 'Pobyt stały', o: 'To Twoje główne miejsce zamieszkania. Wymeldujemy Cię automatycznie z poprzedniego.' }, { t: 'Pobyt czasowy', o: 'Np. studia, praca w innym mieście. Do 3 lat.' }] }, { k: 'do', l: 'Do kiedy', ph: 'np. 30.06.2027', wym: true, gdy: v => v.rodz === 'Pobyt czasowy' }] },
       { t: 'Adres', pola: [{ k: 'ulica', l: 'Ulica i numer', ph: 'np. ul. Słoneczna 4 m. 2', wym: true }, { k: 'kod', l: 'Kod pocztowy', ph: '00-000', wym: true, num: true }, { k: 'miasto', l: 'Miejscowość', v: o.sc.miasto, wym: true }, { k: 'od', l: 'Mieszkasz tu od', v: dzis, wym: true }] },
@@ -175,7 +175,7 @@ export const USLUGI: Usluga[] = [
       api.pismo({ od: `Urząd, ${v.miasto}`, t: 'Wniosek o zameldowanie przyjęty', k: 'mieszkanie', nowe: 1, skrot: [`Wniosek o zameldowanie (${v.rodz.toLowerCase()}) wpłynął do urzędu.`, 'Potwierdzenie przyjdzie do tej skrzynki.'], q: '' });
       return { tytul: 'Wniosek wysłany', opis: 'Urząd sprawdzi wniosek i przyśle potwierdzenie zameldowania.', wiersze: [['Adres', `${v.ulica}, ${v.miasto}`], ['Numer sprawy', nr('ZM')]],
         coDalej: [...(v.wl === 'Właściciel potwierdzi online' ? ['Właściciel dostał prośbę w swoim mObywatelu. Ma 7 dni na potwierdzenie.'] : []), 'Dane w dowodzie się nie zmienią, nie musisz go wymieniać.', 'Zaktualizuj adres w banku i u pracodawcy.'],
-        sprawa: sprawa('Zameldowanie', `Urząd, ${v.miasto}`, 'mieszkanie', 'Decyzja w 1–3 dni', [['Wniosek złożony', dzis.slice(0, 5), 2], [v.wl === 'Właściciel potwierdzi online' ? 'Potwierdzenie właściciela' : 'Weryfikacja w urzędzie', 'w toku', 1], ['Zameldowanie', '', 0]], 'Potwierdzenie przyjdzie do skrzynki e-Doręczeń.') };
+        sprawa: sprawa('Zameldowanie', `Urząd, ${v.miasto}`, 'mieszkanie', 'Decyzja w 1-3 dni', [['Wniosek złożony', dzis.slice(0, 5), 2], [v.wl === 'Właściciel potwierdzi online' ? 'Potwierdzenie właściciela' : 'Weryfikacja w urzędzie', 'w toku', 1], ['Zameldowanie', '', 0]], 'Potwierdzenie przyjdzie do skrzynki e-Doręczeń.') };
     },
   },
   {
@@ -198,7 +198,7 @@ export const USLUGI: Usluga[] = [
   },
   {
     id: 'odpis', t: 'Odpis aktu stanu cywilnego', opis: 'Urodzenia, małżeństwa, zgonu', kat: 'mieszkanie', ik: 'doc', slowa: 'akt urodzenia malzenstwa zgonu usc',
-    karta: () => ({ czas: 'ok. 3 minut, odpis w 1–7 dni', oplata: '22 zł (skrócony), 33 zł (zupełny)', potrzebne: ['Wiesz, kogo dotyczy akt'], jak: ['Wybierasz akt i rodzaj odpisu', 'Płacisz online', 'Odpis przychodzi do skrzynki albo pocztą'] }),
+    karta: () => ({ czas: 'ok. 3 minut, odpis w 1-7 dni', oplata: '22 zł (skrócony), 33 zł (zupełny)', potrzebne: ['Wiesz, kogo dotyczy akt'], jak: ['Wybierasz akt i rodzaj odpisu', 'Płacisz online', 'Odpis przychodzi do skrzynki albo pocztą'] }),
     kroki: o => [
       { t: 'Jaki akt', pola: [{ k: 'akt', l: 'Rodzaj aktu', typ: 'wybor', opcje: ['Urodzenia', 'Małżeństwa', 'Zgonu'] }, { k: 'kogo', l: 'Kogo dotyczy?', typ: 'wybor', opcje: [o.moje.imie_nazwisko, ...dzieci(o).map(m => `${m.imie} (dziecko)`), 'Inna osoba'] }, { k: 'inna', l: 'Imię i nazwisko', wym: true, gdy: v => v.kogo === 'Inna osoba' }] },
       { t: 'Rodzaj odpisu', pola: [{ k: 'typ', l: 'Jaki odpis?', typ: 'wybor', opcje: [{ t: 'Skrócony', o: 'Wystarczy w większości urzędów. 22 zł' }, { t: 'Zupełny', o: 'Pełna historia aktu, np. do spraw spadkowych. 33 zł' }, { t: 'Wielojęzyczny', o: 'Do użytku w krajach UE. 22 zł' }] }, { k: 'dost', l: 'Doręczenie', typ: 'wybor', opcje: [{ t: 'Do skrzynki e-Doręczeń', o: 'Najszybciej' }, { t: 'Pocztą', o: `Na adres ${o.dane.zamel}` }] }] },
@@ -223,7 +223,7 @@ export const USLUGI: Usluga[] = [
       { t: 'Miejsce i zdjęcia', pola: [{ k: 'gdzie', l: 'Miejsce', v: o.sc.miejsce, wym: true, podp: 'Ustaliliśmy je z lokalizacji telefonu.' }, { k: 'foto', l: 'Zdjęcia uszkodzeń', typ: 'plik', plik: '4 zdjęcia', wym: true }] },
     ],
     zgoda: 'Potwierdzam, że opis zdarzenia jest zgodny z prawdą.',
-    podsumowanie: (v, o) => [['Twoje auto', v.tw], ['Drugie auto', v.nr + ', OC TU Bałtyk'], ['Sprawca', v.kto === 'Ja' ? o.moje.imie_nazwisko : 'kierowca ' + v.nr], ['Okoliczności', wiele(v.co).join(', ') || '—'], ['Miejsce', v.gdzie], ['Zdjęcia', v.foto], ['Data', `${dzis}, ${new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}`]],
+    podsumowanie: (v, o) => [['Twoje auto', v.tw], ['Drugie auto', v.nr + ', OC TU Bałtyk'], ['Sprawca', v.kto === 'Ja' ? o.moje.imie_nazwisko : 'kierowca ' + v.nr], ['Okoliczności', wiele(v.co).join(', ') || 'brak'], ['Miejsce', v.gdzie], ['Zdjęcia', v.foto], ['Data', `${dzis}, ${new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}`]],
     przycisk: 'Podpisz oświadczenie', wysylka: ['Podpisuję oświadczenie…', 'Czekam na podpis drugiego kierowcy…', 'Wysyłam do ubezpieczyciela…'],
     wynik: (v, o) => ({
       tytul: 'Oświadczenie podpisane', opis: v.kto === 'Ja' ? 'Drugi kierowca zgłosi szkodę z Twojego OC. Oświadczenie już ma.' : 'Zgłosiliśmy szkodę do ubezpieczyciela sprawcy.',
@@ -304,7 +304,7 @@ export const USLUGI: Usluga[] = [
     zgoda: 'Oświadczam, że dane są zgodne z prawdą.',
     podsumowanie: (v, o) => [['Dziecko', `${v.imie}${v.imie2 ? ' ' + v.imie2 : ''} ${o.sc.nazw[v.plec === 'Dziewczynka' ? 0 : 1]}`], ['Urodzone', `16.10.2026, ${o.sc.szpital}`], ['Drugi rodzic', v.drugi || 'do uzupełnienia'], ['Zameldowanie', v.mel], ['800 plus', tak(v.p800) ? 'tak' : 'nie'], ['KDR', tak(v.kdr) ? 'tak' : 'nie'], ['Becikowe', tak(v.bec) ? 'tak' : 'nie']],
     przycisk: 'Podpisz i wyślij', wysylka: ['Wysyłam zgłoszenie do USC…', 'Nadaję numer PESEL…', 'Składam wnioski o świadczenia…'],
-    wynik: (v, o) => ({ tytul: 'Zgłoszenie wysłane', opis: 'Odpis aktu urodzenia przyjdzie do skrzynki, zwykle następnego dnia roboczego.', wiersze: [['Dziecko', `${v.imie} ${o.sc.nazw[v.plec === 'Dziewczynka' ? 0 : 1]}`], ['PESEL', 'nadany jutro'], ['800 plus', tak(v.p800) ? 'wniosek w ZUS' : '—']],
+    wynik: (v, o) => ({ tytul: 'Zgłoszenie wysłane', opis: 'Odpis aktu urodzenia przyjdzie do skrzynki, zwykle następnego dnia roboczego.', wiersze: [['Dziecko', `${v.imie} ${o.sc.nazw[v.plec === 'Dziewczynka' ? 0 : 1]}`], ['PESEL', 'nadany jutro'], ['800 plus', tak(v.p800) ? 'wniosek w ZUS' : 'nie']],
       coDalej: ['Przekaż PESEL dziecka pracodawcy w ciągu 7 dni (zgłosi je do ubezpieczenia).', 'Wybierz przychodnię i lekarza dla dziecka w Internetowym Koncie Pacjenta.', ...(tak(v.kdr) ? ['Karta Dużej Rodziny dziecka pojawi się w aplikacji po decyzji gminy.'] : [])],
       sprawa: sprawa(`Zgłoszenie urodzenia: ${v.imie}`, 'Urząd Stanu Cywilnego', 'rodzina', 'PESEL jutro', [['Zgłoszenie', dzis.slice(0, 5), 2], ['Akt urodzenia i PESEL', 'w toku', 1], ['800 plus w ZUS', tak(v.p800) ? 'do miesiąca' : 'nie złożono', 0]], 'Odpis skrócony aktu urodzenia trafi bezpłatnie do skrzynki.') }),
   },
@@ -312,7 +312,7 @@ export const USLUGI: Usluga[] = [
     id: '800plus', t: '800 plus', opis: 'Wniosek i wypłaty', kat: 'rodzina', ik: 'coin', slowa: '800 plus swiadczenie wychowawcze zus', dostepna: o => dzieci(o).length > 0,
     karta: () => ({ czas: 'ok. 3 minut', oplata: 'bezpłatnie', potrzebne: ['Numer konta do wypłaty'], jak: ['Zaznaczasz dzieci', 'Podajesz konto', 'ZUS przysyła informację o przyznaniu do skrzynki'] }),
     kroki: o => [{ t: 'Dzieci i konto', pola: [{ k: 'dz', l: 'Dla których dzieci?', typ: 'wiele', opcje: dzieci(o).map(m => `${m.imie}, ${m.wiek} l.`), v: dzieci(o).map(m => `${m.imie}, ${m.wiek} l.`).join('|') }, { k: 'konto', l: 'Konto do wypłaty', v: 'PL61 1090 •••• •••• 4412', wym: true }] }],
-    podsumowanie: v => [['Dzieci', wiele(v.dz).join(', ')], ['Kwota', `${wiele(v.dz).length * 800} zł miesięcznie`], ['Okres', '01.06.2026–31.05.2027'], ['Konto', v.konto]],
+    podsumowanie: v => [['Dzieci', wiele(v.dz).join(', ')], ['Kwota', `${wiele(v.dz).length * 800} zł miesięcznie`], ['Okres', 'od 01.06.2026 do 31.05.2027'], ['Konto', v.konto]],
     wynik: v => ({ tytul: 'Wniosek wysłany do ZUS', opis: 'Informację o przyznaniu dostaniesz do skrzynki.', wiersze: [['Dzieci', wiele(v.dz).join(', ')], ['Kwota', `${wiele(v.dz).length * 800} zł / mies.`]],
       sprawa: sprawa('800 plus', 'ZUS', 'rodzina', 'Decyzja do 2 mies.', [['Wniosek', dzis.slice(0, 5), 2], ['Weryfikacja w ZUS', 'w toku', 1], ['Informacja o przyznaniu', '', 0], ['Wypłaty', 'co miesiąc', 0]], 'Wypłata z wyrównaniem od miesiąca złożenia wniosku.') }),
   },
@@ -363,7 +363,7 @@ export const USLUGI: Usluga[] = [
     id: 'podroz', t: 'Bezpieczna podróż', opis: 'Zarejestruj wyjazd w Odyseuszu', kat: 'inne', ik: 'plane', slowa: 'wakacje wyjazd egipt zagranica odyseusz paszport',
     karta: () => ({ czas: 'ok. 2 minut', oplata: 'bezpłatnie', potrzebne: ['Kraj i daty wyjazdu'], jak: ['Rejestrujesz podróż', 'Sprawdzamy ważność paszportów', 'W razie zagrożenia konsul wyśle Ci SMS'] }),
     wstep: o => o.id === 'jan' ? { flaga: 'Paszport Olka traci ważność 02.01.2027. Egipt wymaga paszportu ważnego co najmniej 6 miesięcy od wjazdu, więc trzeba go wymienić przed wyjazdem.' } : {},
-    kroki: o => [{ t: 'Wyjazd', pola: [{ k: 'kraj', l: 'Dokąd jedziesz?', v: o.id === 'jan' ? 'Egipt' : '', ph: 'kraj', wym: true }, { k: 'kiedy', l: 'Kiedy', v: o.id === 'jan' ? '20.12–03.01' : '', ph: 'np. 01.07–14.07', wym: true }, { k: 'kto', l: 'Kto jedzie?', typ: 'wiele', opcje: [o.imie, ...o.rodzina.map(m => m.imie)], v: o.imie }, { k: 'tel', l: 'Telefon w podróży', v: o.dane.tel, wym: true }] }],
+    kroki: o => [{ t: 'Wyjazd', pola: [{ k: 'kraj', l: 'Dokąd jedziesz?', v: o.id === 'jan' ? 'Egipt' : '', ph: 'kraj', wym: true }, { k: 'kiedy', l: 'Kiedy', v: o.id === 'jan' ? 'od 20.12 do 03.01' : '', ph: 'np. od 01.07 do 14.07', wym: true }, { k: 'kto', l: 'Kto jedzie?', typ: 'wiele', opcje: [o.imie, ...o.rodzina.map(m => m.imie)], v: o.imie }, { k: 'tel', l: 'Telefon w podróży', v: o.dane.tel, wym: true }] }],
     podsumowanie: v => [['Kraj', v.kraj], ['Termin', v.kiedy], ['Osoby', wiele(v.kto).join(', ')], ['Telefon', v.tel]],
     wynik: v => ({ tytul: 'Podróż zarejestrowana', opis: 'Dostaniesz SMS, jeśli w kraju podróży będzie niebezpiecznie.', wiersze: [['Kraj', v.kraj], ['Termin', v.kiedy], ['Osoby', String(wiele(v.kto).length)]], coDalej: ['Sprawdź ostrzeżenia MSZ dla kraju podróży.', 'Weź kartę EKUZ, jeśli jedziesz do kraju UE.', 'Zapisz numer konsulatu.'], dalej: [{ t: 'Zamów kartę EKUZ', trasa: '/usluga/ekuz' }] }),
   },
@@ -372,7 +372,7 @@ export const USLUGI: Usluga[] = [
 export const usluga = (id: string) => USLUGI.find(u => u.id === id);
 export const trasaUslugi = (u: Usluga) => u.ekran ?? `/usluga/${u.id}`;
 
-/* Zdania z danych (przypomnienia, terminy, pisma) → ekran aplikacji. */
+/* Zdania z danych (przypomnienia, terminy, pisma) to ekran aplikacji. */
 const norm = (t: string) => t.toLowerCase().replace(/ł/g, 'l').normalize('NFD').replace(/[̀-ͯ]/g, '');
 export function trasaDla(q: string | null | undefined): string | null {
   if (!q) return null;

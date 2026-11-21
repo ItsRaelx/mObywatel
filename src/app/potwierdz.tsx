@@ -7,7 +7,7 @@ import { potwierdz } from '@/ui/potwierdzenie';
 import { Ekran, Grupa, Ikona, Karta, Notka, Para, Portret, Przycisk, T } from '@/ui/elementy';
 import { ZAKRESY } from '@/data/zakresy';
 
-/* Kto prosi o dane — w makiecie odbiorca wynika z kodu (fikcyjne podmioty). */
+/* Kto prosi o dane. W makiecie odbiorca wynika z kodu (fikcyjne podmioty). */
 const ODBIORCY = [
   { kto: 'Jedź24 Wypożyczalnia Samochodów', gdzie: 'Strona internetowa', ik: 'pc', zakres: 'prawo_jazdy' },
   { kto: 'Sklep Pod Kasztanem, kasa 2', gdzie: 'Kasa samoobsługowa', ik: 'receipt', zakres: 'pelnoletnosc' },

@@ -26,7 +26,7 @@ export default function Czlonek() {
       ) : <Karta style={{ padding: 20, marginTop: 20 }}><T v="bodyB" center>{m.imie} ma własne konto mObywatela</T><T v="sub" center style={{ marginTop: 4 }}>Możesz poprosić o upoważnienie do wybranych spraw.</T></Karta>}
       {m.akcje.length ? (
         <Sekcja tytul="Co możesz zrobić">
-          <Grupa>{m.akcje.map(([t, q]) => { const tr = trasaDla(q); return <Wiersz key={t} ik="arrow" ikAkcent tytul={t} onPress={tr ? () => router.push(tr as never) : undefined} />; })}</Grupa>
+          <Grupa>{m.akcje.map(([t, q]) => { const tr = trasaDla(q); return <Wiersz key={t} ik="spark" ikAkcent tytul={t} onPress={tr ? () => router.push(tr as never) : undefined} />; })}</Grupa>
         </Sekcja>
       ) : null}
       <T v="small" center style={{ marginTop: 20 }} c={k.ink3}>Dane z rejestru PESEL i rejestrów dokumentów.</T>

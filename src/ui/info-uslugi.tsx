@@ -2,15 +2,15 @@
 import { router } from 'expo-router';
 import { useState, type ReactNode } from 'react';
 import { Pressable, ScrollView, TextInput, View } from 'react-native';
-import Animated, { FadeIn, FadeInDown, LinearTransition } from 'react-native-reanimated';
-import Svg, { Circle, SvgXml } from 'react-native-svg';
+import Animated, { FadeIn, LinearTransition } from 'react-native-reanimated';
+import { SvgXml } from 'react-native-svg';
 
 import { dniDo, kiedy, pl3, type Osoba } from '@/data/typy';
 import type { Usluga } from '@/data/uslugi';
 import { autoSvg } from '@/lib/grafika';
 import { useApp } from '@/state/app';
-import { Avatar, Dni, Ekran, Grupa, Ikona, IkonaKafel, Karta, KodQR, Notka, Para, Pill, Przycisk, Sekcja, T, Wiersz } from '@/ui/elementy';
-import { Luk, Pasek, Sprezyna, Wejscie } from '@/ui/ruch';
+import { Avatar, Dni, Ekran, Grupa, Ikona, IkonaKafel, Karta, KodQR, Para, Pill, Przycisk, Sekcja, T, Wiersz } from '@/ui/elementy';
+import { Pasek, Sprezyna, Wejscie } from '@/ui/ruch';
 
 /* ---------- wspólne ---------- */
 function Chipy({ opcje, v, set }: { opcje: string[]; v: string; set: (s: string) => void }) {
@@ -41,15 +41,18 @@ function Segment({ opcje, v, set }: { opcje: string[]; v: string; set: (s: strin
   );
 }
 function Hero({ u, children }: { u: Usluga; children?: ReactNode }) {
+  const { k } = useApp();
   return (
-    <Wejscie style={{ marginBottom: 18 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-        <IkonaKafel n={u.ik} akcent size={52} />
-        <View style={{ flex: 1 }}><T v="h2">{u.t}</T><T v="sub" style={{ marginTop: 2 }}>{u.opis}</T></View>
-      </View>
+    <View style={{ marginBottom: 22, paddingTop: 4 }}>
+      <IkonaKafel n={u.ik} akcent size={52} />
+      <T v="h1" style={{ fontSize: 28, lineHeight: 33, marginTop: 18 }}>{u.t}</T>
+      <T v="body" c={k.ink2} style={{ marginTop: 8 }}>{u.opis}</T>
       {children}
-    </Wejscie>
+    </View>
   );
+}
+function Przypis({ children }: { children: ReactNode }) {
+  return <T v="small" style={{ marginTop: 14, marginHorizontal: 4, lineHeight: 18 }}>{children}</T>;
 }
 const data = (s: string) => s.match(/\d{2}\.\d{2}\.\d{4}/)?.[0] ?? null;
 const PIERWSZA = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -59,51 +62,34 @@ function Punkty({ u, os }: { u: Usluga; os: Osoba }) {
   const { k } = useApp(); const p = os.sc.punkty;
   const probny = os.id === 'kacper'; const limit = probny ? 20 : 24;
   const f = p.n / limit; const kol = f > 0.6 ? k.acc : f > 0.3 ? k.warn : k.ok;
-  const wyk = p.n ? [{ t: os.id === 'kacper' ? 'Przekroczenie prędkości o 18 km/h' : 'Przekroczenie prędkości o 21–25 km/h', d: os.id === 'kacper' ? '14.10.2026' : '12.05.2026', n: p.n, wyg: os.id === 'kacper' ? '14.10.2027' : '12.05.2027', gdzie: os.id === 'kacper' ? 'Gdańsk, al. Grunwaldzka' : 'Warszawa, ul. Puławska' }] : [];
+  const wyk = p.n ? [{ t: os.id === 'kacper' ? 'Przekroczenie prędkości o 18 km/h' : 'Przekroczenie prędkości o 21-25 km/h', d: os.id === 'kacper' ? '14.10.2026' : '12.05.2026', n: p.n, wyg: os.id === 'kacper' ? '14.10.2027' : '12.05.2027', gdzie: os.id === 'kacper' ? 'Gdańsk, al. Grunwaldzka' : 'Warszawa, ul. Puławska' }] : [];
   return (
     <>
       <Hero u={u} />
-      <Wejscie i={1}>
-        <Karta style={{ padding: 20, alignItems: 'center' }}>
-          <View style={{ width: 180, height: 180, alignItems: 'center', justifyContent: 'center' }}>
-            <Svg width={180} height={180} viewBox="0 0 180 180" style={{ position: 'absolute', transform: [{ rotate: '-90deg' }] }}>
-              <Circle cx={90} cy={90} r={78} stroke={k.surface2} strokeWidth={14} fill="none" />
-              {p.n ? <Luk cx={90} cy={90} r={78} f={f} kolor={kol} grub={14} opoznienie={350} /> : null}
-            </Svg>
-            <Animated.View style={{ alignItems: 'center' }}>
-              <T v="h1" style={{ fontSize: 52, lineHeight: 56 }}>{p.n}</T>
-              <T v="sub">z {limit} pkt</T>
-            </Animated.View>
-          </View>
-          <Pill t={p.n === 0 ? 'Czyste konto' : `Zostało ${limit - p.n} pkt do limitu`} ton={p.n === 0 ? 'g' : f > 0.6 ? 'r' : 'a'} ik={p.n === 0 ? 'ok' : 'info'} />
-          <T v="sub" center style={{ marginTop: 10 }}>{p.note}</T>
-        </Karta>
-      </Wejscie>
+      <Karta style={{ padding: 20 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 8 }}>
+          <T v="h1" style={{ fontSize: 48, lineHeight: 52 }}>{p.n}</T>
+          <T v="body" c={k.ink2} style={{ marginBottom: 8 }}>{pl3(p.n, 'punkt', 'punkty', 'punktów')} z {limit}</T>
+        </View>
+        <View style={{ marginTop: 14 }}><Pasek f={Math.max(f, 0.01)} kolor={kol} tlo={k.surface2} h={8} /></View>
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 6 }}><T v="small">0</T><T v="small">Limit {limit}</T></View>
+        <T v="body" style={{ marginTop: 14 }}>{p.n === 0 ? p.note : `Do limitu zostało ${limit - p.n} pkt. ${p.note}`}</T>
+      </Karta>
       {probny ? (
-        <Sekcja tytul="Okres próbny" i={2} style={{ marginTop: 22 }}>
-          <Karta style={{ padding: 16 }}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 }}><T v="sub">14.01.2026</T><T v="sub">14.01.2028</T></View>
-            <Pasek f={0.38} kolor={k.ink} tlo={k.surface2} h={8} />
-            <T v="sub" c={k.ink} style={{ marginTop: 10 }}>Do 14.01.2027 limit to 20 pkt. Dwa wykroczenia w okresie próbnym oznaczają kurs reedukacyjny.</T>
-          </Karta>
-        </Sekcja>
+        <Grupa style={{ marginTop: 12 }}>
+          <Para k="Okres próbny" w="do 14.01.2028" />
+          <Para k="Limit 20 pkt" w="do 14.01.2027" />
+        </Grupa>
       ) : null}
       <Sekcja tytul="Wykroczenia" i={3} style={{ marginTop: 22 }}>
         {wyk.length ? <Grupa>{wyk.map(w => (
-          <View key={w.d} style={{ padding: 14, gap: 6 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}><T v="bodyB" style={{ flex: 1 }}>{w.t}</T><Pill t={`${w.n} pkt`} ton="r" /></View>
-            <T v="sub">{w.d} · {w.gdzie}</T>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}><Ikona n="clock" size={15} color={k.ok} /><T v="sub" c={k.ok} style={{ fontWeight: '600' }}>Wygasną {w.wyg} ({kiedy(dniDo(w.wyg))})</T></View>
-          </View>
-        ))}</Grupa> : <Karta style={{ padding: 18, alignItems: 'center' }}><Ikona n="star" size={28} color={k.ok} /><T v="bodyB" style={{ marginTop: 8 }}>Brak wykroczeń w ostatnich 2 latach</T></Karta>}
+          <Wiersz key={w.d} tytul={w.t} opis={`${w.d}, ${w.gdzie}. Wygasną ${w.wyg} (${kiedy(dniDo(w.wyg))}).`} prawa={<T v="bodyB" c={k.accInk}>{w.n} pkt</T>} />
+        ))}</Grupa> : <Grupa><Wiersz ik="check" tytul="Brak wykroczeń" opis="W ostatnich 2 latach" /></Grupa>}
       </Sekcja>
-      <Sekcja tytul="Dobrze wiedzieć" i={4} style={{ marginTop: 22 }}>
-        <Grupa>
-          <Wiersz ik="clock" tytul="Punkty wygasają po roku" opis="Liczone od dnia zapłaty mandatu, a nie od wykroczenia." />
-          <Wiersz ik="cap" tytul="Kurs redukujący punkty" opis="Nie da się już zmniejszyć punktów kursem. Pomaga tylko czas." />
-          <Wiersz ik="receipt" tytul="Mandaty" opis="Opłać i zobacz historię mandatów" onPress={() => router.push('/platnosci')} />
-        </Grupa>
-      </Sekcja>
+      <Grupa style={{ marginTop: 22 }}>
+        <Wiersz ik="receipt" tytul="Mandaty" opis="Opłać i zobacz historię" onPress={() => router.push('/platnosci')} />
+      </Grupa>
+      <Przypis>Punkty wygasają po roku od zapłaty mandatu. Nie da się ich zmniejszyć kursem.</Przypis>
     </>
   );
 }
@@ -117,7 +103,7 @@ const RECEPTY: Record<string, Recepta[]> = {
     { lek: 'Ibuprofen 100 mg/5 ml', dawka: 'doraźnie przy gorączce', do: '02.10.2026', kod: '7731', dla: 'Staś', stan: 'wykupiona', lekarz: 'lek. A. Wiśniewska' },
   ],
   jan: [
-    { lek: 'Salbutamol 100 µg, inhalator', dawka: '1–2 wdechy doraźnie', do: '18.11.2026', kod: '5420', dla: 'Igor', stan: 'aktywna', lekarz: 'lek. M. Kowal, Poradnia alergologiczna' },
+    { lek: 'Salbutamol 100 µg, inhalator', dawka: '1-2 wdechy doraźnie', do: '18.11.2026', kod: '5420', dla: 'Igor', stan: 'aktywna', lekarz: 'lek. M. Kowal, Poradnia alergologiczna' },
     { lek: 'Budezonid 200 µg', dawka: '1 wdech 2 razy dziennie', do: '18.01.2027', kod: '5421', dla: 'Igor', stan: 'czesc', lekarz: 'lek. M. Kowal' },
   ],
   ewa: [
@@ -133,40 +119,24 @@ const SKIEROWANIA: Record<string, [string, string, string, string][]> = {
   ewa: [['Poradnia kardiologiczna', 'Halina', 'Termin: 14.11.2026, 9:00', 'SPSK4, ul. Jaczewskiego 8'], ['USG tarczycy', 'Ewa', 'Do umówienia', 'kod skierowania 8820']],
   kacper: [],
 };
-function KartaRecepty({ r, i }: { r: Recepta; i: number }) {
+function KartaRecepty({ r }: { r: Recepta }) {
   const { k, os } = useApp(); const [kod, setKod] = useState(false);
-  const stan = r.stan === 'aktywna' ? ['Do wykupienia', 'g'] : r.stan === 'czesc' ? ['Wykupiona częściowo', 'a'] : ['Wykupiona', 'n'];
+  const aktywna = r.stan !== 'wykupiona';
+  const stan = r.stan === 'aktywna' ? 'Do wykupienia' : r.stan === 'czesc' ? 'Wykupiona częściowo' : 'Wykupiona';
+  const dla = r.dla === os.imie ? '' : `, dla: ${r.dla}`;
   return (
-    <Wejscie i={i + 2} style={{ marginBottom: 12 }}>
-      <Karta>
-        <Animated.View layout={LinearTransition.duration(200)} style={{ padding: 16 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
-            <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: r.stan === 'wykupiona' ? k.surface2 : k.accBg, alignItems: 'center', justifyContent: 'center' }}><Ikona n="pill" size={22} color={r.stan === 'wykupiona' ? k.ink3 : k.accInk} /></View>
-            <View style={{ flex: 1 }}>
-              <T v="bodyB">{r.lek}</T>
-              <T v="sub" style={{ marginTop: 2 }}>{r.dawka}</T>
-            </View>
-          </View>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginTop: 12 }}>
-            <Pill t={stan[0]} ton={stan[1] as 'g'} />
-            <Pill t={r.dla === os.imie ? 'Dla Ciebie' : `Dla: ${r.dla}`} ik="user" />
-            {r.stan !== 'wykupiona' ? <Pill t={`Ważna do ${r.do.slice(0, 5)}`} ik="clock" ton={dniDo(r.do) < 10 ? 'a' : 'n'} /> : null}
-          </View>
-          {kod ? (
-            <Animated.View entering={FadeIn.duration(200)} style={{ marginTop: 16, alignItems: 'center', padding: 16, borderRadius: 16, backgroundColor: k.surface2 }}>
-              <T v="cap">Kod recepty</T>
-              <View style={{ flexDirection: 'row', gap: 8, marginTop: 8 }}>
-                {r.kod.split('').map((c, j) => <Animated.View key={j} style={{ width: 48, height: 60, borderRadius: 12, backgroundColor: k.surface, alignItems: 'center', justifyContent: 'center' }}><T v="h1" style={{ fontSize: 34 }}>{c}</T></Animated.View>)}
-              </View>
-              <View style={{ marginTop: 14, padding: 8, backgroundColor: '#fff', borderRadius: 12 }}><KodQR tekst={`erecepta:${r.kod}:${r.dla}`} size={140} logo={false} /></View>
-              <T v="small" center style={{ marginTop: 10 }}>W aptece podaj kod i PESEL {r.dla === os.imie ? '' : `osoby (${r.dla}) `}albo pokaż kod QR.</T>
-            </Animated.View>
-          ) : null}
-          <T v="small" style={{ marginTop: 12 }}>{r.lekarz}</T>
-          {r.stan !== 'wykupiona' ? <Przycisk tytul={kod ? 'Ukryj kod' : 'Pokaż kod do apteki'} ik={kod ? 'eye' : 'qr'} rodzaj={kod ? 'drugi' : 'glowny'} maly style={{ marginTop: 12 }} onPress={() => setKod(!kod)} /> : null}
+    <Grupa style={{ marginBottom: 12 }}>
+      <Wiersz lewa={<IkonaKafel n="pill" />} tytul={r.lek} opis={`${stan}${aktywna ? `, ważna do ${r.do.slice(0, 5)}` : ''}${dla}`}
+        onPress={aktywna ? () => setKod(!kod) : undefined} strzalka={false}
+        prawa={aktywna ? <T v="sub" c={k.accInk} style={{ fontWeight: '700' }}>{kod ? 'Ukryj' : 'Kod'}</T> : null} />
+      {kod ? (
+        <Animated.View entering={FadeIn.duration(200)} style={{ alignItems: 'center', padding: 18 }}>
+          <T v="h1" style={{ fontSize: 40, letterSpacing: 10 }}>{r.kod}</T>
+          <View style={{ marginTop: 12, padding: 8, backgroundColor: '#fff', borderRadius: 12 }}><KodQR tekst={`erecepta:${r.kod}:${r.dla}`} size={140} logo={false} /></View>
+          <T v="small" center style={{ marginTop: 10 }}>{r.dawka}. W aptece podaj kod i PESEL{r.dla === os.imie ? '' : ` osoby (${r.dla})`} albo pokaż kod QR.</T>
         </Animated.View>
-      </Karta>
-    </Wejscie>
+      ) : null}
+    </Grupa>
   );
 }
 function Recepty({ u, os }: { u: Usluga; os: Osoba }) {
@@ -178,12 +148,12 @@ function Recepty({ u, os }: { u: Usluga; os: Osoba }) {
   return (
     <>
       <Hero u={u} />
-      {os.id === 'ewa' ? <Notka ik="key">Masz upoważnienie do konta pacjenta mamy, Haliny Nowak. Jej recepty widzisz razem ze swoimi.</Notka> : null}
+      {os.id === 'ewa' ? <Przypis>Masz upoważnienie do konta pacjenta mamy, Haliny Nowak. Jej recepty widzisz razem ze swoimi.</Przypis> : null}
       <View style={{ marginTop: 14, marginBottom: 14 }}><Segment opcje={['Recepty', 'Skierowania']} v={tab} set={setTab} /></View>
       {tab === 'Recepty' ? (
         <Animated.View key="r" entering={FadeIn}>
           {osoby.length > 2 ? <View style={{ marginBottom: 14 }}><Chipy opcje={osoby} v={kto} set={setKto} /></View> : null}
-          {lista.map((r, i) => <KartaRecepty key={r.kod} r={r} i={i} />)}
+          {lista.map(r => <KartaRecepty key={r.kod} r={r} />)}
         </Animated.View>
       ) : (
         <Animated.View key="s" entering={FadeIn}>
@@ -191,22 +161,21 @@ function Recepty({ u, os }: { u: Usluga; os: Osoba }) {
             : <Karta style={{ padding: 20, alignItems: 'center' }}><Ikona n="doc" size={28} color={k.ink3} /><T v="bodyB" style={{ marginTop: 8 }}>Brak aktywnych skierowań</T></Karta>}
         </Animated.View>
       )}
-      <Notka>Nowe e-recepty i skierowania pojawią się tu od razu po wystawieniu. Dostaniesz też powiadomienie z kodem.</Notka>
     </>
   );
 }
 
 /* ---------- szczepienia ---------- */
 function plan(wiek: number): [string, string, 0 | 1 | 2][] {
-  const ob: [number, string, string][] = [[0, 'Gruźlica, WZW B', 'po urodzeniu'], [0, 'DTP, Hib, IPV, WZW B', '2 miesiąc'], [1, 'Odra, świnka, różyczka (MMR)', '13–15 miesiąc'], [1, 'Pneumokoki', '13–15 miesiąc'], [6, 'DTaP, IPV (przypominająca)', '6 lat'], [6, 'MMR (druga dawka)', '6 lat'], [9, 'HPV (zalecane)', '9–14 lat'], [14, 'Tdap (przypominająca)', '14 lat'], [19, 'Td (przypominająca)', '19 lat']];
+  const ob: [number, string, string][] = [[0, 'Gruźlica, WZW B', 'po urodzeniu'], [0, 'DTP, Hib, IPV, WZW B', '2 miesiąc'], [1, 'Odra, świnka, różyczka (MMR)', '13-15 miesiąc'], [1, 'Pneumokoki', '13-15 miesiąc'], [6, 'DTaP, IPV (przypominająca)', '6 lat'], [6, 'MMR (druga dawka)', '6 lat'], [9, 'HPV (zalecane)', '9-14 lat'], [14, 'Tdap (przypominająca)', '14 lat'], [19, 'Td (przypominająca)', '19 lat']];
   const r = ob.map(([w, t, kiedy_]): [string, string, 0 | 1 | 2] => [t, kiedy_, wiek > w ? 2 : wiek === w ? 1 : 0]);
-  return wiek >= 19 ? [...r.filter(x => x[2] === 2).slice(-3), ['Grypa (zalecane co sezon)', 'październik–marzec', 1], ['Td co 10 lat', 'następna: 2031', 0]] : r;
+  return wiek >= 19 ? [...r.filter(x => x[2] === 2).slice(-3), ['Grypa (zalecane co sezon)', 'od października do marca', 1], ['Td co 10 lat', 'następna: 2031', 0]] : r;
 }
 function Szczepienia({ u, os }: { u: Usluga; os: Osoba }) {
   const { k, toast } = useApp();
   const osoby: { id: string; imie: string; wiek: number }[] = [{ id: os.id, imie: os.imie, wiek: 2026 - +os.moje.data_urodzenia.slice(6) }, ...os.rodzina.filter(m => m.wiek < 18 || m.wiek > 80)];
   const [kto, setKto] = useState(osoby.find(o => o.wiek < 18)?.imie ?? os.imie);
-  const o = osoby.find(x => x.imie === kto)!; const pl = o.wiek > 80 ? [['Grypa', 'październik–marzec', 1], ['Pneumokoki (zalecane po 65. r.ż.)', 'jednorazowo', 2], ['Półpasiec (zalecane)', 'do umówienia', 0], ['COVID-19 (sezonowe)', 'jesień 2026', 0]] as [string, string, 0 | 1 | 2][] : plan(o.wiek);
+  const o = osoby.find(x => x.imie === kto)!; const pl = o.wiek > 80 ? [['Grypa', 'od października do marca', 1], ['Pneumokoki (zalecane po 65. r.ż.)', 'jednorazowo', 2], ['Półpasiec (zalecane)', 'do umówienia', 0], ['COVID-19 (sezonowe)', 'jesień 2026', 0]] as [string, string, 0 | 1 | 2][] : plan(o.wiek);
   const nast = pl.find(p => p[2] === 1) ?? pl.find(p => p[2] === 0);
   return (
     <>
@@ -244,7 +213,6 @@ function Szczepienia({ u, os }: { u: Usluga; os: Osoba }) {
         </Sekcja>
       </Animated.View>
       <Przycisk tytul="Pobierz zaświadczenie o szczepieniach" ik="download" rodzaj="drugi" style={{ marginTop: 18 }} onPress={() => toast('Zaświadczenie trafiło do skrzynki')} />
-      <Notka ik="bell">Przypomnimy Ci miesiąc przed każdym szczepieniem z kalendarza.</Notka>
     </>
   );
 }
@@ -257,7 +225,7 @@ function Emerytura({ u, os }: { u: Usluga; os: Osoba }) {
   const [w, setW] = useState(ustaw);
   const baza = { marta: 3150, jan: 3980, ewa: 3400, kacper: 4100 }[os.id] ?? 3500;
   const kwota = Math.round(baza * (1 + (w - ustaw) * 0.085) / 10) * 10;
-  const skladki = { marta: '228 140 zł', jan: '402 910 zł', ewa: '612 480 zł', kacper: '6 120 zł' }[os.id] ?? '—';
+  const skladki = { marta: '228 140 zł', jan: '402 910 zł', ewa: '612 480 zł', kacper: '6 120 zł' }[os.id] ?? 'brak';
   const lat = rok + w - 2026;
   return (
     <>
@@ -290,7 +258,7 @@ function Emerytura({ u, os }: { u: Usluga; os: Osoba }) {
           <Para k="Staż ubezpieczeniowy" w={`${Math.max(0, 2026 - rok - 22)} lat`} />
         </Grupa>
       </Sekcja>
-      <Notka>Prognoza zakłada obecne zarobki do końca pracy. Wniosek o emeryturę złożysz najwcześniej miesiąc przed osiągnięciem wieku emerytalnego.</Notka>
+      <Przypis>Prognoza zakłada obecne zarobki do końca pracy. Wniosek o emeryturę złożysz najwcześniej miesiąc przed osiągnięciem wieku emerytalnego.</Przypis>
     </>
   );
 }
@@ -315,8 +283,8 @@ function Kdr({ u, os }: { u: Usluga; os: Osoba }) {
   if (!ma) return (
     <>
       <Hero u={u} />
-      <Karta style={{ padding: 18 }}><T v="body">Karta przysługuje rodzinom z co najmniej trojgiem dzieci, niezależnie od dochodu. Rodzice dostają ją dożywotnio.</T></Karta>
-      <Grupa style={{ marginTop: 14 }}>
+      <T v="body" style={{ marginBottom: 16 }}>Karta przysługuje rodzinom z co najmniej trojgiem dzieci, niezależnie od dochodu. Rodzice dostają ją dożywotnio.</T>
+      <Grupa>
         <Para k="Kto może dostać" w="rodzina z min. 3 dzieci" />
         <Para k="Dzieci" w="do 18 lat, uczące się do 25" />
         <Para k="Gdzie złożyć" w="urząd gminy albo online" />
@@ -337,11 +305,13 @@ function Kdr({ u, os }: { u: Usluga; os: Osoba }) {
           <Ikona n="chev" size={18} color={k.ink3} />
         </Karta>
       </Wejscie>
-      <Wejscie i={2} style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>
-        {[['37%', 'pociągi'], ['0 zł', 'parki narodowe'], ['ok. 30 tys.', 'partnerów']].map(([a, b]) => (
-          <Karta key={b} style={{ flex: 1, padding: 12, alignItems: 'center' }}><T v="h3">{a}</T><T v="small" center>{b}</T></Karta>
-        ))}
-      </Wejscie>
+      <Sekcja tytul="Twoje korzyści" style={{ marginTop: 22 }}>
+        <Grupa>
+          <Wiersz ik="bus" tytul="Pociągi" opis="37% taniej, bilet miesięczny 49% taniej" />
+          <Wiersz ik="globe" tytul="Parki narodowe" opis="Wstęp bezpłatny" />
+          <Wiersz ik="star" tytul="Ponad 30 tysięcy partnerów" opis="Sklepy, kina, stacje paliw, muzea" />
+        </Grupa>
+      </Sekcja>
       <Sekcja tytul="Zniżki w okolicy" i={3} style={{ marginTop: 22 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, height: 48, borderRadius: 14, paddingHorizontal: 14, backgroundColor: k.surface, borderWidth: 1, borderColor: k.hair, marginBottom: 12 }}>
           <Ikona n="search" size={18} color={k.ink3} />
@@ -353,7 +323,6 @@ function Kdr({ u, os }: { u: Usluga; os: Osoba }) {
             : <Karta style={{ padding: 18, alignItems: 'center' }}><T v="sub">Nic nie znaleźliśmy. Spróbuj innej nazwy.</T></Karta>}
         </Animated.View>
       </Sekcja>
-      <Notka>U partnera pokaż kartę w aplikacji. Kasjer może zeskanować jej kod QR.</Notka>
     </>
   );
 }
@@ -361,7 +330,7 @@ function Kdr({ u, os }: { u: Usluga; os: Osoba }) {
 /* ---------- ulgi studenta ---------- */
 function Ulgi({ u }: { u: Usluga }) {
   const { k } = useApp();
-  const trasy: [string, number][] = [['Gdańsk – Warszawa', 169], ['Gdańsk – Kraków', 219], ['Gdańsk – Poznań', 129], ['Gdańsk – Słupsk', 49]];
+  const trasy: [string, number][] = [['Gdańsk-Warszawa', 169], ['Gdańsk-Kraków', 219], ['Gdańsk-Poznań', 129], ['Gdańsk-Słupsk', 49]];
   const [t, setT] = useState(trasy[0][0]); const cena = trasy.find(x => x[0] === t)![1];
   return (
     <>
@@ -387,7 +356,7 @@ function Ulgi({ u }: { u: Usluga }) {
         </Grupa>
       </Sekcja>
       <Przycisk tytul="Pokaż mLegitymację" ik="id" style={{ marginTop: 20 }} onPress={() => router.push('/dokument/leg')} />
-      <Notka>Konduktor sprawdzi legitymację na ekranie albo zeskanuje kod QR. Nie musisz mieć plastikowej karty.</Notka>
+      <Przypis>Konduktor sprawdzi legitymację na ekranie albo zeskanuje kod QR. Nie musisz mieć plastikowej karty.</Przypis>
     </>
   );
 }
@@ -400,54 +369,44 @@ function OcBadanie({ u, os }: { u: Usluga; os: Osoba }) {
     ...(a.more ?? []).map(m => ({ plate: m.plate, model: m.model, kolor: m.kolor, oc: a.rows.find(x => /^OC /.test(x[0]))?.[1] ?? '', bt: os.sc.oc.rows.find(x => /Badanie/.test(x[0]))?.[1] ?? '' }))];
   const [wyb, setWyb] = useState(0); const [przyp, setPrzyp] = useState<string[]>([]);
   const x = auta[wyb]; const ocD = data(x.oc), btD = data(x.bt);
-  const STACJE = [[`SKP Okręgowa, ${os.sc.miasto}`, '1,4 km', 'dziś do 18:00'], [`Stacja Kontroli Pojazdów Auto-Test`, '2,9 km', 'jutro od 7:00'], [`SKP przy ul. Przemysłowej`, '4,2 km', 'sob. 8:00–14:00']];
-  const wiersz = (t: string, ik: string, d: string | null, opis: string) => {
-    const n = d ? dniDo(d) : null; const id = `${x.plate}${t}`;
-    return (
-      <View style={{ padding: 16, gap: 12 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <IkonaKafel n={ik} />
-          <View style={{ flex: 1 }}><T v="bodyB">{t}</T><T v="sub">{opis}</T></View>
-          <Dni n={n} />
-        </View>
-        {n != null && n < 60 ? (
-          <Sprezyna onPress={() => { setPrzyp(p => p.includes(id) ? p.filter(y => y !== id) : [...p, id]); if (!przyp.includes(id)) toast(`Przypomnimy 7 dni przed terminem (${d})`); }}
-            style={{ flexDirection: 'row', alignItems: 'center', gap: 8, alignSelf: 'flex-start', paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, backgroundColor: przyp.includes(id) ? k.okBg : k.surface2 }}>
-            <Ikona n={przyp.includes(id) ? 'ok' : 'bell'} size={16} color={przyp.includes(id) ? k.ok : k.ink} />
-            <T v="sub" c={przyp.includes(id) ? k.ok : k.ink} style={{ fontWeight: '700' }}>{przyp.includes(id) ? 'Przypomnienie ustawione' : 'Przypomnij mi'}</T>
-          </Sprezyna>
-        ) : null}
-      </View>
-    );
+  const STACJE = [[`SKP Okręgowa, ${os.sc.miasto}`, '1,4 km', 'dziś do 18:00'], [`Stacja Kontroli Pojazdów Auto-Test`, '2,9 km', 'jutro od 7:00'], [`SKP przy ul. Przemysłowej`, '4,2 km', 'sob. 8:00-14:00']];
+  const nOc = ocD ? dniDo(ocD) : 999, nBt = btD ? dniDo(btD) : 999;
+  const pilne = Math.min(nOc, nBt) < 30;
+  const status = !pilne ? 'Wszystko w porządku' : nOc <= nBt ? `OC kończy się za ${nOc} ${pl3(nOc, 'dzień', 'dni', 'dni')}` : `Badanie traci ważność za ${nBt} ${pl3(nBt, 'dzień', 'dni', 'dni')}`;
+  const id = x.plate; const ma = przyp.includes(id);
+  const termin = (t: string, ik: string, d: string | null, opis: string) => {
+    const n = d ? dniDo(d) : null;
+    return <Wiersz ik={ik} tytul={t} opis={opis} prawa={n != null ? <T v="sub" c={n < 30 ? k.accInk : k.ink2} style={{ fontWeight: '700' }}>{kiedy(n)}</T> : null} />;
   };
   return (
     <>
       <Hero u={u} />
       {auta.length > 1 ? <View style={{ marginBottom: 14 }}><Segment opcje={auta.map(z => z.plate)} v={x.plate} set={p => setWyb(auta.findIndex(z => z.plate === p))} /></View> : null}
-      <Animated.View key={x.plate} entering={FadeIn.duration(300)}>
-        <Karta style={{ padding: 16, alignItems: 'center' }}>
-          <Animated.View style={{ width: '100%' }}><SvgXml xml={autoSvg(x.model, x.kolor)} width="100%" height={130} /></Animated.View>
-          <T v="bodyB" center style={{ marginTop: 6 }}>{x.model}</T>
-          <T v="sub" center>{x.plate}</T>
-        </Karta>
-        <Grupa style={{ marginTop: 12 }}>
-          {wiersz('Ubezpieczenie OC', 'shield', ocD, ocD ? `${x.oc.replace(/, do .*/, '')}, do ${ocD}` : x.oc)}
-          {wiersz('Badanie techniczne', 'check', btD, btD ? `ważne do ${btD}` : x.bt)}
+      <Animated.View key={x.plate} entering={FadeIn.duration(250)}>
+        <SvgXml xml={autoSvg(x.model, x.kolor)} width="100%" height={120} />
+        <T v="sub" center style={{ marginTop: 4 }}>{x.model}, {x.plate}</T>
+        <T v="h2" style={{ marginTop: 22, marginBottom: 12 }} c={pilne ? k.accInk : k.ink}>{status}</T>
+        <Grupa>
+          {termin('Ubezpieczenie OC', 'shield', ocD, ocD ? `${x.oc.replace(/, do .*/, '')}, do ${ocD}` : x.oc)}
+          {termin('Badanie techniczne', 'check', btD, btD ? `Ważne do ${btD}` : x.bt)}
+          <Pressable onPress={() => { setPrzyp(p => ma ? p.filter(y => y !== id) : [...p, id]); if (!ma) toast('Przypomnimy 7 dni przed terminem'); }} accessibilityRole="switch" accessibilityState={{ checked: ma }}
+            style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 13, paddingHorizontal: 14, minHeight: 62 }}>
+            <IkonaKafel n="bell" />
+            <T v="bodyB" style={{ flex: 1 }}>Przypomnij przed terminem</T>
+            <View style={{ width: 50, height: 30, borderRadius: 15, padding: 3, backgroundColor: ma ? k.ok : k.surface2, alignItems: ma ? 'flex-end' : 'flex-start' }}><View style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: '#fff' }} /></View>
+          </Pressable>
         </Grupa>
-        <Notka>{wyb === 0 ? os.sc.oc.note : 'Auto jest w leasingu, więc OC zwykle odnawia leasingodawca.'}</Notka>
+        <Przypis>{wyb === 0 ? os.sc.oc.note : 'Auto jest w leasingu, więc OC zwykle odnawia leasingodawca.'}</Przypis>
       </Animated.View>
       {btD && dniDo(btD) < 90 ? (
         <Sekcja tytul="Stacje kontroli w pobliżu" style={{ marginTop: 22 }}>
-          <Grupa>{STACJE.map(([n, d, g]) => <Wiersz key={n} ik="pin" tytul={n} opis={`${d} · ${g}`} prawa={<T v="small">ok. 149 zł</T>} onPress={() => toast('Otworzymy nawigację do stacji')} />)}</Grupa>
+          <Grupa>{STACJE.map(([n, d, g]) => <Wiersz key={n} ik="pin" tytul={n} opis={`${d}, ${g}`} prawa={<T v="small">ok. 149 zł</T>} onPress={() => toast('Otworzymy nawigację do stacji')} />)}</Grupa>
         </Sekcja>
       ) : null}
-      <Sekcja tytul="Inne sprawy pojazdu" style={{ marginTop: 22 }}>
-        <Grupa>
-          <Wiersz ik="car" tytul="Dokument pojazdu" opis="Dane z CEPiK i odczyty licznika" onPress={() => router.push('/dokument/auto')} />
-          <Wiersz ik="swap" tytul="Zgłoś sprzedaż pojazdu" onPress={() => router.push('/usluga/zbycie')} />
-          <Wiersz ik="car" tytul="mStłuczka" opis="Oświadczenie o kolizji" onPress={() => router.push('/usluga/mstluczka')} />
-        </Grupa>
-      </Sekcja>
+      <Grupa style={{ marginTop: 22 }}>
+        <Wiersz ik="car" tytul="Dokument pojazdu" onPress={() => router.push('/dokument/auto')} />
+        <Wiersz ik="swap" tytul="Zgłoś sprzedaż pojazdu" onPress={() => router.push('/usluga/zbycie')} />
+      </Grupa>
     </>
   );
 }
@@ -456,9 +415,7 @@ function OcBadanie({ u, os }: { u: Usluga; os: Osoba }) {
 function PrawoJazdy({ u, os }: { u: Usluga; os: Osoba }) {
   const { k } = useApp(); const d = os.docs.find(x => x.id === 'pj')!;
   const kat = (d.f.find(x => x[0] === 'Kategorie')?.[1] ?? 'B').split(/,\s*/);
-  const [wyb, setWyb] = useState(kat[kat.length - 1]);
   const KAT: [string, string, string][] = [['AM', 'motorower', 'bus'], ['A1', 'motocykl do 125 cm³', 'bus'], ['A2', 'motocykl do 35 kW', 'bus'], ['A', 'każdy motocykl', 'bus'], ['B', 'samochód do 3,5 t', 'car'], ['BE', 'B z przyczepą', 'car'], ['C1', 'do 7,5 t', 'bus'], ['C', 'ciężarówka', 'bus'], ['CE', 'C z przyczepą', 'bus'], ['D', 'autobus', 'bus'], ['T', 'ciągnik', 'car']];
-  const opis = KAT.find(x => x[0] === wyb);
   const wazne = d.rows.find(x => /Ważne/.test(x[0]))?.[1] ?? '';
   const wd = data(wazne);
   return (
@@ -472,34 +429,17 @@ function PrawoJazdy({ u, os }: { u: Usluga; os: Osoba }) {
           <Ikona n="chev" size={18} color={k.ink3} />
         </Karta>
       </Wejscie>
-      <Sekcja tytul="Twoje kategorie" i={2} style={{ marginTop: 22 }}>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
-          {KAT.map(([kk], i) => { const ma = kat.includes(kk), on = wyb === kk; return (
-            <Animated.View key={kk}>
-              <Sprezyna onPress={() => setWyb(kk)} style={{ width: 58, height: 52, borderRadius: 14, alignItems: 'center', justifyContent: 'center', backgroundColor: ma ? (on ? k.acc : k.accBg) : on ? k.ink : k.surface, borderWidth: 1, borderColor: ma ? 'transparent' : k.hair }}>
-                <T v="bodyB" c={ma ? (on ? '#fff' : k.accInk) : on ? k.bg : k.ink3}>{kk}</T>
-              </Sprezyna>
-            </Animated.View>
-          ); })}
-        </View>
-        {opis ? (
-          <Animated.View key={wyb} entering={FadeInDown.duration(250)}>
-            <Karta style={{ padding: 14, marginTop: 12, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <IkonaKafel n={opis[2]} />
-              <View style={{ flex: 1 }}><T v="bodyB">Kategoria {opis[0]}</T><T v="sub">{PIERWSZA(opis[1])}</T></View>
-              <Pill t={kat.includes(wyb) ? 'Masz' : 'Nie masz'} ton={kat.includes(wyb) ? 'g' : 'n'} />
-            </Karta>
-          </Animated.View>
-        ) : null}
+      <Sekcja tytul="Twoje kategorie" style={{ marginTop: 22 }}>
+        <Grupa>{kat.map(kk => { const o = KAT.find(x => x[0] === kk); return <Wiersz key={kk} lewa={<View style={{ width: 40, height: 40, borderRadius: 12, backgroundColor: k.accBg, alignItems: 'center', justifyContent: 'center' }}><T v="bodyB" c={k.accInk}>{kk}</T></View>} tytul={`Kategoria ${kk}`} opis={o ? PIERWSZA(o[1]) : undefined} />; })}</Grupa>
       </Sekcja>
       <Sekcja tytul="Szczegóły" i={3} style={{ marginTop: 22 }}>
         <Grupa>{d.rows.map(([a, b]) => <Para key={a} k={a} w={b} />)}</Grupa>
       </Sekcja>
-      <Notka>{/bezterminow/.test(d.sub) ? 'Prawa jazdy wydane bezterminowo przed 19.01.2013 trzeba wymienić najpóźniej do 19.01.2033. Przypomnimy Ci o tym rok wcześniej.' : 'Przypomnimy Ci o wymianie 3 miesiące przed końcem ważności.'}</Notka>
-      <View style={{ gap: 10, marginTop: 16 }}>
-        <Przycisk tytul="Punkty karne" ik="clock" rodzaj="drugi" onPress={() => router.push('/usluga/punkty')} />
-        <Przycisk tytul="Zgubione prawo jazdy" ik="alert" rodzaj="drugi" onPress={() => router.push('/usluga/zgubiony-dowod')} />
-      </View>
+      <Przypis>{/bezterminow/.test(d.sub) ? 'Prawa jazdy wydane bezterminowo przed 19.01.2013 trzeba wymienić najpóźniej do 19.01.2033. Przypomnimy Ci o tym rok wcześniej.' : 'Przypomnimy Ci o wymianie 3 miesiące przed końcem ważności.'}</Przypis>
+      <Grupa style={{ marginTop: 16 }}>
+        <Wiersz ik="clock" tytul="Punkty karne" onPress={() => router.push('/usluga/punkty')} />
+        <Wiersz ik="alert" tytul="Zgubione prawo jazdy" onPress={() => router.push('/usluga/zgubiony-dowod')} />
+      </Grupa>
     </>
   );
 }

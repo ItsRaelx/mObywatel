@@ -24,7 +24,7 @@ export default function PismoEkran() {
         {m.skrot.map(s => <View key={s} style={{ flexDirection: 'row', gap: 10, marginTop: 6 }}><View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: k.acc, marginTop: 8 }} /><T v="body" style={{ flex: 1 }}>{s}</T></View>)}
       </Karta>
       <Karta style={{ marginTop: 12 }}><Wiersz ik="doc" tytul="Pismo oryginalne (PDF)" opis="Z kwalifikowaną pieczęcią urzędu" prawa={<Ikona n="download" size={20} color={k.ink2} />} strzalka={false} onPress={() => toast('Pismo zapisane w Plikach (pokaz)')} /></Karta>
-      {trasa ? <Przycisk tytul={odpowiedz ? 'Odpowiedz na pismo' : 'Załatw tę sprawę'} ik="arrow" style={{ marginTop: 20 }} onPress={() => router.push(trasa as never)} /> : null}
+      {trasa ? <Przycisk tytul={odpowiedz ? 'Odpowiedz na pismo' : 'Załatw tę sprawę'} style={{ marginTop: 20 }} onPress={() => router.push(trasa as never)} /> : null}
     </Ekran>
   );
 }
