@@ -2,7 +2,7 @@ import type { Osoba, Pismo, Sprawa, Wiersz } from './typy';
 
 /* Katalog usług prototypu.
    Usługa to: ekran aplikacji (ekran), bogaty ekran informacyjny (ekranInfo, src/ui/info-uslugi.tsx)
-   albo przepływ: karta informacyjna → kroki z polami → podsumowanie i zgoda → Face ID → wysyłka → wynik
+   albo przepływ: karta informacyjna → kroki z polami → podsumowanie i zgoda → PIN mObywatela (płatność: Face ID) → wysyłka → wynik
    (z podglądem wydanego dokumentu, listą „co dalej” i nową sprawą w toku). Treści dopasowane do osoby. */
 
 export type V = Record<string, string>;
@@ -27,7 +27,7 @@ export type Usluga = {
   ekran?: string; ekranInfo?: string; dostepna?: (o: Osoba, st: Stan) => boolean;
   karta?: (o: Osoba, st: Stan) => KartaInfo; wstep?: (o: Osoba, st: Stan) => Info;
   kroki?: (o: Osoba, st: Stan) => Krok[]; podsumowanie?: (v: V, o: Osoba) => Wiersz[];
-  zgoda?: string; przycisk?: string; bezFaceId?: boolean; wysylka?: string[];
+  zgoda?: string; przycisk?: string; bezFaceId?: boolean; platnosc?: boolean; wysylka?: string[];
   wynik?: (v: V, o: Osoba, api: Api) => Wynik; blokada?: (o: Osoba, st: Stan) => Info | null;
 };
 
@@ -62,7 +62,7 @@ export const USLUGI: Usluga[] = [
   {
     id: 'zastrzez-pesel', t: 'Zastrzeż PESEL', opis: 'Nikt nie weźmie kredytu na Twoje dane', kat: 'dokumenty', ik: 'shield', slowa: 'zastrzezenie kredyt pozyczka oszustwo',
     blokada: (_, st) => st.pesel ? { tekst: 'Twój PESEL jest już zastrzeżony. Banki i firmy pożyczkowe dostaną odmowę, jeśli ktoś spróbuje wziąć kredyt na Twoje dane.', dalej: [{ t: 'Cofnij zastrzeżenie na chwilę', trasa: '/usluga/cofnij-zastrzezenie', ik: 'clock' }, { t: 'Zobacz, kto sprawdzał Twój PESEL', trasa: '/prywatnosc', ik: 'eye' }] } : null,
-    karta: () => ({ czas: 'ok. 1 minuty', oplata: 'bezpłatnie', potrzebne: ['Nic więcej, dane mamy w rejestrze'], jak: ['Wybierasz, od kiedy zastrzeżenie ma działać', 'Potwierdzasz Face ID', 'Zastrzeżenie działa od razu, w całej Polsce'] }),
+    karta: () => ({ czas: 'ok. 1 minuty', oplata: 'bezpłatnie', potrzebne: ['Nic więcej, dane mamy w rejestrze'], jak: ['Wybierasz, od kiedy zastrzeżenie ma działać', 'Podpisujesz PIN-em mObywatela', 'Zastrzeżenie działa od razu, w całej Polsce'] }),
     kroki: () => [{
       t: 'Co chcesz zastrzec', pola: [
         { k: 'pow', l: 'Dlaczego zastrzegasz?', typ: 'wybor', opcje: [{ t: 'Profilaktycznie', o: 'Najczęstszy wybór. Po prostu dla bezpieczeństwa.' }, { t: 'Zgubiłem lub ukradziono mi dokumenty', o: 'Zastrzeż też dowód w usłudze „Zgubiony dowód”.' }, { t: 'Ktoś użył moich danych', o: 'Po zastrzeżeniu zgłoś sprawę na policji.' }] },
@@ -79,7 +79,7 @@ export const USLUGI: Usluga[] = [
   },
   {
     id: 'cofnij-zastrzezenie', t: 'Cofnij zastrzeżenie PESEL', opis: 'Na czas wniosku o kredyt', kat: 'dokumenty', ik: 'clock', slowa: 'odblokuj pesel kredyt', dostepna: (_, st) => st.pesel,
-    karta: () => ({ czas: 'ok. 1 minuty', oplata: 'bezpłatnie', potrzebne: ['Nic więcej'], jak: ['Wybierasz, na jak długo', 'Potwierdzasz Face ID', 'Po tym czasie zastrzeżenie włączy się samo'] }),
+    karta: () => ({ czas: 'ok. 1 minuty', oplata: 'bezpłatnie', potrzebne: ['Nic więcej'], jak: ['Wybierasz, na jak długo', 'Podpisujesz PIN-em mObywatela', 'Po tym czasie zastrzeżenie włączy się samo'] }),
     kroki: () => [{
       t: 'Na jak długo', pola: [
         { k: 'na', l: 'Cofnij zastrzeżenie na', typ: 'wybor', opcje: [{ t: '1 dzień', o: 'Wystarczy na podpisanie umowy w oddziale' }, { t: '7 dni', o: 'Typowy czas rozpatrywania wniosku kredytowego' }, { t: '30 dni', o: 'Np. kredyt hipoteczny' }, { t: 'Na stałe', o: 'Zastrzeżenie nie wróci samo' }], v: '7 dni' },
@@ -140,7 +140,7 @@ export const USLUGI: Usluga[] = [
       { t: 'Twoje dane', opis: 'Uzupełniliśmy je z rejestru PESEL.', pola: [{ k: 'rodzice', l: 'Imiona rodziców', v: o.dane.rodzice, wym: true }, { k: 'rodowe', l: 'Nazwisko rodowe', v: o.nazwisko, wym: true }, { k: 'jezyk', l: 'Język zaświadczenia', typ: 'wybor', opcje: ['Polski', 'Polski i angielski'], gdy: v => v.cel === 'Za granicę' }] },
     ],
     podsumowanie: (v, o) => [['Osoba', o.moje.imie_nazwisko], ['PESEL', peselM(o)], ['Imiona rodziców', v.rodzice], ['Cel', v.cel], ...(v.cel === 'Za granicę' ? [['Język', v.jezyk] as Wiersz] : []), ['Opłata', '20 zł']],
-    przycisk: 'Zapłać 20 zł i wyślij', wysylka: ['Płatność BLIK…', 'Sprawdzam Krajowy Rejestr Karny…', 'Podpisuję zaświadczenie…'],
+    przycisk: 'Zapłać 20 zł i wyślij', platnosc: true, wysylka: ['Płatność BLIK…', 'Sprawdzam Krajowy Rejestr Karny…', 'Podpisuję zaświadczenie…'],
     wynik: (v, o, api) => {
       api.zaplac('Zaświadczenie z KRK', '20,00 zł');
       api.pismo({ od: 'Krajowy Rejestr Karny', t: 'Zaświadczenie o niekaralności', k: 'dokumenty', nowe: 1, skrot: [`${o.imie} ${o.nazwisko} nie figuruje w Krajowym Rejestrze Karnym.`, 'Plik PDF z podpisem, gotowy do wysłania pracodawcy.'], q: '' });
@@ -180,7 +180,7 @@ export const USLUGI: Usluga[] = [
   },
   {
     id: 'wymeldowanie', t: 'Wymeldowanie', opis: 'Z pobytu stałego lub czasowego', kat: 'mieszkanie', ik: 'out', slowa: 'wymeldowac meldunek wyprowadzka',
-    karta: () => ({ czas: 'ok. 1 minuty', oplata: 'bezpłatnie', potrzebne: ['Nic więcej'], jak: ['Wybierasz, z którego pobytu', 'Potwierdzasz Face ID', 'Wymeldowanie działa od wybranego dnia'] }),
+    karta: () => ({ czas: 'ok. 1 minuty', oplata: 'bezpłatnie', potrzebne: ['Nic więcej'], jak: ['Wybierasz, z którego pobytu', 'Podpisujesz PIN-em mObywatela', 'Wymeldowanie działa od wybranego dnia'] }),
     kroki: o => [{ t: 'Wymeldowanie', pola: [{ k: 'z', l: 'Z którego adresu?', typ: 'wybor', opcje: [{ t: o.dane.zamel, o: `Pobyt stały od ${o.dane.zamelOd}` }] }, { k: 'od', l: 'Od kiedy', v: dzis, wym: true }] }],
     wynik: v => ({ tytul: 'Wymeldowano', opis: 'Pamiętaj o zameldowaniu pod nowym adresem.', wiersze: [['Adres', v.z], ['Od', v.od]], dalej: [{ t: 'Zamelduj się pod nowym adresem', trasa: '/usluga/zameldowanie' }] }),
   },
@@ -204,7 +204,7 @@ export const USLUGI: Usluga[] = [
       { t: 'Rodzaj odpisu', pola: [{ k: 'typ', l: 'Jaki odpis?', typ: 'wybor', opcje: [{ t: 'Skrócony', o: 'Wystarczy w większości urzędów. 22 zł' }, { t: 'Zupełny', o: 'Pełna historia aktu, np. do spraw spadkowych. 33 zł' }, { t: 'Wielojęzyczny', o: 'Do użytku w krajach UE. 22 zł' }] }, { k: 'dost', l: 'Doręczenie', typ: 'wybor', opcje: [{ t: 'Do skrzynki e-Doręczeń', o: 'Najszybciej' }, { t: 'Pocztą', o: `Na adres ${o.dane.zamel}` }] }] },
     ],
     podsumowanie: v => [['Akt', v.akt], ['Osoba', v.kogo === 'Inna osoba' ? v.inna : v.kogo], ['Odpis', v.typ], ['Doręczenie', v.dost], ['Opłata', v.typ === 'Zupełny' ? '33 zł' : '22 zł']],
-    przycisk: 'Zapłać i wyślij', wysylka: ['Płatność BLIK…', 'Wysyłam do urzędu stanu cywilnego…'],
+    przycisk: 'Zapłać i wyślij', platnosc: true, wysylka: ['Płatność BLIK…', 'Wysyłam do urzędu stanu cywilnego…'],
     wynik: v => ({ tytul: 'Wniosek złożony', opis: 'Odpis zwykle w ciągu kilku dni.', wiersze: [['Odpis', `akt ${v.akt.toLowerCase()}, ${v.typ.toLowerCase()}`], ['Opłata', (v.typ === 'Zupełny' ? '33' : '22') + ' zł, zapłacono']],
       sprawa: sprawa(`Odpis aktu ${v.akt.toLowerCase()}`, 'Urząd Stanu Cywilnego', 'mieszkanie', 'Do 7 dni', [['Wniosek i opłata', dzis.slice(0, 5), 2], ['Wydanie odpisu w USC', 'w toku', 1], [v.dost === 'Pocztą' ? 'Wysyłka pocztą' : 'Doręczenie do skrzynki', '', 0]], 'Dostaniesz powiadomienie, gdy odpis będzie gotowy.') }),
   },
@@ -254,7 +254,7 @@ export const USLUGI: Usluga[] = [
       { t: 'Pojazd', pola: [{ k: 'vin', l: 'VIN', v: 'WVWZZZAUZKW118204', wym: true }, { k: 'nr', l: 'Obecny numer rejestracyjny', v: 'WE 4K221', wym: true }, { k: 'tab', l: 'Tablice', typ: 'wybor', opcje: [{ t: 'Zachowuję obecne', o: 'Taniej, jeśli auto jest z Twojego województwa' }, { t: 'Nowe tablice', o: '180,50 zł razem z dowodem' }] }] },
       { t: 'Dokumenty', pola: [{ k: 'umowa', l: 'Umowa kupna-sprzedaży', typ: 'plik', plik: 'umowa-kupna.pdf', wym: true }, { k: 'oc', l: 'Polisa OC', typ: 'wybor', opcje: ['Mam OC na siebie', 'Przejmuję OC poprzedniego właściciela'] }, { k: 'pcc', l: 'Złóż od razu PCC-3 (2% wartości auta)', typ: 'tak', v: 'tak', podp: 'Masz na to 14 dni od zakupu.' }] },
     ],
-    przycisk: 'Zapłać i wyślij', wysylka: ['Płatność…', 'Wysyłam do wydziału komunikacji…'],
+    przycisk: 'Zapłać i wyślij', platnosc: true, wysylka: ['Płatność…', 'Wysyłam do wydziału komunikacji…'],
     wynik: v => ({ tytul: 'Wniosek złożony', opis: 'Dostaniesz SMS, gdy dowód rejestracyjny będzie do odbioru.', wiersze: [['Pojazd', v.nr], ['Tablice', v.tab], ['PCC-3', tak(v.pcc) ? 'złożone, do zapłaty 1 240 zł' : 'nie']],
       sprawa: sprawa('Rejestracja pojazdu', 'Wydział komunikacji', 'pojazd', 'Odbiór ok. ' + za(5).slice(0, 5), [['Wniosek i opłata', dzis.slice(0, 5), 2], ['Pozwolenie czasowe', 'w toku', 1], ['Dowód rejestracyjny do odbioru', '', 0]], 'Do czasu odbioru możesz jeździć na pozwoleniu czasowym.') }),
   },
@@ -279,12 +279,12 @@ export const USLUGI: Usluga[] = [
   { id: 'skrzynka', t: 'Skrzynka e-Doręczeń', opis: 'Pisma z urzędów', kat: 'oplaty', ik: 'inbox', ekran: '/skrzynka', slowa: 'pismo list urzad doreczenia wezwanie' },
   {
     id: 'odpowiedz', t: 'Odpowiedz na pismo', opis: 'Z załącznikami, przez e-Doręczenia', kat: 'oplaty', ik: 'mail', slowa: 'odpowiedz urzad skarbowy wezwanie wyjasnienia', dostepna: o => !!o.sc.letter.draft,
-    karta: o => ({ czas: 'ok. 3 minut', oplata: 'bezpłatnie', potrzebne: ['Dokumenty, o które prosi urząd'], jak: [`Odpowiadasz na: ${o.sc.letter.info.title}`, 'Dołączasz pliki (część znaleźliśmy już w Twoich dokumentach)', 'Podpisujesz Face ID; dostajesz dowód doręczenia'] }),
+    karta: o => ({ czas: 'ok. 3 minut', oplata: 'bezpłatnie', potrzebne: ['Dokumenty, o które prosi urząd'], jak: [`Odpowiadasz na: ${o.sc.letter.info.title}`, 'Dołączasz pliki (część znaleźliśmy już w Twoich dokumentach)', 'Podpisujesz PIN-em mObywatela; dostajesz dowód doręczenia'] }),
     kroki: o => [
       { t: 'Załączniki', opis: o.sc.letter.say?.replace(/ Przygotować.*$/, ''), pola: [{ k: 'zal', l: 'Dołącz', typ: 'wiele', opcje: (o.sc.letter.att?.startsWith('5') ? ['FV Tech-Bud 08/2026/14', 'FV Tech-Bud 08/2026/31', 'FV Elmar 2026/08/112', 'FV Elmar 2026/08/140', 'Korekta FV/08/2026/77'] : ['FV 2025/03/118', 'FV 2025/04/022', 'FV 2025/05/301']), v: (o.sc.letter.att?.startsWith('5') ? 'FV Tech-Bud 08/2026/14|FV Tech-Bud 08/2026/31|FV Elmar 2026/08/112|FV Elmar 2026/08/140|Korekta FV/08/2026/77' : 'FV 2025/03/118|FV 2025/04/022|FV 2025/05/301') }, { k: 'dod', l: 'Inny plik (opcjonalnie)', typ: 'plik', plik: 'dokument.pdf' }] },
       { t: 'Treść', opis: 'Przygotowaliśmy odpowiedź. Możesz ją poprawić.', pola: [{ k: 'tresc', l: 'Treść pisma', typ: 'dlugi', v: (o.sc.letter.draft ?? '').replace(/<br>/g, '\n').replace(/<[^>]+>/g, ''), wym: true }] },
     ],
-    podsumowanie: (v, o) => [['Do', o.sc.letter.to ?? ''], ['Załączniki', `${wiele(v.zal).length + (v.dod ? 1 : 0)} pliki`], ['Podpis', 'podpis zaufany (Face ID)']],
+    podsumowanie: (v, o) => [['Do', o.sc.letter.to ?? ''], ['Załączniki', `${wiele(v.zal).length + (v.dod ? 1 : 0)} pliki`], ['Podpis', 'podpis zaufany (PIN mObywatela)']],
     przycisk: 'Podpisz i wyślij', wysylka: ['Podpisuję pismo…', 'Wysyłam przez e-Doręczenia…', 'Odbieram dowód doręczenia…'],
     wynik: (v, o, api) => { api.zalatw('letter'); return { tytul: 'Pismo doręczone', opis: 'Dowód doręczenia ma moc potwierdzenia odbioru listu poleconego.', wiersze: [['Do', o.sc.letter.to ?? ''], ['Załączniki', `${wiele(v.zal).length + (v.dod ? 1 : 0)} pliki`], ['Doręczono', `${dzis}, ${new Date().toLocaleTimeString('pl-PL', { hour: '2-digit', minute: '2-digit' })}`]],
       sprawa: sprawa(o.sc.letter.info.title, o.sc.letter.to ?? 'Urząd skarbowy', 'podatki', 'Odpowiedź urzędu do 30 dni', [['Wezwanie', 'odebrane', 2], ['Twoja odpowiedź', dzis.slice(0, 5), 2], ['Weryfikacja w urzędzie', 'w toku', 1], ['Zakończenie sprawy', '', 0]], 'Urząd ma zwykle do 30 dni na odpowiedź.') }; },

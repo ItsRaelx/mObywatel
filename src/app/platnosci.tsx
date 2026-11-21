@@ -1,6 +1,7 @@
 import { View } from 'react-native';
 
-import { potwierdz, useApp } from '@/state/app';
+import { useApp } from '@/state/app';
+import { potwierdz } from '@/ui/potwierdzenie';
 import { Ekran, Grupa, IkonaKafel, Karta, Przycisk, Sekcja, T } from '@/ui/elementy';
 
 export default function Platnosci() {
@@ -8,7 +9,7 @@ export default function Platnosci() {
   const doZap = os.sc.pay.filter(p => !zaplacone.includes(p.title));
   const termin = (rows: [string, string][]) => rows.find(r => /termin/i.test(r[0]))?.[1];
   const zaplac = async (t: string, kw: string) => {
-    if (!(await potwierdz(`Zapłać ${kw}`))) return;
+    if (!(await potwierdz(`Zapłać ${kw}`, 'faceid'))) return;
     zmien(s => ({ zaplacone: [...s.zaplacone, t], historia: [['18.10', t, kw, 'EP/2026/7 2' + String(Date.now()).slice(-5)], ...s.historia] }));
     toast(`Zapłacono ${kw}`);
   };

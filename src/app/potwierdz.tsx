@@ -2,7 +2,8 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 
-import { potwierdz, useApp } from '@/state/app';
+import { useApp } from '@/state/app';
+import { potwierdz } from '@/ui/potwierdzenie';
 import { Ekran, Grupa, Ikona, Karta, Notka, Para, Portret, Przycisk, T } from '@/ui/elementy';
 import { ZAKRESY } from '@/data/zakresy';
 
@@ -18,7 +19,7 @@ export default function Potwierdz() {
   const { os, k, zmien } = useApp(); const [gotowe, setGotowe] = useState(false);
   const o = ODBIORCY[Number(kod) % 3]; const z = ZAKRESY.find(x => x.id === o.zakres)!; const pola = z.pola(os);
   const udostepnij = async () => {
-    if (!(await potwierdz('Potwierdź przekazanie danych'))) return;
+    if (!(await potwierdz('Przekazanie danych', 'pin'))) return;
     zmien(s => ({ log: [{ id: 'n' + Date.now(), kiedy: 'Przed chwilą', kto: o.kto, typ: 'ty', co: 'Udostępnienie: ' + z.t.toLowerCase(), dane: pola.map(p => p[0]), jak: 'Kodem QR, za Twoją zgodą potwierdzoną biometrią.' }, ...s.log] }));
     setGotowe(true);
   };
@@ -52,7 +53,7 @@ export default function Potwierdz() {
       <Notka ik="lock">Dane przekażemy jednorazowo. Odbiorca nie dostanie dostępu do niczego więcej.</Notka>
       <View style={{ flexDirection: 'row', gap: 10, marginTop: 22 }}>
         <Przycisk tytul="Odmów" rodzaj="drugi" style={{ flex: 1 }} onPress={() => router.back()} />
-        <Przycisk tytul="Udostępnij" ik="faceid" style={{ flex: 1.6 }} onPress={udostepnij} />
+        <Przycisk tytul="Udostępnij" ik="key" style={{ flex: 1.6 }} onPress={udostepnij} />
       </View>
     </Ekran>
   );

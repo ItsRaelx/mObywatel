@@ -3,7 +3,8 @@ import { useState } from 'react';
 import { Alert, Pressable, Switch, View } from 'react-native';
 
 import type { Wpis } from '@/data/typy';
-import { potwierdz, useApp } from '@/state/app';
+import { useApp } from '@/state/app';
+import { potwierdz } from '@/ui/potwierdzenie';
 import { Ekran, Grupa, Ikona, IkonaKafel, Karta, Pill, Sekcja, T } from '@/ui/elementy';
 import { AlertPrywatnosci } from '@/ui/wspolne';
 
@@ -35,7 +36,7 @@ export default function Prywatnosc() {
   const { k, pesel, log, zgody, zmien, toast } = useApp(); const [f, setF] = useState<string>('all');
   const L = log.filter(x => f === 'all' || x.typ === f || (f === 'firma' && x.typ === 'alert'));
   const przelacz = async (v: boolean) => {
-    if (v) { if (await potwierdz('Zastrzeż PESEL')) { zmien({ pesel: true }); toast('PESEL zastrzeżony'); } }
+    if (v) { if (await potwierdz('Zastrzeżenie PESEL', 'pin')) { zmien({ pesel: true }); toast('PESEL zastrzeżony'); } }
     else router.push('/usluga/cofnij-zastrzezenie');
   };
   return (

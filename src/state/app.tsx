@@ -67,15 +67,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
 export function useApp() { const c = useContext(C); if (!c) throw new Error('Brak AppProvider'); return c; }
 export const useK = () => useApp().k;
 
-/* Potwierdzenie biometrią: prawdziwe Face ID / odcisk palca; bez czujnika (np. w przeglądarce) przepuszcza. */
-export async function potwierdz(powod = 'Potwierdź tożsamość'): Promise<boolean> {
-  if (Platform.OS === 'web') return true;
+/* Logowanie biometrią: prawdziwe Face ID / odcisk palca, bez przechodzenia na kod telefonu.
+   Bez czujnika albo po anulowaniu zostaje PIN mObywatela na ekranie blokady. */
+export async function biometria(powod = 'Zaloguj się'): Promise<boolean> {
+  if (Platform.OS === 'web') return false;
   try {
     const ma = (await LocalAuthentication.hasHardwareAsync()) && (await LocalAuthentication.isEnrolledAsync());
-    if (!ma) return true;
-    const r = await LocalAuthentication.authenticateAsync({ promptMessage: powod, cancelLabel: 'Anuluj', fallbackLabel: 'Użyj kodu' });
+    if (!ma) return false;
+    const r = await LocalAuthentication.authenticateAsync({ promptMessage: powod, cancelLabel: 'Użyj PIN-u', disableDeviceFallback: true });
     return r.success;
-  } catch { return true; }
+  } catch { return false; }
 }
 /* sprawy z listy „Do załatwienia”, których użytkownik jeszcze nie załatwił */
 export function useZadania() {

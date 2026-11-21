@@ -8,6 +8,7 @@ import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { AppProvider, useApp } from '@/state/app';
 import { Blokada, Wprowadzenie } from '@/ui/brama';
 import { ToastHost } from '@/ui/elementy';
+import { PotwierdzenieHost } from '@/ui/potwierdzenie';
 import { SplashAnimowany } from '@/ui/splash';
 
 SplashScreen.preventAutoHideAsync();
@@ -51,6 +52,7 @@ function Wnetrze() {
       </Stack>
       <ToastHost />
       {brama ? <Animated.View key={wprowadzenie ? 'blokada' : 'wprowadzenie'} entering={FadeIn.duration(250)} exiting={FadeOut.duration(380)} style={StyleSheet.absoluteFill}>{brama}</Animated.View> : null}
+      <PotwierdzenieHost />
       <SplashAnimowany />
     </ThemeProvider>
   );

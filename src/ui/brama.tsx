@@ -1,54 +1,22 @@
-import * as Haptics from 'expo-haptics';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { useEffect, useState } from 'react';
 import { Animated, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import R, { FadeIn, FadeInDown, FadeInUp, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import R, { FadeIn, FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { OSOBY, OSOBY_IDS } from '@/data/typy';
-import { potwierdz, useApp } from '@/state/app';
+import { biometria, useApp } from '@/state/app';
+import { Klawiatura, Kropki, trzes } from '@/ui/klawiatura';
+import { potwierdz } from '@/ui/potwierdzenie';
 import { Avatar, Ikona, LogoBiale, Portret, Przycisk } from '@/ui/elementy';
-
-/* ---------- klawiatura PIN ---------- */
-function Klawiatura({ onCyfra, onUsun, onBio, jasna }: { onCyfra: (c: string) => void; onUsun: () => void; onBio?: () => void; jasna?: boolean }) {
-  const fg = jasna ? '#17181C' : '#fff', bg = jasna ? 'rgba(0,0,0,0.06)' : 'rgba(255,255,255,0.14)';
-  const k = (t: string) => (
-    <Pressable key={t} onPress={() => { Haptics.selectionAsync().catch(() => {}); onCyfra(t); }} accessibilityLabel={t}
-      style={({ pressed }) => [st.klaw, { backgroundColor: pressed ? (jasna ? 'rgba(0,0,0,0.14)' : 'rgba(255,255,255,0.3)') : bg }]}>
-      <Text style={{ color: fg, fontSize: 30, fontWeight: '500' }}>{t}</Text>
-    </Pressable>
-  );
-  return (
-    <View style={{ width: 290, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', rowGap: 14 }}>
-      {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map(k)}
-      {onBio ? <Pressable onPress={onBio} accessibilityLabel="Zaloguj biometrią" style={st.klaw}><Ikona n="faceid" size={32} color={fg} /></Pressable> : <View style={st.klaw} />}
-      {k('0')}
-      <Pressable onPress={onUsun} accessibilityLabel="Usuń cyfrę" style={st.klaw}><Ikona n="back" size={28} color={fg} /></Pressable>
-    </View>
-  );
-}
-function Kropki({ n, blad }: { n: number; blad: Animated.Value }) {
-  return (
-    <Animated.View style={{ flexDirection: 'row', gap: 18, transform: [{ translateX: blad.interpolate({ inputRange: [0, 0.25, 0.5, 0.75, 1], outputRange: [0, -12, 12, -8, 0] }) }] }}>
-      {[0, 1, 2, 3].map(i => <Kropka key={i} pelna={i < n} />)}
-    </Animated.View>
-  );
-}
-function Kropka({ pelna }: { pelna: boolean }) {
-  const s = useSharedValue(1);
-  useEffect(() => { s.set(withTiming(pelna ? 1 : 0.9, { duration: 120 })); }, [pelna, s]);
-  const st = useAnimatedStyle(() => ({ transform: [{ scale: s.value }] }));
-  return <R.View style={[{ width: 15, height: 15, borderRadius: 8, borderWidth: 2, borderColor: '#fff', backgroundColor: pelna ? '#fff' : 'transparent' }, st]} />;
-}
-const trzes = (a: Animated.Value) => { a.setValue(0); Animated.timing(a, { toValue: 1, duration: 380, useNativeDriver: true }).start(); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {}); };
 
 /* ---------- ekran blokady ---------- */
 export function Blokada() {
   const { os, pin, odblokuj, k, ustaw } = useApp(); const ins = useSafeAreaInsets();
   const [p, setP] = useState(''); const [msg, setMsg] = useState('Wpisz PIN, aby otworzyć aplikację');
   const blad = useState(() => new Animated.Value(0))[0];
-  const bio = async () => { if (await potwierdz('Zaloguj się do mObywatela')) odblokuj(); };
+  const bio = async () => { if (await biometria('Zaloguj się do mObywatela')) odblokuj(); };
   useEffect(() => { if (Platform.OS !== 'web') LocalAuthentication.isEnrolledAsync().then(e => { if (e) bio(); }).catch(() => {}); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const cyfra = (c: string) => {
     if (p.length >= 4) return; const n = p + c; setP(n);
@@ -154,9 +122,9 @@ export function Wprowadzenie() {
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <View style={{ width: 120, height: 120, borderRadius: 38, backgroundColor: 'rgba(255,255,255,0.16)', alignItems: 'center', justifyContent: 'center' }}><Ikona n="faceid" size={64} color="#fff" sw={1.4} /></View>
         <Text style={{ color: '#fff', fontSize: 30, fontWeight: '800', marginTop: 26, textAlign: 'center' }}>Logowanie twarzą</Text>
-        <Text style={{ color: 'rgba(255,255,255,0.9)', fontSize: 17, lineHeight: 24, marginTop: 12, textAlign: 'center' }}>Face ID albo odcisk palca zamiast PIN-u. Tym samym potwierdzisz też wysyłane wnioski.</Text>
+        <Text style={{ color: 'rgba(255,255,255,0.9)', fontSize: 17, lineHeight: 24, marginTop: 12, textAlign: 'center' }}>Face ID albo odcisk palca zamiast PIN-u przy otwieraniu aplikacji. Wnioski podpiszesz PIN-em mObywatela.</Text>
       </View>
-      <Pressable onPress={async () => { await potwierdz('Włącz logowanie biometrią'); ustaw({ wprowadzenie: true }); odblokuj(); }} style={({ pressed }) => [st.biały, pressed && { opacity: 0.85 }]}><Text style={{ color: '#B00F30', fontSize: 17, fontWeight: '800' }}>Włącz</Text></Pressable>
+      <Pressable onPress={async () => { await potwierdz('Face ID włączone', 'faceid'); ustaw({ wprowadzenie: true }); odblokuj(); }} style={({ pressed }) => [st.biały, pressed && { opacity: 0.85 }]}><Text style={{ color: '#B00F30', fontSize: 17, fontWeight: '800' }}>Włącz</Text></Pressable>
       <Pressable onPress={() => { ustaw({ wprowadzenie: true }); odblokuj(); }} style={{ alignItems: 'center', padding: 16 }}><Text style={{ color: '#fff', fontSize: 16, fontWeight: '600' }}>Nie teraz</Text></Pressable>
     </LinearGradient>
   );

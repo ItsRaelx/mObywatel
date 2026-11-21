@@ -1,4 +1,4 @@
-/* Przepływ usługi: karta informacyjna → kroki z polami → podsumowanie i zgoda → Face ID → wysyłka → wynik. */
+/* Przepływ usługi: karta informacyjna → kroki z polami → podsumowanie i zgoda → PIN albo Face ID → wysyłka → wynik. */
 import * as Haptics from 'expo-haptics';
 import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
@@ -7,7 +7,8 @@ import { FadeIn, FadeInDown, FadeOut, LinearTransition } from 'react-native-rean
 
 import { lab, usluga, wiele, type Api, type Info, type Krok, type Pole, type Usluga, type V, type Wynik } from '@/data/uslugi';
 import type { Osoba, Wiersz as Wrsz } from '@/data/typy';
-import { potwierdz, useApp } from '@/state/app';
+import { useApp } from '@/state/app';
+import { potwierdz } from '@/ui/potwierdzenie';
 import { Ekran, Grupa, Ikona, IkonaKafel, Karta, Notka, Para, Pill, Przycisk, Sekcja, T } from '@/ui/elementy';
 import { EkranInfo } from '@/ui/info-uslugi';
 import { Animated, Pasek, Pop, Puls, Sprezyna, Wejscie } from '@/ui/ruch';
@@ -311,7 +312,7 @@ export default function UslugaEkran() {
 
   const wykonaj = async () => {
     if (u.zgoda && !zgoda) { setBladZgody(true); return; }
-    if (!u.bezFaceId && !(await potwierdz(u.przycisk ?? 'Podpisz i wyślij'))) return;
+    if (!u.bezFaceId && !(await potwierdz(u.platnosc ? (u.przycisk ?? 'Zapłać') : u.t, u.platnosc ? 'faceid' : 'pin'))) return;
     setFaza('wysylka'); setEtap(0);
     for (let i = 0; i < etapy.length; i++) { setEtap(i); await czekaj(850); }
     setEtap(etapy.length); await czekaj(300);
@@ -362,9 +363,9 @@ export default function UslugaEkran() {
         </Wejscie>
       ) : null}
       <Wejscie i={3}>
-        <Przycisk tytul={u.przycisk ?? 'Podpisz i wyślij'} ik={u.bezFaceId ? undefined : 'faceid'} style={{ marginTop: 18 }} onPress={wykonaj} />
+        <Przycisk tytul={u.przycisk ?? 'Podpisz i wyślij'} ik={u.bezFaceId ? undefined : u.platnosc ? 'faceid' : 'key'} style={{ marginTop: 18 }} onPress={wykonaj} />
         <Przycisk tytul="Wróć i popraw" rodzaj="link" onPress={wstecz} />
-        {!u.bezFaceId ? <T v="small" center style={{ marginTop: 4 }}>Face ID działa tu jak podpis zaufany.</T> : null}
+        {!u.bezFaceId ? <T v="small" center style={{ marginTop: 4 }}>{u.platnosc ? 'Płatność potwierdzisz Face ID, a wniosek podpiszemy Twoim profilem.' : 'Podpiszesz PIN-em mObywatela. To podpis zaufany.'}</T> : null}
       </Wejscie>
     </Ekran>
   );

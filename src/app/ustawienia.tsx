@@ -41,7 +41,7 @@ export default function Ustawienia() {
       </Sekcja>
       <Sekcja tytul="Logowanie">
         <Grupa>
-          {sw('bio', 'Face ID / odcisk palca', 'Do logowania i podpisywania wniosków')}
+          {sw('bio', 'Face ID / odcisk palca', 'Do otwierania aplikacji. Wnioski podpisujesz PIN-em mObywatela')}
           <Wiersz ik="key" tytul="Zmień PIN" onPress={() => Alert.alert('Zmienić PIN?', 'Przejdziesz przez krótkie ustawienie od nowa.', [{ text: 'Anuluj', style: 'cancel' }, { text: 'Zmień', onPress: () => ustaw({ wprowadzenie: false, pin: null }) }])} />
           <Wiersz ik="phone" tytul="Aktywne urządzenia" opis="Ten telefon" onPress={() => toast('Wylogowano z pozostałych urządzeń (pokaz)')} />
         </Grupa>
