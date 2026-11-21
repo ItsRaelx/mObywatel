@@ -4,17 +4,17 @@ import * as LocalAuthentication from 'expo-local-authentication';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Platform, useColorScheme } from 'react-native';
 
-import { OSOBY, type Osoba, type Pismo, type Wpis } from '@/data/typy';
+import { OSOBY, type Osoba, type Pismo, type Sprawa, type Wpis } from '@/data/typy';
 import { PALETA, type Kolory } from '@/ui/motyw';
 
 export type Motyw = 'system' | 'jasny' | 'ciemny';
 type Trwale = { osobaId: string; motyw: Motyw; pin: string | null; wprowadzenie: boolean };
 type Sesja = {
   pesel: boolean; log: Wpis[]; zgody: [string, string, string][]; przeczytane: string[]; zaplacone: string[];
-  pisma: Pismo[]; historia: [string, string, string, string][]; zalatwione: string[];
+  pisma: Pismo[]; historia: [string, string, string, string][]; zalatwione: string[]; noweSprawy: Sprawa[];
 };
 type Ctx = Trwale & Sesja & {
-  gotowe: boolean; odblokowana: boolean; os: Osoba; k: Kolory; skrzynka: Pismo[];
+  gotowe: boolean; odblokowana: boolean; os: Osoba; k: Kolory; skrzynka: Pismo[]; sprawy: Sprawa[];
   ustaw: (z: Partial<Trwale>) => void; odblokuj: () => void; zablokuj: () => void;
   zmien: (z: Partial<Sesja> | ((s: Sesja) => Partial<Sesja>)) => void;
   toast: (t: string) => void; toastTxt: string | null;
@@ -23,7 +23,7 @@ type Ctx = Trwale & Sesja & {
 const KLUCZ = 'mobywatel-prototyp';
 const sesjaDla = (o: Osoba): Sesja => ({
   pesel: o.priv.pesel, log: o.priv.log.map(x => ({ ...x })), zgody: o.priv.zgody.slice(), przeczytane: [], zaplacone: [],
-  pisma: [], historia: o.platnosci.slice(), zalatwione: [],
+  pisma: [], historia: o.platnosci.slice(), zalatwione: [], noweSprawy: [],
 });
 
 const C = createContext<Ctx | null>(null);
@@ -56,8 +56,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const ciemny = t.motyw === 'ciemny' || (t.motyw === 'system' && sys === 'dark');
   const os = OSOBY[t.osobaId] ?? OSOBY.marta;
   const skrzynka = useMemo(() => [...s.pisma, ...os.skrzynka], [s.pisma, os]);
+  const sprawy = useMemo(() => [...s.noweSprawy, ...os.toku], [s.noweSprawy, os]);
   const v: Ctx = {
-    ...t, ...s, gotowe, odblokowana, os, k: ciemny ? PALETA.dark : PALETA.light, skrzynka,
+    ...t, ...s, gotowe, odblokowana, os, k: ciemny ? PALETA.dark : PALETA.light, skrzynka, sprawy,
     ustaw, zmien, toast, toastTxt, odblokuj: () => setOdbl(true), zablokuj: () => setOdbl(false),
   };
   return <C.Provider value={v}>{children}</C.Provider>;

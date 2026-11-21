@@ -6,6 +6,7 @@ import { useApp } from '@/state/app';
 import { Ekran, Ikona, Pill, Przycisk, Sekcja, T } from '@/ui/elementy';
 import { KartaDokumentu } from '@/ui/karta';
 import { KartaCzlonka } from '@/ui/wspolne';
+import { Sprezyna, Wejscie } from '@/ui/ruch';
 
 export default function Dokumenty() {
   const { os, k } = useApp(); const { width } = useWindowDimensions(); const w = Math.min(width - 32, 420);
@@ -14,16 +15,16 @@ export default function Dokumenty() {
     <Ekran tab tytul="Dokumenty" podtytul={`${os.docs.length} ${pl3(os.docs.length, 'dokument', 'dokumenty', 'dokumentów')} · ${bad ? `${bad} ${pl3(bad, 'wymaga', 'wymagają', 'wymaga')} uwagi` : 'wszystkie ważne'}`}
       prawa={<Pressable onPress={() => router.push('/dodaj-dokument')} accessibilityLabel="Dodaj dokument" style={{ width: 44, height: 44, borderRadius: 22, backgroundColor: k.surface, alignItems: 'center', justifyContent: 'center' }}><Ikona n="plus" size={22} color={k.ink} /></Pressable>}>
       <View style={{ gap: 18 }}>
-        {os.docs.map(d => (
-          <View key={d.id}>
-            <Pressable onPress={() => router.push(`/dokument/${d.id}`)} accessibilityLabel={`Otwórz: ${d.name}`} style={({ pressed }) => pressed && { transform: [{ scale: 0.985 }] }}>
+        {os.docs.map((d, i) => (
+          <Wejscie key={d.id} i={i}>
+            <Sprezyna onPress={() => router.push(`/dokument/${d.id}`)} accessibilityLabel={`Otwórz: ${d.name}`} skala={0.97}>
               <KartaDokumentu d={d} os={os} w={w} ukryte={d.id === 'dowod'} onQR={() => router.push('/pokaz-kod')} onPokaz={() => router.push('/dokument/dowod')} />
-            </Pressable>
+            </Sprezyna>
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8, paddingHorizontal: 4 }}>
               <T v="sub" n={1} style={{ flex: 1 }}>{d.sub}</T>
               {d.alert ? <Pill t={d.alert} ton="r" ik="alert" /> : <Pill t="Ważny" ton="g" ik="ok" />}
             </View>
-          </View>
+          </Wejscie>
         ))}
       </View>
 

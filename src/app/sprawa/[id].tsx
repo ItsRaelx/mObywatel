@@ -7,7 +7,7 @@ import { Ekran, Ikona, Karta, Notka, Pill, T } from '@/ui/elementy';
 
 export default function SprawaEkran() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { os, k } = useApp(); const s = os.toku.find(x => x.id === id); const [pow, setPow] = useState(true);
+  const { k, sprawy } = useApp(); const s = sprawy.find(x => x.id === id); const [pow, setPow] = useState(true);
   if (!s) return <Ekran><T>Nie znaleziono sprawy.</T></Ekran>;
   const koniec = s.steps.every(x => x[2] === 2);
   return (

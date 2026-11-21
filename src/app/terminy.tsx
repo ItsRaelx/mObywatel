@@ -8,12 +8,12 @@ import { Ekran, Grupa, Karta, Pill, Przycisk, Sekcja, T } from '@/ui/elementy';
 import { SprawaWiersz } from '@/ui/wspolne';
 
 export default function Terminy() {
-  const { os, k, toast } = useApp();
+  const { os, k, toast, sprawy } = useApp();
   const items = os.os.map(r => ({ d: dataZ(r[0]), t: r[1], s: r[2], q: r[4] })).sort((a, b) => +a.d - +b.d);
   return (
     <Ekran>
       <Sekcja tytul="Sprawy w toku" style={{ marginTop: 0 }}>
-        <Grupa>{os.toku.map(s => <SprawaWiersz key={s.id} s={s} />)}</Grupa>
+        <Grupa>{sprawy.map(s => <SprawaWiersz key={s.id} s={s} />)}</Grupa>
       </Sekcja>
       <Sekcja tytul="Najbliższe terminy">
         <T v="sub" style={{ marginBottom: 10, marginLeft: 4 }}>Dziś: {DZIS_TXT.toLowerCase()}</T>

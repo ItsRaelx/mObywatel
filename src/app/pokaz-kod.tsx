@@ -1,10 +1,12 @@
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useMemo, useState } from 'react';
 import { Pressable, ScrollView, useWindowDimensions, View } from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 import { ZAKRESY } from '@/data/zakresy';
 import { useApp } from '@/state/app';
 import { Ikona, Karta, KodQR, Portret, T } from '@/ui/elementy';
+import { Pasek } from '@/ui/ruch';
 
 const WSZYSTKIE = ['Imię i nazwisko', 'Data urodzenia', 'PESEL', 'Numer dowodu', 'Adres'];
 
@@ -32,11 +34,12 @@ export default function PokazKod() {
       </View>
 
       <Karta style={{ marginTop: 16, padding: 20, alignItems: 'center' }}>
-        <View style={{ padding: 10, borderRadius: 20, backgroundColor: '#fff' }}><KodQR tekst={tekst} size={size} /></View>
+        <Animated.View key={tekst} entering={FadeIn.duration(450)} style={{ padding: 10, borderRadius: 20, backgroundColor: '#fff' }}><KodQR tekst={tekst} size={size} /></Animated.View>
         <T v="h2" style={{ marginTop: 12, letterSpacing: 2, fontVariant: ['tabular-nums'] }}>{String(tok).slice(0, 2)} {String(tok).slice(2)}</T>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 }}>
           <Ikona n="clock" size={15} color={k.ink2} /><T v="sub">Nowy kod za {left} s</T>
         </View>
+        <View style={{ alignSelf: 'stretch', marginTop: 12 }}><Pasek f={left / 30} kolor={left <= 5 ? k.acc : k.ink3} tlo={k.surface2} h={4} /></View>
       </Karta>
 
       <Karta style={{ marginTop: 14, padding: 16 }}>

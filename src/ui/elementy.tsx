@@ -1,7 +1,7 @@
-import * as Haptics from 'expo-haptics';
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { Animated, Image, Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
+import { useEffect, useMemo, type ReactNode } from 'react';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Animated, { FadeInDown, useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import Svg, { Circle, SvgXml } from 'react-native-svg';
 
 import { kiedy, pl3 } from '@/data/typy';
@@ -10,6 +10,7 @@ import { IKONY } from '@/lib/ikony';
 import { QR } from '@/lib/qr';
 import { useApp, useK } from '@/state/app';
 import { CIEN, R } from '@/ui/motyw';
+import { Luk, Sprezyna, Wejscie } from '@/ui/ruch';
 
 /* ---------- ikona z własnego zestawu ---------- */
 export function Ikona({ n, size = 22, color, sw = 1.75 }: { n: string; size?: number; color?: string; sw?: number }) {
@@ -57,10 +58,10 @@ export function Ekran({ tytul, podtytul, prawa, children, tab }: { tytul?: strin
 }
 
 /* ---------- sekcja, grupa, wiersz ---------- */
-export function Sekcja({ tytul, akcja, onAkcja, children, style }: { tytul?: string; akcja?: string; onAkcja?: () => void; children: ReactNode; style?: StyleProp<ViewStyle> }) {
+export function Sekcja({ tytul, akcja, onAkcja, children, style, i = 1 }: { tytul?: string; akcja?: string; onAkcja?: () => void; children: ReactNode; style?: StyleProp<ViewStyle>; i?: number }) {
   const k = useK();
   return (
-    <View style={[{ marginTop: 26 }, style]}>
+    <Wejscie i={i} style={[{ marginTop: 26 }, style]}>
       {tytul ? (
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10, paddingHorizontal: 4 }}>
           <T v="h2" style={{ fontSize: 19 }}>{tytul}</T>
@@ -68,18 +69,18 @@ export function Sekcja({ tytul, akcja, onAkcja, children, style }: { tytul?: str
         </View>
       ) : null}
       {children}
-    </View>
+    </Wejscie>
   );
 }
 export function Karta({ children, style, onPress }: { children: ReactNode; style?: StyleProp<ViewStyle>; onPress?: () => void }) {
   const k = useK();
   const st = [{ backgroundColor: k.surface, borderRadius: R.l, overflow: 'hidden' as const }, k.dark ? { borderWidth: StyleSheet.hairlineWidth, borderColor: k.hair } : CIEN, style];
   if (!onPress) return <View style={st}>{children}</View>;
-  return <Pressable onPress={onPress} style={({ pressed }) => [st, pressed && { opacity: 0.85, transform: [{ scale: 0.99 }] }]}>{children}</Pressable>;
+  return <Sprezyna onPress={onPress} style={st} skala={0.975}>{children}</Sprezyna>;
 }
 export function Grupa({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const k = useK(); const arr = (Array.isArray(children) ? children : [children]).flat().filter(Boolean);
-  return <Karta style={style}>{arr.map((c, i) => <View key={i} style={i ? { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: k.hair } : null}>{c}</View>)}</Karta>;
+  return <Karta style={style}>{arr.map((c, i) => <Animated.View key={i} entering={FadeInDown.delay(80 + Math.min(i, 8) * 45).duration(380)} style={i ? { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: k.hair } : null}>{c}</Animated.View>)}</Karta>;
 }
 export function IkonaKafel({ n, akcent, size = 40 }: { n: string; akcent?: boolean; size?: number }) {
   const k = useK();
@@ -117,12 +118,12 @@ export function Przycisk({ tytul, ik, onPress, rodzaj = 'glowny', style, maly }:
   const bg = rodzaj === 'glowny' ? k.acc : rodzaj === 'drugi' ? k.surface : 'transparent';
   const fg = rodzaj === 'glowny' ? '#fff' : rodzaj === 'drugi' ? k.ink : k.accInk;
   return (
-    <Pressable onPress={() => { Haptics.selectionAsync().catch(() => {}); onPress?.(); }} accessibilityRole="button"
-      style={({ pressed }) => [{ height: maly ? 44 : 54, borderRadius: maly ? 14 : 17, backgroundColor: bg, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingHorizontal: 16 },
-        rodzaj === 'drugi' && (k.dark ? { borderWidth: StyleSheet.hairlineWidth, borderColor: k.hair } : CIEN), pressed && { opacity: 0.8, transform: [{ scale: 0.985 }] }, style]}>
+    <Sprezyna onPress={() => onPress?.()} accessibilityRole="button" skala={0.96}
+      style={[{ height: maly ? 44 : 54, borderRadius: maly ? 14 : 17, backgroundColor: bg, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, paddingHorizontal: 16 },
+        rodzaj === 'drugi' && (k.dark ? { borderWidth: StyleSheet.hairlineWidth, borderColor: k.hair } : CIEN), style]}>
       {ik ? <Ikona n={ik} size={20} color={fg} /> : null}
       <Text style={{ color: fg, fontSize: maly ? 15 : 16.5, fontWeight: '700' }}>{tytul}</Text>
-    </Pressable>
+    </Sprezyna>
   );
 }
 export function Pill({ t, ton = 'n', ik }: { t: string; ton?: 'r' | 'g' | 'n' | 'a'; ik?: string }) {
@@ -183,13 +184,13 @@ export function KodQR({ tekst, size, logo = true }: { tekst: string; size: numbe
 export function Dni({ n }: { n: number | null }) {
   const k = useK();
   if (n == null) return null;
-  const C = 2 * Math.PI * 19, f = Math.max(0.05, Math.min(1, n / 30));
+  const f = Math.max(0.05, Math.min(1, n / 30));
   const kol = n <= 7 ? k.acc : n <= 14 ? k.warn : k.ink3;
   return (
     <View style={{ width: 50, height: 50, alignItems: 'center', justifyContent: 'center' }} accessibilityLabel={kiedy(n)}>
       <Svg width={50} height={50} viewBox="0 0 44 44" style={{ position: 'absolute', transform: [{ rotate: '-90deg' }] }}>
         <Circle cx={22} cy={22} r={19} stroke={k.surface2} strokeWidth={4} fill="none" />
-        <Circle cx={22} cy={22} r={19} stroke={kol} strokeWidth={4} fill="none" strokeLinecap="round" strokeDasharray={`${C * f} ${C}`} />
+        <Luk cx={22} cy={22} r={19} f={f} kolor={kol} />
       </Svg>
       <Text style={{ fontSize: 16, fontWeight: '800', color: n <= 7 ? k.accInk : k.ink, lineHeight: 17 }}>{n}</Text>
       <Text style={{ fontSize: 9, fontWeight: '600', color: k.ink2 }}>{pl3(n, 'dzień', 'dni', 'dni')}</Text>
@@ -200,10 +201,11 @@ export function Dni({ n }: { n: number | null }) {
 /* ---------- komunikat na dole ekranu ---------- */
 export function ToastHost() {
   const { toastTxt, k } = useApp(); const ins = useSafeAreaInsets();
-  const a = useState(() => new Animated.Value(0))[0];
-  useEffect(() => { Animated.timing(a, { toValue: toastTxt ? 1 : 0, duration: 220, useNativeDriver: true }).start(); }, [toastTxt, a]);
+  const a = useSharedValue(0);
+  useEffect(() => { a.set(toastTxt ? withSpring(1, { damping: 14, stiffness: 170 }) : withTiming(0, { duration: 200 })); }, [toastTxt, a]);
+  const st = useAnimatedStyle(() => ({ opacity: Math.min(1, a.value), transform: [{ translateY: (1 - a.value) * 30 }, { scale: 0.94 + a.value * 0.06 }] }));
   return (
-    <Animated.View pointerEvents="none" style={{ position: 'absolute', left: 16, right: 16, bottom: ins.bottom + 96, opacity: a, transform: [{ translateY: a.interpolate({ inputRange: [0, 1], outputRange: [16, 0] }) }] }}>
+    <Animated.View pointerEvents="none" style={[{ position: 'absolute', left: 16, right: 16, bottom: ins.bottom + 96 }, st]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, padding: 14, borderRadius: 18, backgroundColor: k.dark ? '#F2F2F4' : '#1B1C21' }}>
         <View style={{ width: 22, height: 22, borderRadius: 11, backgroundColor: '#2FBF71', alignItems: 'center', justifyContent: 'center' }}><Ikona n="ok" size={14} color="#fff" sw={2.6} /></View>
         <Text style={{ flex: 1, color: k.dark ? '#17181C' : '#fff', fontSize: 14.5, fontWeight: '500' }}>{toastTxt}</Text>

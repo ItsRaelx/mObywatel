@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { useEffect, useState } from 'react';
 import { Animated, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import R, { FadeIn, FadeInDown, FadeInRight, FadeInUp, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming, ZoomIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { OSOBY, OSOBY_IDS } from '@/data/typy';
@@ -30,9 +31,15 @@ function Klawiatura({ onCyfra, onUsun, onBio, jasna }: { onCyfra: (c: string) =>
 function Kropki({ n, blad }: { n: number; blad: Animated.Value }) {
   return (
     <Animated.View style={{ flexDirection: 'row', gap: 18, transform: [{ translateX: blad.interpolate({ inputRange: [0, 0.25, 0.5, 0.75, 1], outputRange: [0, -12, 12, -8, 0] }) }] }}>
-      {[0, 1, 2, 3].map(i => <View key={i} style={{ width: 15, height: 15, borderRadius: 8, borderWidth: 2, borderColor: '#fff', backgroundColor: i < n ? '#fff' : 'transparent' }} />)}
+      {[0, 1, 2, 3].map(i => <Kropka key={i} pelna={i < n} />)}
     </Animated.View>
   );
+}
+function Kropka({ pelna }: { pelna: boolean }) {
+  const s = useSharedValue(1);
+  useEffect(() => { if (pelna) s.set(withSequence(withTiming(1.45, { duration: 90 }), withSpring(1, { damping: 8, stiffness: 300 }))); }, [pelna, s]);
+  const st = useAnimatedStyle(() => ({ transform: [{ scale: s.value }] }));
+  return <R.View style={[{ width: 15, height: 15, borderRadius: 8, borderWidth: 2, borderColor: '#fff', backgroundColor: pelna ? '#fff' : 'transparent' }, st]} />;
 }
 const trzes = (a: Animated.Value) => { a.setValue(0); Animated.timing(a, { toValue: 1, duration: 380, useNativeDriver: true }).start(); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => {}); };
 
@@ -50,13 +57,13 @@ export function Blokada() {
   return (
     <LinearGradient colors={k.hero} style={[StyleSheet.absoluteFill, { paddingTop: ins.top + 30, paddingBottom: ins.bottom + 20, alignItems: 'center' }]}>
       <LogoBiale w={150} />
-      <View style={{ marginTop: 26, alignItems: 'center' }}>
-        <Avatar id={os.id} size={80} ramka="#fff" />
+      <R.View entering={FadeInDown.delay(150).duration(500)} style={{ marginTop: 26, alignItems: 'center' }}>
+        <R.View entering={ZoomIn.delay(200).springify().damping(12)}><Avatar id={os.id} size={80} ramka="#fff" /></R.View>
         <Text style={{ color: '#fff', fontSize: 24, fontWeight: '800', marginTop: 12 }}>Cześć, {os.wolacz}</Text>
         <Text style={{ color: 'rgba(255,255,255,0.88)', fontSize: 15, marginTop: 4 }}>{msg}</Text>
-      </View>
+      </R.View>
       <View style={{ marginTop: 26, marginBottom: 'auto' }}><Kropki n={p.length} blad={blad} /></View>
-      <Klawiatura onCyfra={cyfra} onUsun={() => setP(p.slice(0, -1))} onBio={Platform.OS === 'web' ? undefined : bio} />
+      <R.View entering={FadeInUp.delay(300).duration(500)}><Klawiatura onCyfra={cyfra} onUsun={() => setP(p.slice(0, -1))} onBio={Platform.OS === 'web' ? undefined : bio} /></R.View>
       <Pressable onPress={() => ustaw({ wprowadzenie: false, pin: null })} style={{ marginTop: 18, padding: 6 }}>
         <Text style={{ color: '#fff', opacity: 0.9, fontWeight: '600' }}>Nie pamiętasz PIN-u? Ustaw nowy</Text>
       </Pressable>
@@ -85,15 +92,15 @@ export function Wprowadzenie() {
           <LogoBiale w={132} />
           <Pressable onPress={() => setKrok(3)} hitSlop={12}><Text style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>Pomiń</Text></Pressable>
         </View>
-        <View style={{ flex: 1, justifyContent: 'center' }}>
-          <View style={{ width: 120, height: 120, borderRadius: 38, backgroundColor: 'rgba(255,255,255,0.16)', alignItems: 'center', justifyContent: 'center', marginBottom: 32 }}>
+        <R.View key={krok} entering={FadeInRight.duration(420)} style={{ flex: 1, justifyContent: 'center' }}>
+          <R.View entering={ZoomIn.delay(120).springify().damping(11)} style={{ width: 120, height: 120, borderRadius: 38, backgroundColor: 'rgba(255,255,255,0.16)', alignItems: 'center', justifyContent: 'center', marginBottom: 32 }}>
             <Ikona n={s.ik} size={62} color="#fff" sw={1.5} />
-          </View>
-          <Text style={{ color: '#fff', fontSize: 34, lineHeight: 39, fontWeight: '800', letterSpacing: -0.6 }}>{s.t}</Text>
-          <Text style={{ color: 'rgba(255,255,255,0.9)', fontSize: 18, lineHeight: 26, marginTop: 14 }}>{s.o}</Text>
-        </View>
+          </R.View>
+          <R.Text entering={FadeInDown.delay(180).duration(450)} style={{ color: '#fff', fontSize: 34, lineHeight: 39, fontWeight: '800', letterSpacing: -0.6 }}>{s.t}</R.Text>
+          <R.Text entering={FadeInDown.delay(260).duration(450)} style={{ color: 'rgba(255,255,255,0.9)', fontSize: 18, lineHeight: 26, marginTop: 14 }}>{s.o}</R.Text>
+        </R.View>
         <View style={{ flexDirection: 'row', gap: 7, marginBottom: 22 }}>
-          {SLAJDY.map((_, i) => <View key={i} style={{ height: 7, width: i === krok ? 26 : 7, borderRadius: 4, backgroundColor: i === krok ? '#fff' : 'rgba(255,255,255,0.4)' }} />)}
+          {SLAJDY.map((_, i) => <R.View key={i + '-' + (i === krok)} entering={FadeIn.duration(300)} style={{ height: 7, width: i === krok ? 26 : 7, borderRadius: 4, backgroundColor: i === krok ? '#fff' : 'rgba(255,255,255,0.4)' }} />)}
         </View>
         <Pressable onPress={dalej} style={({ pressed }) => [st.biały, pressed && { opacity: 0.85 }]}><Text style={{ color: '#B00F30', fontSize: 17, fontWeight: '800' }}>{krok < 2 ? 'Dalej' : 'Zaczynamy'}</Text></Pressable>
       </LinearGradient>
@@ -106,16 +113,16 @@ export function Wprowadzenie() {
           <Text style={{ color: k.ink, fontSize: 30, fontWeight: '800', letterSpacing: -0.5 }}>Wybierz osobę do pokazu</Text>
           <Text style={{ color: k.ink2, fontSize: 16, lineHeight: 22, marginTop: 8 }}>To prototyp na fikcyjnych danych. Każda osoba ma inne dokumenty i sprawy. Zmienisz ją później w zakładce Więcej.</Text>
           <View style={{ gap: 12, marginTop: 22 }}>
-            {OSOBY_IDS.map(id => { const o = OSOBY[id], on = wybor === id; return (
-              <Pressable key={id} onPress={() => setWybor(id)} accessibilityState={{ selected: on }}
+            {OSOBY_IDS.map((id, i) => { const o = OSOBY[id], on = wybor === id; return (
+              <R.View key={id} entering={FadeInDown.delay(100 + i * 70).duration(420)}><Pressable onPress={() => setWybor(id)} accessibilityState={{ selected: on }}
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 14, padding: 14, borderRadius: 22, backgroundColor: k.surface, borderWidth: 2, borderColor: on ? k.acc : k.dark ? k.hair : 'transparent' }}>
                 <Portret id={id} w={58} h={72} r={12} />
                 <View style={{ flex: 1 }}>
                   <Text style={{ color: k.ink, fontSize: 18, fontWeight: '700' }}>{o.imie} {o.nazwisko}</Text>
                   <Text style={{ color: k.ink2, fontSize: 14, lineHeight: 19, marginTop: 3 }}>{o.opis}</Text>
                 </View>
-                <View style={{ width: 26, height: 26, borderRadius: 13, borderWidth: 2, borderColor: on ? k.acc : k.ink3, backgroundColor: on ? k.acc : 'transparent', alignItems: 'center', justifyContent: 'center' }}>{on ? <Ikona n="ok" size={15} color="#fff" sw={2.6} /> : null}</View>
-              </Pressable>
+                <View style={{ width: 26, height: 26, borderRadius: 13, borderWidth: 2, borderColor: on ? k.acc : k.ink3, backgroundColor: on ? k.acc : 'transparent', alignItems: 'center', justifyContent: 'center' }}>{on ? <R.View entering={ZoomIn.springify()}><Ikona n="ok" size={15} color="#fff" sw={2.6} /></R.View> : null}</View>
+              </Pressable></R.View>
             ); })}
           </View>
         </ScrollView>
