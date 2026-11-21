@@ -1,9 +1,11 @@
 # mObywatel: prototyp aplikacji
 
+**Projekt na [mObywatel Challenge](https://mobywatel.ai/)**, konkurs na koncepcję lepszej aplikacji mObywatel (zgłoszenia do 30 listopada 2026).
+
 Klikalna koncepcja aplikacji mObywatel zbudowana w **Expo (React Native) i TypeScript**.
 Działa na iPhonie, Androidzie i w przeglądarce. Nie potrzebuje serwera ani sieci, a wszystkie dane są fikcyjne.
 
-> To prototyp przygotowany na [mObywatel Challenge](https://mobywatel.ai/). Nie jest to aplikacja mObywatel ani usługa administracji publicznej.
+> To niezależny prototyp. Nie jest to aplikacja mObywatel ani usługa administracji publicznej.
 > Osoby, numery, firmy i sprawy są zmyślone.
 
 ## Najważniejsze założenia
