@@ -156,7 +156,7 @@ export function Prezentacja() {
             <button aria-pressed={motyw === 'jasny'} onClick={() => zmienMotyw('jasny')}>Jasny</button>
             <button aria-pressed={motyw === 'ciemny'} onClick={() => zmienMotyw('ciemny')}>Ciemny</button>
           </div>
-          <span className="pin">PIN do podpisu w pokazie: <b>1234</b></span>
+          <span className="pin">W pokazie działa <b>dowolny PIN</b></span>
         </div>
 
         <div className="karta">

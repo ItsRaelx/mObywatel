@@ -1,4 +1,4 @@
-import { DarkTheme, DefaultTheme, router, Stack, ThemeProvider, usePathname } from 'expo-router';
+import { DarkTheme, DefaultTheme, router, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
@@ -20,10 +20,9 @@ if (__DEV__ && typeof window !== 'undefined') (window as unknown as { __router: 
 
 function Wnetrze() {
   const { gotowe, wprowadzenie, odblokowana, k, ustaw } = useApp();
-  const sciezka = usePathname();
   useEffect(() => { if (gotowe) SplashScreen.hideAsync(); }, [gotowe]);
   /* strona pokazowa: kolor paska statusu w ramce telefonu oraz zmiana osoby i motywu ze strony */
-  const ciemnyPasek = !wprowadzenie || !odblokowana || sciezka === '/';
+  const ciemnyPasek = !wprowadzenie || !odblokowana;
   useEffect(() => { doRamki({ typ: 'pasek', jasny: ciemnyPasek, ciemny: k.dark }); }, [ciemnyPasek, k.dark]);
   useEffect(() => {
     if (!OSADZONA) return;

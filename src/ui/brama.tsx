@@ -1,27 +1,27 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { useEffect, useState } from 'react';
-import { Animated, BackHandler, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { BackHandler, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import R, { FadeIn, FadeInDown, FadeInUp } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { OSOBY, OSOBY_IDS } from '@/data/typy';
 import { biometria, useApp } from '@/state/app';
-import { Klawiatura, Kropki, trzes } from '@/ui/klawiatura';
+import { Klawiatura, Kropki } from '@/ui/klawiatura';
 import { potwierdz } from '@/ui/potwierdzenie';
 import { Avatar, Ikona, LogoBiale, Portret, Przycisk } from '@/ui/elementy';
 
 /* ---------- ekran blokady ---------- */
 export function Blokada() {
-  const { os, pin, odblokuj, k, ustaw } = useApp(); const ins = useSafeAreaInsets();
-  const [p, setP] = useState(''); const [msg, setMsg] = useState('Wpisz PIN, aby otworzyć aplikację');
-  const blad = useState(() => new Animated.Value(0))[0];
+  const { os, odblokuj, k, ustaw } = useApp(); const ins = useSafeAreaInsets();
+  const [p, setP] = useState(''); const msg = 'Wpisz PIN, aby otworzyć aplikację';
   useEffect(() => { const sub = BackHandler.addEventListener('hardwareBackPress', () => { BackHandler.exitApp(); return true; }); return () => sub.remove(); }, []);
   const bio = async () => { if (await biometria('Zaloguj się do mObywatela')) odblokuj(); };
   useEffect(() => { if (Platform.OS !== 'web') LocalAuthentication.isEnrolledAsync().then(e => { if (e) bio(); }).catch(() => {}); }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const cyfra = (c: string) => {
     if (p.length >= 4) return; const n = p + c; setP(n);
-    if (n.length === 4) setTimeout(() => { if (n === pin) odblokuj(); else { trzes(blad); setMsg('Nieprawidłowy PIN. Spróbuj jeszcze raz.'); setP(''); } }, 150);
+    /* w pokazie każdy PIN jest poprawny */
+    if (n.length === 4) setTimeout(odblokuj, 150);
   };
   return (
     <LinearGradient colors={k.hero} style={[StyleSheet.absoluteFill, { paddingTop: ins.top + 30, paddingBottom: ins.bottom + 20, alignItems: 'center' }]}>
@@ -31,7 +31,7 @@ export function Blokada() {
         <Text style={{ color: '#fff', fontSize: 24, fontWeight: '800', marginTop: 12 }}>Cześć, {os.wolacz}</Text>
         <Text style={{ color: 'rgba(255,255,255,0.88)', fontSize: 15, marginTop: 4 }}>{msg}</Text>
       </R.View>
-      <View style={{ marginTop: 26, marginBottom: 'auto' }}><Kropki n={p.length} blad={blad} /></View>
+      <View style={{ marginTop: 26, marginBottom: 'auto' }}><Kropki n={p.length} /></View>
       <R.View entering={FadeInUp.delay(300).duration(500)}><Klawiatura onCyfra={cyfra} onUsun={() => setP(p.slice(0, -1))} onBio={Platform.OS === 'web' ? undefined : bio} /></R.View>
       <Pressable onPress={() => ustaw({ wprowadzenie: false, pin: null })} style={{ marginTop: 18, padding: 6 }}>
         <Text style={{ color: '#fff', opacity: 0.9, fontWeight: '600' }}>Nie pamiętasz PIN-u? Ustaw nowy</Text>
@@ -50,7 +50,6 @@ export function Wprowadzenie() {
   const { ustaw, k, osobaId, odblokuj } = useApp(); const ins = useSafeAreaInsets();
   const [krok, setKrok] = useState(0); const [wybor, setWybor] = useState(osobaId);
   const [p1, setP1] = useState(''); const [p2, setP2] = useState(''); const [pierwszy, setPierwszy] = useState<string | null>(null);
-  const blad = useState(() => new Animated.Value(0))[0];
   const dalej = () => setKrok(krok + 1);
   /* Android: wstecz cofa slajd, na pierwszym zamyka aplikację */
   useEffect(() => {
@@ -111,14 +110,14 @@ export function Wprowadzenie() {
     const cyfra = (c: string) => {
       const cur = potw ? p2 : p1; if (cur.length >= 4) return; const n = cur + c;
       if (!potw) { setP1(n); if (n.length === 4) setTimeout(() => { setPierwszy(n); setP1(''); }, 150); }
-      else { setP2(n); if (n.length === 4) setTimeout(() => { if (n === pierwszy) { ustaw({ pin: n }); dalej(); } else { trzes(blad); setP2(''); setPierwszy(null); } }, 150); }
+      else { setP2(n); if (n.length === 4) setTimeout(() => { ustaw({ pin: n }); dalej(); }, 150); }
     };
     return (
       <LinearGradient colors={k.hero} style={[StyleSheet.absoluteFill, { paddingTop: ins.top + 40, paddingBottom: ins.bottom + 30, alignItems: 'center' }]}>
         <View style={{ width: 70, height: 70, borderRadius: 24, backgroundColor: 'rgba(255,255,255,0.16)', alignItems: 'center', justifyContent: 'center' }}><Ikona n="lock" size={36} color="#fff" /></View>
         <Text style={{ color: '#fff', fontSize: 28, fontWeight: '800', marginTop: 18 }}>{potw ? 'Powtórz PIN' : 'Ustaw PIN'}</Text>
         <Text style={{ color: 'rgba(255,255,255,0.9)', fontSize: 15.5, lineHeight: 21, marginTop: 8, textAlign: 'center', paddingHorizontal: 40 }}>{potw ? 'Wpisz te same 4 cyfry jeszcze raz.' : 'Wymyśl 4 cyfry. Będziesz je wpisywać przy otwieraniu aplikacji.'}</Text>
-        <View style={{ marginTop: 28, marginBottom: 'auto' }}><Kropki n={(potw ? p2 : p1).length} blad={blad} /></View>
+        <View style={{ marginTop: 28, marginBottom: 'auto' }}><Kropki n={(potw ? p2 : p1).length} /></View>
         <Klawiatura onCyfra={cyfra} onUsun={() => (potw ? setP2(p2.slice(0, -1)) : setP1(p1.slice(0, -1)))} />
       </LinearGradient>
     );

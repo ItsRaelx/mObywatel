@@ -4,13 +4,13 @@
    potwierdz() można wywołać z dowolnego miejsca; okno rysuje PotwierdzenieHost w głównym layoucie. */
 import * as Haptics from 'expo-haptics';
 import { useEffect, useState, useSyncExternalStore } from 'react';
-import { Animated as RNAnimated, BackHandler, Pressable, StyleSheet, Text, View } from 'react-native';
+import { BackHandler, Pressable, StyleSheet, Text, View } from 'react-native';
 import Animated, { Easing, FadeIn, FadeOut, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { useApp } from '@/state/app';
 import { Ikona } from '@/ui/elementy';
-import { Klawiatura, Kropki, trzes } from '@/ui/klawiatura';
+import { Klawiatura, Kropki } from '@/ui/klawiatura';
 
 export type Tryb = 'pin' | 'faceid';
 type Zadanie = { id: number; powod: string; tryb: Tryb; koniec: (ok: boolean) => void };
@@ -29,16 +29,14 @@ const czekaj = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 /* ---------- podpis PIN-em mObywatela ---------- */
 function OknoPin({ z }: { z: Zadanie }) {
-  const { k, pin } = useApp(); const ins = useSafeAreaInsets();
-  const [p, setP] = useState(''); const [msg, setMsg] = useState<string | null>(null); const [ok, setOk] = useState(false);
-  const blad = useState(() => new RNAnimated.Value(0))[0];
+  const { k } = useApp(); const ins = useSafeAreaInsets();
+  const [p, setP] = useState(''); const [ok, setOk] = useState(false);
   const cyfra = (c: string) => {
     if (ok || p.length >= 4) return; const n = p + c; setP(n);
     if (n.length === 4) setTimeout(async () => {
-      if (n === (pin ?? '1234')) {
-        setOk(true); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
-        await czekaj(650); z.koniec(true);
-      } else { trzes(blad); setMsg('Nieprawidłowy PIN. Spróbuj jeszcze raz.'); setP(''); }
+      /* w pokazie każdy PIN jest poprawny */
+      setOk(true); Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      await czekaj(650); z.koniec(true);
     }, 150);
   };
   return (
@@ -58,8 +56,8 @@ function OknoPin({ z }: { z: Zadanie }) {
           <>
             <View style={{ width: 48, height: 48, borderRadius: 16, backgroundColor: k.accBg, alignItems: 'center', justifyContent: 'center' }}><Ikona n="key" size={24} color={k.accInk} /></View>
             <Text style={{ color: k.ink, fontSize: 21, fontWeight: '800', marginTop: 12 }}>Podpisz PIN-em mObywatela</Text>
-            <Text style={{ color: msg ? k.accInk : k.ink2, fontSize: 15, marginTop: 4, textAlign: 'center', paddingHorizontal: 24, fontWeight: msg ? '600' : '400' }}>{msg ?? z.powod}</Text>
-            <View style={{ marginTop: 22, marginBottom: 24 }}><Kropki n={p.length} blad={blad} kolor={k.ink} /></View>
+            <Text style={{ color: k.ink2, fontSize: 15, marginTop: 4, textAlign: 'center', paddingHorizontal: 24 }}>{z.powod}</Text>
+            <View style={{ marginTop: 22, marginBottom: 24 }}><Kropki n={p.length} kolor={k.ink} /></View>
             <Klawiatura jasna={!k.dark} onCyfra={cyfra} onUsun={() => setP(p.slice(0, -1))} />
             <Pressable onPress={() => z.koniec(false)} style={{ padding: 14, marginTop: 6 }}><Text style={{ color: k.accInk, fontSize: 16, fontWeight: '700' }}>Anuluj</Text></Pressable>
           </>
