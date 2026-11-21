@@ -2,22 +2,21 @@
    pojawia się napis, potem całość rozjaśnia się i odsłania aplikację. */
 import { useEffect, useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
-import Animated, { Easing, useAnimatedStyle, useSharedValue, withDelay, withSequence, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
 
 import { Godlo } from '@/ui/elementy';
 
 export function SplashAnimowany() {
   const [jest, setJest] = useState(true);
-  const g = useSharedValue(1), napis = useSharedValue(0), wyjscie = useSharedValue(0);
+  const napis = useSharedValue(0), wyjscie = useSharedValue(0);
   useEffect(() => {
-    g.set(withSequence(withTiming(0.9, { duration: 260, easing: Easing.out(Easing.quad) }), withSpring(1.06, { damping: 9, stiffness: 140 }), withTiming(1, { duration: 200 })));
     napis.set(withDelay(380, withTiming(1, { duration: 420, easing: Easing.out(Easing.cubic) })));
     wyjscie.set(withDelay(1250, withTiming(1, { duration: 480, easing: Easing.in(Easing.cubic) })));
     const t = setTimeout(() => setJest(false), 1780);
     return () => clearTimeout(t);
-  }, [g, napis, wyjscie]);
-  const sCala = useAnimatedStyle(() => ({ opacity: 1 - wyjscie.value, transform: [{ scale: 1 + wyjscie.value * 0.18 }] }));
-  const sGodlo = useAnimatedStyle(() => ({ transform: [{ scale: g.value }, { translateY: -napis.value * 18 }] }));
+  }, [napis, wyjscie]);
+  const sCala = useAnimatedStyle(() => ({ opacity: 1 - wyjscie.value, transform: [] }));
+  const sGodlo = useAnimatedStyle(() => ({ transform: [{ translateY: -napis.value * 18 }] }));
   const sNapis = useAnimatedStyle(() => ({ opacity: napis.value, transform: [{ translateY: (1 - napis.value) * 14 }] }));
   if (!jest) return null;
   return (

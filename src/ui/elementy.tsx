@@ -1,7 +1,7 @@
 import { useEffect, useMemo, type ReactNode } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type TextStyle, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import Svg, { Circle, SvgXml } from 'react-native-svg';
 
 import { kiedy, pl3 } from '@/data/typy';
@@ -202,7 +202,7 @@ export function Dni({ n }: { n: number | null }) {
 export function ToastHost() {
   const { toastTxt, k } = useApp(); const ins = useSafeAreaInsets();
   const a = useSharedValue(0);
-  useEffect(() => { a.set(toastTxt ? withSpring(1, { damping: 14, stiffness: 170 }) : withTiming(0, { duration: 200 })); }, [toastTxt, a]);
+  useEffect(() => { a.set(toastTxt ? withTiming(1, { duration: 220, easing: Easing.out(Easing.cubic) }) : withTiming(0, { duration: 200 })); }, [toastTxt, a]);
   const st = useAnimatedStyle(() => ({ opacity: Math.min(1, a.value), transform: [{ translateY: (1 - a.value) * 30 }, { scale: 0.94 + a.value * 0.06 }] }));
   return (
     <Animated.View pointerEvents="none" style={[{ position: 'absolute', left: 16, right: 16, bottom: ins.bottom + 96 }, st]}>

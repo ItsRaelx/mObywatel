@@ -2,7 +2,7 @@ import { router, Stack, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Pressable, useWindowDimensions, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
-import Animated, { ZoomIn } from 'react-native-reanimated';
+import Animated, { FadeIn } from 'react-native-reanimated';
 
 import { autoSvg } from '@/lib/grafika';
 import { useApp } from '@/state/app';
@@ -36,7 +36,7 @@ export default function Dok() {
   return (
     <Ekran>
       <Stack.Screen options={{ title: d.name }} />
-      <Animated.View entering={ZoomIn.duration(450).springify().damping(16)}><KartaDokumentu d={d} os={os} w={w} ukryte={ukryte} hologram onQR={() => router.push('/pokaz-kod?zakres=tozsamosc')} onPokaz={() => setUkryte(false)} /></Animated.View>
+      <Animated.View entering={FadeIn.duration(300)}><KartaDokumentu d={d} os={os} w={w} ukryte={ukryte} hologram onQR={() => router.push('/pokaz-kod?zakres=tozsamosc')} onPokaz={() => setUkryte(false)} /></Animated.View>
       <Zegar />
 
       <Karta style={{ marginTop: 14, padding: 14, flexDirection: 'row', gap: 12, alignItems: 'center', backgroundColor: d.alert ? k.accBg : k.okBg }}>

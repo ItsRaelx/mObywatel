@@ -174,8 +174,8 @@ function PoleWidok({ p, v, setV, blad, i }: { p: Pole; v: V; setV: (k: string, w
 function Przelacznik({ on }: { on: boolean }) {
   const { k } = useApp();
   return (
-    <Animated.View layout={LinearTransition.springify().damping(15)} style={{ width: 52, height: 32, borderRadius: 16, padding: 3, backgroundColor: on ? k.ok : k.surface2, alignItems: on ? 'flex-end' : 'flex-start', borderWidth: on ? 0 : 1, borderColor: k.hair }}>
-      <Animated.View layout={LinearTransition.springify().damping(15)} style={{ width: 26, height: 26, borderRadius: 13, backgroundColor: '#fff', shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 3, shadowOffset: { width: 0, height: 1 }, elevation: 2 }} />
+    <Animated.View layout={LinearTransition.duration(180)} style={{ width: 52, height: 32, borderRadius: 16, padding: 3, backgroundColor: on ? k.ok : k.surface2, alignItems: on ? 'flex-end' : 'flex-start', borderWidth: on ? 0 : 1, borderColor: k.hair }}>
+      <Animated.View layout={LinearTransition.duration(180)} style={{ width: 26, height: 26, borderRadius: 13, backgroundColor: '#fff', shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 3, shadowOffset: { width: 0, height: 1 }, elevation: 2 }} />
     </Animated.View>
   );
 }

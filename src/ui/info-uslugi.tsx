@@ -139,7 +139,7 @@ function KartaRecepty({ r, i }: { r: Recepta; i: number }) {
   return (
     <Wejscie i={i + 2} style={{ marginBottom: 12 }}>
       <Karta>
-        <Animated.View layout={LinearTransition.springify().damping(16)} style={{ padding: 16 }}>
+        <Animated.View layout={LinearTransition.duration(200)} style={{ padding: 16 }}>
           <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
             <View style={{ width: 44, height: 44, borderRadius: 14, backgroundColor: r.stan === 'wykupiona' ? k.surface2 : k.accBg, alignItems: 'center', justifyContent: 'center' }}><Ikona n="pill" size={22} color={r.stan === 'wykupiona' ? k.ink3 : k.accInk} /></View>
             <View style={{ flex: 1 }}>

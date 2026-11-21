@@ -3,7 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { useEffect, useState } from 'react';
 import { Animated, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import R, { FadeIn, FadeInDown, FadeInRight, FadeInUp, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming, ZoomIn } from 'react-native-reanimated';
+import R, { FadeIn, FadeInDown, FadeInUp, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { OSOBY, OSOBY_IDS } from '@/data/typy';
@@ -37,7 +37,7 @@ function Kropki({ n, blad }: { n: number; blad: Animated.Value }) {
 }
 function Kropka({ pelna }: { pelna: boolean }) {
   const s = useSharedValue(1);
-  useEffect(() => { if (pelna) s.set(withSequence(withTiming(1.45, { duration: 90 }), withSpring(1, { damping: 8, stiffness: 300 }))); }, [pelna, s]);
+  useEffect(() => { s.set(withTiming(pelna ? 1 : 0.9, { duration: 120 })); }, [pelna, s]);
   const st = useAnimatedStyle(() => ({ transform: [{ scale: s.value }] }));
   return <R.View style={[{ width: 15, height: 15, borderRadius: 8, borderWidth: 2, borderColor: '#fff', backgroundColor: pelna ? '#fff' : 'transparent' }, st]} />;
 }
@@ -58,7 +58,7 @@ export function Blokada() {
     <LinearGradient colors={k.hero} style={[StyleSheet.absoluteFill, { paddingTop: ins.top + 30, paddingBottom: ins.bottom + 20, alignItems: 'center' }]}>
       <LogoBiale w={150} />
       <R.View entering={FadeInDown.delay(150).duration(500)} style={{ marginTop: 26, alignItems: 'center' }}>
-        <R.View entering={ZoomIn.delay(200).springify().damping(12)}><Avatar id={os.id} size={80} ramka="#fff" /></R.View>
+        <R.View entering={FadeIn.delay(150).duration(300)}><Avatar id={os.id} size={80} ramka="#fff" /></R.View>
         <Text style={{ color: '#fff', fontSize: 24, fontWeight: '800', marginTop: 12 }}>Cześć, {os.wolacz}</Text>
         <Text style={{ color: 'rgba(255,255,255,0.88)', fontSize: 15, marginTop: 4 }}>{msg}</Text>
       </R.View>
@@ -92,8 +92,8 @@ export function Wprowadzenie() {
           <LogoBiale w={132} />
           <Pressable onPress={() => setKrok(3)} hitSlop={12}><Text style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>Pomiń</Text></Pressable>
         </View>
-        <R.View key={krok} entering={FadeInRight.duration(420)} style={{ flex: 1, justifyContent: 'center' }}>
-          <R.View entering={ZoomIn.delay(120).springify().damping(11)} style={{ width: 120, height: 120, borderRadius: 38, backgroundColor: 'rgba(255,255,255,0.16)', alignItems: 'center', justifyContent: 'center', marginBottom: 32 }}>
+        <R.View key={krok} entering={FadeIn.duration(260)} style={{ flex: 1, justifyContent: 'center' }}>
+          <R.View entering={FadeIn.delay(80).duration(300)} style={{ width: 120, height: 120, borderRadius: 38, backgroundColor: 'rgba(255,255,255,0.16)', alignItems: 'center', justifyContent: 'center', marginBottom: 32 }}>
             <Ikona n={s.ik} size={62} color="#fff" sw={1.5} />
           </R.View>
           <R.Text entering={FadeInDown.delay(180).duration(450)} style={{ color: '#fff', fontSize: 34, lineHeight: 39, fontWeight: '800', letterSpacing: -0.6 }}>{s.t}</R.Text>
@@ -121,7 +121,7 @@ export function Wprowadzenie() {
                   <Text style={{ color: k.ink, fontSize: 18, fontWeight: '700' }}>{o.imie} {o.nazwisko}</Text>
                   <Text style={{ color: k.ink2, fontSize: 14, lineHeight: 19, marginTop: 3 }}>{o.opis}</Text>
                 </View>
-                <View style={{ width: 26, height: 26, borderRadius: 13, borderWidth: 2, borderColor: on ? k.acc : k.ink3, backgroundColor: on ? k.acc : 'transparent', alignItems: 'center', justifyContent: 'center' }}>{on ? <R.View entering={ZoomIn.springify()}><Ikona n="ok" size={15} color="#fff" sw={2.6} /></R.View> : null}</View>
+                <View style={{ width: 26, height: 26, borderRadius: 13, borderWidth: 2, borderColor: on ? k.acc : k.ink3, backgroundColor: on ? k.acc : 'transparent', alignItems: 'center', justifyContent: 'center' }}>{on ? <R.View entering={FadeIn.duration(150)}><Ikona n="ok" size={15} color="#fff" sw={2.6} /></R.View> : null}</View>
               </Pressable></R.View>
             ); })}
           </View>

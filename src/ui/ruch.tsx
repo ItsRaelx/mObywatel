@@ -3,11 +3,12 @@ import * as Haptics from 'expo-haptics';
 import { useEffect, type ReactNode } from 'react';
 import { Pressable, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
 import Animated, {
-  Easing, FadeInDown, FadeInUp, interpolate, useAnimatedProps, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withSpring, withTiming, ZoomIn,
+  Easing, FadeInDown, FadeInUp, useAnimatedProps, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withTiming, FadeIn,
 } from 'react-native-reanimated';
 import { Circle } from 'react-native-svg';
 
-export const SPREZYNA = { damping: 16, stiffness: 180, mass: 0.8 };
+/* płynne przejście bez sprężystości (bez „odbicia”) */
+export const PLYNNIE = { duration: 220, easing: Easing.out(Easing.cubic) };
 
 /* element wjeżdżający od dołu, z opóźnieniem zależnym od pozycji na liście */
 export function Wejscie({ i = 0, children, style, gora, baza = 0 }: { i?: number; children: ReactNode; style?: StyleProp<ViewStyle>; gora?: boolean; baza?: number }) {
@@ -16,13 +17,13 @@ export function Wejscie({ i = 0, children, style, gora, baza = 0 }: { i?: number
 }
 
 /* przycisk, który lekko się zapada pod palcem i sprężyście wraca */
-export function Sprezyna({ children, style, onPress, skala = 0.965, haptyka = true, zewn, ...rest }: PressableProps & { children: ReactNode; style?: StyleProp<ViewStyle>; skala?: number; haptyka?: boolean; zewn?: StyleProp<ViewStyle> }) {
+export function Sprezyna({ children, style, onPress, skala = 0.98, haptyka = true, zewn, ...rest }: PressableProps & { children: ReactNode; style?: StyleProp<ViewStyle>; skala?: number; haptyka?: boolean; zewn?: StyleProp<ViewStyle> }) {
   const s = useSharedValue(1);
   const st = useAnimatedStyle(() => ({ transform: [{ scale: s.value }] }));
   return (
     <Pressable {...rest} style={zewn}
-      onPressIn={() => { s.set(withSpring(skala, SPREZYNA)); }}
-      onPressOut={() => { s.set(withSpring(1, SPREZYNA)); }}
+      onPressIn={() => { s.set(withTiming(skala, { duration: 90 })); }}
+      onPressOut={() => { s.set(withTiming(1, { duration: 160 })); }}
       onPress={e => { if (haptyka) Haptics.selectionAsync().catch(() => {}); onPress?.(e); }}>
       <Animated.View style={[style, st]}>{children}</Animated.View>
     </Pressable>
@@ -30,16 +31,8 @@ export function Sprezyna({ children, style, onPress, skala = 0.965, haptyka = tr
 }
 
 /* duża ikona na ekranie sukcesu: wskakuje i zostawia rozchodzący się pierścień */
-export function Pop({ children, kolor, size = 92 }: { children: ReactNode; kolor: string; size?: number }) {
-  const p = useSharedValue(0);
-  useEffect(() => { p.set(withDelay(250, withTiming(1, { duration: 1100, easing: Easing.out(Easing.quad) }))); }, [p]);
-  const fala = useAnimatedStyle(() => ({ opacity: interpolate(p.value, [0, 1], [0.35, 0]), transform: [{ scale: interpolate(p.value, [0, 1], [1, 1.45]) }] }));
-  return (
-    <Animated.View entering={ZoomIn.duration(260)} style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
-      <Animated.View style={[{ position: 'absolute', width: size, height: size, borderRadius: size / 2, backgroundColor: kolor }, fala]} />
-      {children}
-    </Animated.View>
-  );
+export function Pop({ children, size = 92 }: { children: ReactNode; kolor?: string; size?: number }) {
+  return <Animated.View entering={FadeIn.duration(250)} style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>{children}</Animated.View>;
 }
 
 /* łuk postępu, który dorysowuje się po pojawieniu */
